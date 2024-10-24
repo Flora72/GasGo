@@ -324,7 +324,7 @@ def vendors(request):
                 'notes': final_notes
             }
 
-            return redirect('vendors')  # ✅ Redirect to vendors.html for payment method
+            return redirect('vendors')
 
         # Step 2: Payment method selection from vendors.html
         vendor_choice = request.POST.get('vendor_choice')
