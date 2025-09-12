@@ -5,16 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/gasgoApp/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/contact.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/testimonials.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/DjangoProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DjangoProject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GasGO/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GasGO/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gasgoApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gasgoApp/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,8 +15,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -107,7 +97,7 @@
       <option name="presentableId" value="Default" />
       <updated>1757585602609</updated>
       <workItem from="1757585603939" duration="1458000" />
-      <workItem from="1757656769652" duration="962000" />
+      <workItem from="1757656769652" duration="1768000" />
     </task>
     <servers />
   </component>
