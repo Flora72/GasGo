@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/gasgoApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gasgoApp/views.py" afterDir="false" />
-    </list>
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -97,7 +95,7 @@
       <option name="presentableId" value="Default" />
       <updated>1757585602609</updated>
       <workItem from="1757585603939" duration="1458000" />
-      <workItem from="1757656769652" duration="1768000" />
+      <workItem from="1757656769652" duration="1993000" />
     </task>
     <servers />
   </component>
