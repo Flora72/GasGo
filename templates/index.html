@@ -9,13 +9,14 @@
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 </head>
 <body>
-<!-- Navigation (5 items) -->
+{#navbar#}
 <header class="header">
     <a href="{% url 'index' %}" class="logo">GasGo</a>
     <nav>
         <ul>
             <li><a href="{% url 'index' %}">Home</a></li>
             <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
             <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li><a href="{% url 'signup' %}">Sign Up</a></li>
             <li><a href="{% url 'login' %}">Login</a></li>
@@ -24,7 +25,11 @@
 </header>
 
 <main>
-    <!-- Hero -->
+    <section>
+        <h1>Welcome to GasGo!</h1> 
+        <p>This is the homepage of our application.</p>
+    </section>
+{#hero sect#}
     <section>
         <h1>Clean cooking gas, delivered fast</h1>
         <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without interruptions.</p>
@@ -38,7 +43,7 @@
         <p><img src="{% static 'images/logo.png' %}" alt="GasGo" width="80" height="80"></p>
     </section>
 
-    <!-- Features / Why GasGo -->
+{#    features#}
     <section>
         <h2>Why choose GasGo</h2>
         <ul>
@@ -49,7 +54,7 @@
         </ul>
     </section>
 
-    <!-- How it works -->
+{#    how it works#}
     <section>
         <h2>How it works</h2>
         <ol>
@@ -59,15 +64,21 @@
         </ol>
     </section>
 
-    <!-- Testimonials carousel (plain HTML + tiny JS, no styling) -->
+{# Testimonials carousel #}
     <section>
         <h2>What our customers say</h2>
         <div id="testimonials">
             <div class="t-item">
+                <p>
+                    <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery" width="220" height="auto">
+                </p>
                 <p>“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</p>
                 <p>- Amina, Westlands</p>
             </div>
             <div class="t-item" style="display:none">
+                <p>
+                    <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo" width="220" height="auto">
+                </p>
                 <p>“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</p>
                 <p>- Brian, South C</p>
             </div>
@@ -119,14 +130,15 @@
 </main>
 
 <footer>
+    <p>Follow Us:</p>
     <nav aria-label="Support and social">
         <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;">X</a>
+        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;">Instagram</a>
+        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;">Facebook</a>
+        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
