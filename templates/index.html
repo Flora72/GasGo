@@ -4,10 +4,122 @@
 <head>
     <meta charset="UTF-8">
     <title>Home | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 </head>
 <body>
+<!-- Navigation (5 items) -->
+<header class="header">
+    <a href="{% url 'index' %}" class="logo">GasGo</a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
+</header>
 
+<main>
+    <!-- Hero -->
+    <section>
+        <h1>Clean cooking gas, delivered fast</h1>
+        <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without interruptions.</p>
+        <p>
+            <a href="{% url 'orders' %}">Order LPG now</a>
+            |
+            <a href="{% url 'emergency' %}">Emergency delivery</a>
+            |
+            <a href="{% url 'track_order' %}">Track your order</a>
+        </p>
+        <p><img src="{% static 'images/logo.png' %}" alt="GasGo" width="80" height="80"></p>
+    </section>
+
+    <!-- Features / Why GasGo -->
+    <section>
+        <h2>Why choose GasGo</h2>
+        <ul>
+            <li>On-demand delivery of sealed, certified LPG cylinders</li>
+            <li>Safe cylinder exchange handled by trained riders</li>
+            <li>Transparent pricing and friendly customer care</li>
+            <li>Emergency top-ups during extended hours</li>
+        </ul>
+    </section>
+
+    <!-- How it works -->
+    <section>
+        <h2>How it works</h2>
+        <ol>
+            <li>Place an order and share your location plus cylinder size.</li>
+            <li>We dispatch the nearest vetted rider with a sealed cylinder.</li>
+            <li>Exchange your empty, confirm safety, and pay on delivery.</li>
+        </ol>
+    </section>
+
+    <!-- Testimonials carousel (plain HTML + tiny JS, no styling) -->
+    <section>
+        <h2>What our customers say</h2>
+        <div id="testimonials">
+            <div class="t-item">
+                <p>“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</p>
+                <p>- Amina, Westlands</p>
+            </div>
+            <div class="t-item" style="display:none">
+                <p>“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</p>
+                <p>- Brian, South C</p>
+            </div>
+            <div class="t-item" style="display:none">
+                <p>“Customer service was helpful and the emergency top-up saved our dinner party.”</p>
+                <p>- Mercy, Parklands</p>
+            </div>
+        </div>
+        <p>
+            <button type="button" id="prevBtn">Prev</button>
+            <button type="button" id="nextBtn">Next</button>
+        </p>
+        <script>
+            (function(){
+                var items = document.querySelectorAll('#testimonials .t-item');
+                var i = 0;
+                function show(idx){
+                    for (var j = 0; j < items.length; j++) {
+                        items[j].style.display = (j === idx ? '' : 'none');
+                    }
+                }
+                function next(){ i = (i + 1) % items.length; show(i); }
+                function prev(){ i = (i - 1 + items.length) % items.length; show(i); }
+                var nextBtn = document.getElementById('nextBtn');
+                var prevBtn = document.getElementById('prevBtn');
+                if (nextBtn) nextBtn.addEventListener('click', next);
+                if (prevBtn) prevBtn.addEventListener('click', prev);
+                setInterval(next, 5000);
+                show(0);
+            })();
+        </script>
+    </section>
+
+    <!-- Vendors / partners (image placeholders) -->
+    <section>
+        <h2>Our partners</h2>
+        <p>
+            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+        </p>
+    </section>
+
+    <!-- Call to action -->
+    <section>
+        <h2>Ready to refill?</h2>
+        <p><a href="{% url 'orders' %}">Start your order</a></p>
+    </section>
+</main>
+
+<footer>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+</footer>
 </body>
 </html>
