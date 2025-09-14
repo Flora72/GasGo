@@ -36,3 +36,5 @@ def signup(request):
     return render(request, 'signup.html')
 def gasbot(request):
     return render(request, 'gasbot.html')
+def forgot_password(request):
+    return render(request, 'forgot_password.html')

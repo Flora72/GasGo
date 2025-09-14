@@ -11,6 +11,7 @@ urlpatterns = [
     path('emergency/', views.emergency, name='emergency'),
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('track_order/', views.track_order, name='track_order'),
     path('vendors/', views.vendors, name='vendors'),
     path('orders/', views.order, name='orders'),
