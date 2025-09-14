@@ -14,6 +14,7 @@ urlpatterns =[
     path('track_order/', views.track_order, name='track_order'),
     path('vendors/', views.vendors, name='vendors'),
     path('orders/', views.order, name='orders'),
+    
 
 
 ]
