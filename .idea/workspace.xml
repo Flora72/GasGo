@@ -4,20 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/static/images/logo.png" afterDir="false" />
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="favicon added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GasGO/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/contact.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/emergency.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/emergency.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/order.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/order.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/signup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/testimonials.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/testimonials.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/track_order.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/track_order.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/vendors.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/vendors.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +37,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
+    "Django Server.DjangoProject.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -81,6 +70,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="GasGO.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -116,8 +106,34 @@
       <updated>1757585602609</updated>
       <workItem from="1757585603939" duration="1458000" />
       <workItem from="1757656769652" duration="1993000" />
-      <workItem from="1757756471389" duration="1725000" />
+      <workItem from="1757756471389" duration="2238000" />
+      <workItem from="1757838900771" duration="4231000" />
     </task>
+    <task id="LOCAL-00001" summary="favicon added">
+      <option name="closed" value="true" />
+      <created>1757759043388</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1757759043389</updated>
+    </task>
+    <task id="LOCAL-00002" summary="favicon added">
+      <option name="closed" value="true" />
+      <created>1757759409073</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1757759409073</updated>
+    </task>
+    <task id="LOCAL-00003" summary="favicon added">
+      <option name="closed" value="true" />
+      <created>1757759419966</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1757759419966</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -133,5 +149,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="favicon added" />
+    <option name="LAST_COMMIT_MESSAGE" value="favicon added" />
   </component>
 </project>
