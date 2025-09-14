@@ -3,11 +3,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Testimonial | GasGo</title>
+    <title>Testimonials | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 </head>
 <body>
+<header class="header">
+    <a href="{% url 'index' %}" class="logo">GasGo</a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
+</header>
 
+<main>
+    <section>
+        <h1>What our customers say</h1>
+        <p>Real stories from GasGo customers across the city.</p>
+    </section>
+
+    <section>
+        <article>
+            <blockquote>
+                “Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”
+            </blockquote>
+            <p>- Amina, Westlands</p>
+        </article>
+        <article>
+            <blockquote>
+                “I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”
+            </blockquote>
+            <p>- Brian, South C</p>
+        </article>
+        <article>
+            <blockquote>
+                “Customer service was helpful and the emergency top-up saved our dinner party.”
+            </blockquote>
+            <p>- Mercy, Parklands</p>
+        </article>
+        <article>
+            <blockquote>
+                “Prices are fair and riders are professional. The safety checks gave me peace of mind.”
+            </blockquote>
+            <p>- Kevin, Kilimani</p>
+        </article>
+        <article>
+            <blockquote>
+                “Ordering and tracking were simple. Got my 13kg cylinder within the hour.”
+            </blockquote>
+            <p>- Joy, Ngong Road</p>
+        </article>
+    </section>
+
+    <section>
+        <p>
+            <a href="{% url 'index' %}#testimonials">Back to Home testimonials</a>
+            |
+            <a href="{% url 'index' %}">Go to Home</a>
+        </p>
+    </section>
+</main>
+
+<footer>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+</footer>
 </body>
 </html>
