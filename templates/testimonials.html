@@ -33,6 +33,15 @@
     <section>
         <h2>Featured stories</h2>
         <div id="tCarousel">
+                 <div class="t-item" style="display:none">
+                <p>
+                    <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo" width="260" height="auto">
+                </p>
+                <blockquote>
+                    “I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”
+                </blockquote>
+                <p>- Brian, South C</p>
+            </div>
             <div class="t-item">
                 <p>
                     <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery" width="260" height="auto">
@@ -42,15 +51,34 @@
                 </blockquote>
                 <p>- Amina, Westlands</p>
             </div>
-            <div class="t-item" style="display:none">
-                <p>
-                    <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo" width="260" height="auto">
+        <div class="t-item">
+             <p>
+                    <img src="{% static 'images/testimonial3.jpg' %}" alt="Mercy talking about customer support services" width="260" height="auto">
                 </p>
-                <blockquote>
-                    “I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”
-                </blockquote>
-                <p>- Brian, South C</p>
-            </div>
+            <blockquote>
+                “Customer service was helpful and the emergency top-up saved our dinner party.”
+            </blockquote>
+            <p>- Mercy, Parklands</p>
+        </div>
+        <div class="t-item">
+             <p>
+                    <img src="{% static 'images/testimonial4.jpg' %}" alt="kevin comparing prices" width="260" height="auto">
+                </p>
+            <blockquote>
+                “Prices are fair and riders are professional. The safety checks gave me peace of mind.”
+            </blockquote>
+            <p>- Kevin, Kilimani</p>
+        </div>
+        <div class="t-item">
+             <p>
+                    <img src="{% static 'images/testimonial5.jpg' %}" alt="Happy customer " width="260" height="auto">
+                </p>
+            <blockquote>
+                “Ordering and tracking were simple. Got my 13kg cylinder within the hour.”
+            </blockquote>
+            <p>- Joy, Ngong Road</p>
+        </div>
+
         </div>
         <p>
             <button type="button" id="tPrev">Prev</button>
@@ -76,40 +104,6 @@
             })();
         </script>
     </section>
-
-    <section>
-        <article>
-            <blockquote>
-                “Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”
-            </blockquote>
-            <p>- Amina, Westlands</p>
-        </article>
-        <article>
-            <blockquote>
-                “I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”
-            </blockquote>
-            <p>- Brian, South C</p>
-        </article>
-        <article>
-            <blockquote>
-                “Customer service was helpful and the emergency top-up saved our dinner party.”
-            </blockquote>
-            <p>- Mercy, Parklands</p>
-        </article>
-        <article>
-            <blockquote>
-                “Prices are fair and riders are professional. The safety checks gave me peace of mind.”
-            </blockquote>
-            <p>- Kevin, Kilimani</p>
-        </article>
-        <article>
-            <blockquote>
-                “Ordering and tracking were simple. Got my 13kg cylinder within the hour.”
-            </blockquote>
-            <p>- Joy, Ngong Road</p>
-        </article>
-    </section>
-
     <section>
         <p>
             <a href="{% url 'index' %}#testimonials">Back to Home testimonials</a>
@@ -117,7 +111,7 @@
             <a href="{% url 'index' %}">Go to Home</a>
         </p>
     </section>
-</main>
+
 
 <footer>
     <p>Follow Us:</p>
