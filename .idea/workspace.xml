@@ -6,6 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="favicon added">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/contact.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/emergency.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/emergency.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/gasbot.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/gasbot.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/order.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/order.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/signup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/testimonials.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/testimonials.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/track_order.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/track_order.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/vendors.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/vendors.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,7 +119,7 @@
       <workItem from="1757585603939" duration="1458000" />
       <workItem from="1757656769652" duration="1993000" />
       <workItem from="1757756471389" duration="2238000" />
-      <workItem from="1757838900771" duration="4231000" />
+      <workItem from="1757838900771" duration="7063000" />
     </task>
     <task id="LOCAL-00001" summary="favicon added">
       <option name="closed" value="true" />

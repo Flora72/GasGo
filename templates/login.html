@@ -18,6 +18,7 @@
         <ul>
             <li><a href="{% url 'index' %}">Home</a></li>
             <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
             <li><a href="{% url 'contact' %}">Contact Us</a></li>
             <li><a href="{% url 'signup' %}">Sign Up</a></li>
             <li><a href="{% url 'login' %}">Login</a></li>
@@ -46,9 +47,9 @@
                 <label class="inline">
                     <input type="checkbox" name="remember" value="1"> Remember me
                 </label>
-                <a href="#" style="font-size:13px; color:#0a7b34; text-decoration:none;">Forgot password?</a>
+                <a href="#" >Forgot password?</a>
             </div>
-            <div class="field" style="margin-top:16px;">
+            <div class="field" >
                 <button class="btn" type="submit">Sign in</button>
             </div>
         </form>
@@ -59,14 +60,15 @@
 </main>
 
 <footer>
+    <p>Follow Us:</p>
     <nav aria-label="Support and social">
         <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;">X</a>
+        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;">Instagram</a>
+        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
         <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;">Facebook</a>
+        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
