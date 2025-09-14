@@ -4,10 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <title>Login | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 </head>
 <body>
+<header class="header">
+    <a href="{% url 'index' %}" class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="GasGo">
+        GasGo
+    </a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
+</header>
 
+<main>
+    <section class="auth" aria-label="Login form">
+        <div class="head">
+            <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
+            <h1>Welcome back</h1>
+            <p>Sign in to continue ordering LPG with ease</p>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="field">
+                <label for="id_identifier">Email or Username</label>
+                <input id="id_identifier" name="identifier" type="text" placeholder="e.g. amina or amina@example.com" autocomplete="username" required>
+            </div>
+            <div class="field">
+                <label for="id_password">Password</label>
+                <input id="id_password" name="password" type="password" placeholder="Your password" autocomplete="current-password" required>
+            </div>
+            <div class="row">
+                <label class="inline">
+                    <input type="checkbox" name="remember" value="1"> Remember me
+                </label>
+                <a href="#" style="font-size:13px; color:#0a7b34; text-decoration:none;">Forgot password?</a>
+            </div>
+            <div class="field" style="margin-top:16px;">
+                <button class="btn" type="submit">Sign in</button>
+            </div>
+        </form>
+        <div class="alt">
+            New to GasGo? <a href="{% url 'signup' %}">Create an account</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+</footer>
 </body>
 </html>

@@ -3,11 +3,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Signup | GasGo</title>
+    <title>Sign Up | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 </head>
 <body>
+<header class="header">
+    <a href="{% url 'index' %}" class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="GasGo">
+        GasGo
+    </a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
+</header>
 
+<main>
+    <section class="auth" aria-label="Sign up form">
+        <div class="head">
+            <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
+            <h1>Create your account</h1>
+            <p>Join GasGo and get LPG delivered fast and safely</p>
+        </div>
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="grid">
+                <div class="field">
+                    <label for="id_first_name">First name</label>
+                    <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
+                </div>
+                <div class="field">
+                    <label for="id_last_name">Last name</label>
+                    <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
+                </div>
+            </div>
+            <div class="field">
+                <label for="id_email">Email</label>
+                <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label for="id_phone">Phone</label>
+                    <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" autocomplete="tel" required>
+                </div>
+                <div class="field">
+                    <label for="id_address">Estate/Address (optional)</label>
+                    <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" autocomplete="street-address">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label for="id_password">Password</label>
+                    <input id="id_password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
+                </div>
+                <div class="field">
+                    <label for="id_password2">Confirm password</label>
+                    <input id="id_password2" name="password2" type="password" placeholder="Re-enter password" autocomplete="new-password" required>
+                </div>
+            </div>
+            <p class="hint">By creating an account, you agree to our terms and privacy policy.</p>
+            <div class="field" style="margin-top:12px;">
+                <button class="btn" type="submit">Create account</button>
+            </div>
+        </form>
+        <div class="alt">
+            Already have an account? <a href="{% url 'login' %}">Sign in</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+</footer>
 </body>
 </html>
