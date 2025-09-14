@@ -34,8 +34,5 @@ def login(request):
 
 def signup(request):
     return render(request, 'signup.html')
-
-# New GasBot chatbot page
-
 def gasbot(request):
     return render(request, 'gasbot.html')
