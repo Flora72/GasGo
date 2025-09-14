@@ -7,145 +7,145 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-{#navbar#}
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
+    {#navbar#}
+    <header class="header">
+        <a href="{% url 'index' %}" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
+            GasGo
+        </a>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
+                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<main>
-    <section>
-        <h1>Welcome to GasGo!</h1> 
-        <p>This is the homepage of our application.</p>
-    </section>
-{#hero sect#}
-    <section>
-        <h1>Clean cooking gas, delivered fast</h1>
-        <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without interruptions.</p>
-        <p>
-            <a href="{% url 'orders' %}">Order LPG now</a>
-            |
-            <a href="{% url 'emergency' %}">Emergency delivery</a>
-            |
-            <a href="{% url 'track_order' %}">Track your order</a>
-        </p>
-        <p><img src="{% static 'images/logo.png' %}" alt="GasGo" width="80" height="80"></p>
-    </section>
+    <main>
+        <section>
+            <h1>Welcome to GasGo!</h1> 
+            <p>This is the homepage of our application.</p>
+        </section>
+        {#hero sect#}
+        <section>
+            <h1>Clean cooking gas, delivered fast</h1>
+            <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without interruptions.</p>
+            <p>
+                <a href="{% url 'orders' %}">Order LPG now</a>
+                |
+                <a href="{% url 'emergency' %}">Emergency delivery</a>
+                |
+                <a href="{% url 'track_order' %}">Track your order</a>
+            </p>
+            <p><img src="{% static 'images/logo.png' %}" alt="GasGo" width="80" height="80"></p>
+        </section>
 
-{#    features#}
-    <section>
-        <h2>Why choose GasGo</h2>
-        <ul>
-            <li>On-demand delivery of sealed, certified LPG cylinders</li>
-            <li>Safe cylinder exchange handled by trained riders</li>
-            <li>Transparent pricing and friendly customer care</li>
-            <li>Emergency top-ups during extended hours</li>
-        </ul>
-    </section>
+        {# features#}
+        <section>
+            <h2>Why choose GasGo</h2>
+            <ul>
+                <li>On-demand delivery of sealed, certified LPG cylinders</li>
+                <li>Safe cylinder exchange handled by trained riders</li>
+                <li>Transparent pricing and friendly customer care</li>
+                <li>Emergency top-ups during extended hours</li>
+            </ul>
+        </section>
 
-{#    how it works#}
-    <section>
-        <h2>How it works</h2>
-        <ol>
-            <li>Place an order and share your location plus cylinder size.</li>
-            <li>We dispatch the nearest vetted rider with a sealed cylinder.</li>
-            <li>Exchange your empty, confirm safety, and pay on delivery.</li>
-        </ol>
-    </section>
+        {# how it works#}
+        <section>
+            <h2>How it works</h2>
+            <ol>
+                <li>Place an order and share your location plus cylinder size.</li>
+                <li>We dispatch the nearest vetted rider with a sealed cylinder.</li>
+                <li>Exchange your empty, confirm safety, and pay on delivery.</li>
+            </ol>
+        </section>
 
-{# Testimonials carousel #}
-    <section>
-        <h2>What our customers say</h2>
-        <div id="testimonials">
-            <div class="t-item" style="display:none">
-                <p>
-                    <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo" width="220" height="auto">
-                </p>
-                <p>“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</p>
-                <p>- Brian, South C</p>
+        {# Testimonials carousel #}
+        <section>
+            <h2>What our customers say</h2>
+            <div id="testimonials">
+                <div class="t-item" style="display:none">
+                    <p>
+                        <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo" width="220" height="auto">
+                    </p>
+                    <p>“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</p>
+                    <p>- Brian, South C</p>
+                </div>
+                <div class="t-item">
+                    <p>
+                        <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery" width="220" height="auto">
+                    </p>
+                    <p>“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</p>
+                    <p>- Amina, Westlands</p>
+                </div>
+                <div class="t-item" style="display:none">
+                    <p>
+                        <img src="{% static 'images/testimonial3.jpg' %}" alt="Happy customer" width="220" height="auto">
+                    </p>
+                    <p>“Customer service was helpful and the emergency top-up saved our dinner party.”</p>
+                    <p>- Mercy, Parklands</p>
+                </div>
             </div>
-               <div class="t-item">
-                <p>
-                    <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery" width="220" height="auto">
-                </p>
-                <p>“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</p>
-                <p>- Amina, Westlands</p>
-            </div>
-            <div class="t-item" style="display:none">
-                  <p>
-                    <img src="{% static 'images/testimonial3.jpg' %}" alt="Happy customer" width="220" height="auto">
-                </p>
-                <p>“Customer service was helpful and the emergency top-up saved our dinner party.”</p>
-                <p>- Mercy, Parklands</p>
-            </div>
-
-
-        </div>
-        <p>
-            <button type="button" id="prevBtn">Prev</button>
-            <button type="button" id="nextBtn">Next</button>
-        </p>
-        <script>
-            (function(){
-                var items = document.querySelectorAll('#testimonials .t-item');
-                var i = 0;
-                function show(idx){
-                    for (var j = 0; j < items.length; j++) {
-                        items[j].style.display = (j === idx ? '' : 'none');
+            <p>
+                <button type="button" id="prevBtn">Prev</button>
+                <button type="button" id="nextBtn">Next</button>
+            </p>
+            <script>
+                (function(){
+                    var items = document.querySelectorAll('#testimonials .t-item');
+                    var i = 0;
+                    function show(idx){
+                        for (var j = 0; j < items.length; j++) {
+                            items[j].style.display = (j === idx ? '' : 'none');
+                        }
                     }
-                }
-                function next(){ i = (i + 1) % items.length; show(i); }
-                function prev(){ i = (i - 1 + items.length) % items.length; show(i); }
-                var nextBtn = document.getElementById('nextBtn');
-                var prevBtn = document.getElementById('prevBtn');
-                if (nextBtn) nextBtn.addEventListener('click', next);
-                if (prevBtn) prevBtn.addEventListener('click', prev);
-                setInterval(next, 5000);
-                show(0);
-            })();
-        </script>
-    </section>
+                    function next(){ i = (i + 1) % items.length; show(i); }
+                    function prev(){ i = (i - 1 + items.length) % items.length; show(i); }
+                    var nextBtn = document.getElementById('nextBtn');
+                    var prevBtn = document.getElementById('prevBtn');
+                    if (nextBtn) nextBtn.addEventListener('click', next);
+                    if (prevBtn) prevBtn.addEventListener('click', prev);
+                    setInterval(next, 5000);
+                    show(0);
+                })();
+            </script>
+        </section>
 
-    <!-- Vendors / partners (image placeholders) -->
-    <section>
-        <h2>Our partners</h2>
-        <p>
-            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
-            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
-            <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
-        </p>
-    </section>
+        <section>
+            <h2>Our partners</h2>
+            <p>
+                <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+                <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+                <img src="{% static 'images/logo.png' %}" alt="Partner" width="60" height="60">
+            </p>
+        </section>
 
-    <!-- Call to action -->
-    <section>
-        <h2>Ready to refill?</h2>
-        <p><a href="{% url 'orders' %}">Start your order</a></p>
-    </section>
-</main>
+        <section>
+            <h2>Ready to refill?</h2>
+            <p><a href="{% url 'orders' %}">Start your order</a></p>
+        </section>
+    </main>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
+    <footer>
+        <p>Follow Us:</p>
+        <nav aria-label="Support and social">
+            <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
+            <span style="margin:0 6px;">|</span>
+            <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
+            <span style="margin:0 6px;">|</span>
+            <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
+            <span style="margin:0 6px;">|</span>
+            <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
+        </nav>
+        <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+    </footer>
 </body>
 </html>
