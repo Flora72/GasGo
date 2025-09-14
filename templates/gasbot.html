@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GasBot (AI Chat) | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+</head>
+<body>
+<header class="header">
+    <a href="{% url 'index' %}" class="logo">GasGo</a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h1>Meet GasBot</h1>
+        <p>GasBot is a simple AI-style chatbot that can answer common questions about GasGo — ordering LPG, delivery, vendors, tracking, safety and more. Type a question below to get started.</p>
+        <p>Need human help? Email <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a> or see <a href="{% url 'emergency' %}">Emergency</a>.</p>
+    </section>
+
+    <section>
+        <h2>Chat</h2>
+        <div id="chat" style="border:1px solid #ddd; max-width:720px; padding:10px;">
+            <div id="log" style="height:260px; overflow:auto; white-space:pre-wrap;">
+GasBot: Hi! I can help with:
+- Ordering and delivery (sizes, prices, areas, ETA)
+- Vendors and payment options
+- Tracking your order
+- Safety and emergencies
+Ask me anything like "price for 13kg?", "how to order?", "track my order", or "I smell gas".
+            </div>
+            <div style="margin-top:10px; display:flex; gap:6px;">
+                <label for="msg" class="visually-hidden">Your message</label>
+                <input id="msg" type="text" placeholder="Type your question…" style="flex:1;">
+                <button id="send" type="button">Send</button>
+            </div>
+            <p style="font-size:12px; color:#555; margin-top:6px;">Note: Demo only — no personal data is stored. For urgent safety issues, call 999/112 and our toll‑free 0800 720 000.</p>
+        </div>
+        <p style="margin-top:10px;">
+            Quick prompts:
+            <button type="button" data-q="how do i order?">How do I order?</button>
+            <button type="button" data-q="price 13kg">Price 13kg</button>
+            <button type="button" data-q="track order">Track order</button>
+            <button type="button" data-q="vendors near me">Vendors near me</button>
+            <button type="button" data-q="i smell gas" data-emergency="1" title="Go to Emergency help">I smell gas</button>
+        </p>
+    </section>
+
+    <section>
+        <h2>How is an AI chatbot created?</h2>
+        <p>There are two common approaches:</p>
+        <ol>
+            <li>
+                Rule‑based/keyword bots (like this demo):
+                You define intents and answers using simple rules or buttons. Easy to set up, no training needed, good for FAQs and structured flows.
+            </li>
+            <li>
+                AI/NLP/LLM bots: Use machine learning or large language models (LLMs) to understand free‑form questions and generate responses.
+                Typically involves:
+                <ul>
+                    <li>Designing conversation goals and intents.</li>
+                    <li>Choosing a model/API (e.g., an open‑source model or a hosted provider).</li>
+                    <li>Feeding your knowledge (policies, prices, safety guides) via prompts, fine‑tuning, or retrieval (RAG).</li>
+                    <li>Building a backend endpoint to call the model securely.</li>
+                    <li>Creating a web chat UI that calls your backend.</li>
+                    <li>Testing safety, accuracy, and adding guardrails for emergencies.</li>
+                </ul>
+            </li>
+        </ol>
+        <p>Next steps for a production GasBot could be: connect to a backend endpoint, add your knowledge base (pricing, locations, policies), and log conversations for quality (with consent).</p>
+    </section>
+
+    <section>
+        <h2>Do more</h2>
+        <ul>
+            <li><a href="{% url 'orders' %}">Start an order</a></li>
+            <li><a href="{% url 'vendors' %}">See vendors</a></li>
+            <li><a href="{% url 'track_order' %}">Track an order</a></li>
+            <li><a href="{% url 'emergency' %}">Emergency help</a></li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <nav aria-label="Support and social">
+        <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
+        <span style="margin:0 6px;">|</span>
+        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;">X</a>
+        <span style="margin:0 6px;">|</span>
+        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;">Instagram</a>
+        <span style="margin:0 6px;">|</span>
+        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;">Facebook</a>
+    </nav>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+</footer>
+
+<script>
+(function(){
+    var log = document.getElementById('log');
+    var msg = document.getElementById('msg');
+    var send = document.getElementById('send');
+
+    function append(line){
+        log.textContent += "\n" + line;
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function answer(text){
+        var t = (text||'').trim().toLowerCase();
+        function has(){ for (var i=0;i<arguments.length;i++){ if (t.indexOf(arguments[i]) !== -1) return true; } return false; }
+        var reply = "I'm here to help. You can order via the Orders page, choose a vendor, then track delivery. What would you like to do?";
+
+        if (has('how','order')){
+            reply = "To order: go to Orders, choose size (6kg/13kg/22.5kg/35kg/50kg), enter your address and contact, then pick a vendor and payment. Start here: /orders/";
+        } else if (has('price','cost','how much')){
+            reply = "Indicative prices: 6kg ~ KSh 1,400–1,500; 13kg ~ KSh 3,050–3,200. Final price depends on brand/vendor and is confirmed on delivery.";
+        } else if (has('13kg','13 kg')){
+            reply = "13kg refills are typically KSh 3,050–3,150 depending on vendor. You can compare on the Vendors page before confirming.";
+        } else if (has('vendor','near me','partners')){
+            reply = "After you fill your order, we show available vendors near you with ETA, ratings and prices. See /vendors/ for examples.";
+        } else if (has('track','tracking','where','rider')){
+            reply = "You can track your rider live on the map here: /track_order/. Allow location for best accuracy.";
+        } else if (has('pay','payment','mpesa','cash','card')){
+            reply = "Payment options include Cash, M‑Pesa, or Card on delivery (depending on vendor). Choose on the Vendors confirmation step.";
+        } else if (has('deliver','area','coverage','location')){
+            reply = "We serve major Nairobi neighborhoods via partner vendors. Enter your address on the order form to see nearby options and ETA.";
+        } else if (has('time','eta','how long','minutes','hours')){
+            reply = "Typical ETA is 30–90 minutes depending on distance and traffic. You’ll see a live estimate after choosing a vendor.";
+        } else if (has('safety','install','regulator','leak','smell','fire','burner')){
+            if (has('fire')){
+                reply = "If there is fire: evacuate immediately, call 999/112. If safe and trained, use a suitable extinguisher. Do not take risks.";
+            } else if (has('smell','leak')){
+                reply = "If you smell gas: close the valve if safe, open windows, avoid switches/flames, evacuate, call 999/112 and 0800 720 000.";
+            } else if (has('install','regulator')){
+                reply = "Installation tips: ensure regulator matches valve, check the O‑ring, secure the hose, and perform a soapy water leak test.";
+            } else if (has('burner')){
+                reply = "Burner not lighting: confirm gas is on, regulator locked, hose ok, try another ignition, and perform a leak check.";
+            } else {
+                reply = "Safety first: keep cylinders upright/ventilated, check seals/regulator fit, and use soapy water for leak checks.";
+            }
+        } else if (has('contact','help','support','agent','human')){
+            reply = "You can reach our team at gasgosupport@gmail.com or via the Emergency page for urgent issues.";
+        }
+        append('GasBot: ' + reply);
+    }
+
+    function sendMsg(){
+        var q = (msg.value||'').trim();
+        if (!q) return;
+        append('You: ' + q);
+        msg.value = '';
+        setTimeout(function(){ answer(q); }, 250);
+    }
+
+    if (send) send.addEventListener('click', sendMsg);
+    if (msg) msg.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); sendMsg(); }});
+
+    // Quick prompt buttons
+    Array.prototype.forEach.call(document.querySelectorAll('button[data-q]'), function(btn){
+        btn.addEventListener('click', function(){
+            if (btn.getAttribute('data-emergency') === '1') {
+                // Redirect to Emergency page when emergency prompt is clicked
+                window.location.href = "{% url 'emergency' %}";
+                return;
+            }
+            msg.value = btn.getAttribute('data-q');
+            sendMsg();
+        });
+    });
+})();
+</script>
+</body>
+</html>
