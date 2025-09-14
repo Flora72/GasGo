@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="Merge branch 'main' of https://github.com/Flora72/GasGo&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;GasGO/__pycache__/settings.cpython-313.pyc&#10;#&#9;gasgoApp/urls.py&#10;#&#9;templates/index.html&#10;#&#9;templates/login.html&#10;#&#9;templates/signup.html">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gasgoApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gasgoApp/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/testimonials.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/testimonials.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
