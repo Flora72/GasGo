@@ -6,7 +6,9 @@
     <title>GasBot (AI Chat) | GasGo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/bot.css' %}">
 </head>
 <body>
 <header class="header">
@@ -29,79 +31,51 @@
         <p>Need human help? Email <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a> or see <a href="{% url 'emergency' %}">Emergency</a>.</p>
     </section>
 
-    <section>
-        <h2>Chat</h2>
-        <div id="chat" style="border:1px solid #ddd; max-width:720px; padding:10px;">
-            <div id="log" style="height:260px; overflow:auto; white-space:pre-wrap;">
-GasBot: Hi! I can help with:
-- Ordering and delivery (sizes, prices, areas, ETA)
-- Vendors and payment options
-- Tracking your order
-- Safety and emergencies
-Ask me anything like "price for 13kg?", "how to order?", "track my order", or "I smell gas".
-            </div>
-            <div style="margin-top:10px; display:flex; gap:6px;">
-                <label for="msg" class="visually-hidden">Your message</label>
-                <input id="msg" type="text" placeholder="Type your question…" style="flex:1;">
-                <button id="send" type="button">Send</button>
-            </div>
-            <p style="font-size:12px; color:#555; margin-top:6px;">Note: Demo only — no personal data is stored. For urgent safety issues, call 999/112 and our toll‑free 0800 720 000.</p>
-        </div>
-        <p style="margin-top:10px;">
-            Quick prompts:
-            <button type="button" data-q="how do i order?">How do I order?</button>
-            <button type="button" data-q="price 13kg">Price 13kg</button>
-            <button type="button" data-q="track order">Track order</button>
-            <button type="button" data-q="vendors near me">Vendors near me</button>
-            <button type="button" data-q="i smell gas" data-emergency="1" title="Go to Emergency help">I smell gas</button>
-        </p>
-    </section>
+<section>
+  <h2>Chat</h2>
+  <div class="chat-container">
+    <div id="log" class="chat-log">
+      <div class="bot-msg">GasBot: Hi! I can help with:<br>
+        – Ordering and delivery<br>
+        – Vendors and payment options<br>
+        – Tracking your order<br>
+        – Safety and emergencies<br>
+        Ask me anything like “price for 13kg?”, “how to order?”, “track my order”, or “I smell gas”.
+      </div>
+    </div>
+    <div class="chat-input">
+      <input id="msg" type="text" placeholder="Type your question…" />
+      <button id="send" type="button">Send</button>
+    </div>
+    <p class="chat-note">Note: Demo only — no personal data is stored. For urgent safety issues, call 999/112 and our toll‑free 0800 720 000.</p>
+    <div class="chat-prompts">
+      <button type="button" data-q="how do i order?">How do I order?</button>
+      <button type="button" data-q="price 13kg">Price 13kg</button>
+      <button type="button" data-q="track order">Track order</button>
+      <button type="button" data-q="vendors near me">Vendors near me</button>
+      <button type="button" data-q="i smell gas" data-emergency="1">I smell gas</button>
+    </div>
+  </div>
 
-    <section>
-        <h2>How is an AI chatbot created?</h2>
-        <p>There are two common approaches:</p>
-        <ol>
-            <li>
-                Rule‑based/keyword bots (like this demo):
-                You define intents and answers using simple rules or buttons. Easy to set up, no training needed, good for FAQs and structured flows.
-            </li>
-            <li>
-                AI/NLP/LLM bots: Use machine learning or large language models (LLMs) to understand free‑form questions and generate responses.
-                Typically involves:
-                <ul>
-                    <li>Designing conversation goals and intents.</li>
-                    <li>Choosing a model/API (e.g., an open‑source model or a hosted provider).</li>
-                    <li>Feeding your knowledge (policies, prices, safety guides) via prompts, fine‑tuning, or retrieval (RAG).</li>
-                    <li>Building a backend endpoint to call the model securely.</li>
-                    <li>Creating a web chat UI that calls your backend.</li>
-                    <li>Testing safety, accuracy, and adding guardrails for emergencies.</li>
-                </ul>
-            </li>
-        </ol>
-        <p>Next steps for a production GasBot could be: connect to a backend endpoint, add your knowledge base (pricing, locations, policies), and log conversations for quality (with consent).</p>
-    </section>
+    <section class="gasbot-actions">
+  <h2>Do more</h2>
+  <ul>
+    <li><a href="{% url 'orders' %}"><i class="fas fa-box"></i> Start an order</a></li>
+<li><a href="{% url 'vendors' %}"><i class="fas fa-store"></i> See vendors</a></li>
+<li><a href="{% url 'track_order' %}"><i class="fas fa-map-marker-alt"></i> Track an order</a></li>
+<li><a href="{% url 'emergency' %}"><i class="fas fa-exclamation-triangle"></i> Emergency help</a></li>
 
-    <section>
-        <h2>Do more</h2>
-        <ul>
-            <li><a href="{% url 'orders' %}">Start an order</a></li>
-            <li><a href="{% url 'vendors' %}">See vendors</a></li>
-            <li><a href="{% url 'track_order' %}">Track an order</a></li>
-            <li><a href="{% url 'emergency' %}">Emergency help</a></li>
-        </ul>
-    </section>
+  </ul>
+</section>
+
 </main>
 
 <footer>
     <p>Follow Us:</p>
     <nav aria-label="Support and social">
-        <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
@@ -111,10 +85,13 @@ Ask me anything like "price for 13kg?", "how to order?", "track my order", or "I
     var msg = document.getElementById('msg');
     var send = document.getElementById('send');
 
-    function append(line){
-        log.textContent += "\n" + line;
-        log.scrollTop = log.scrollHeight;
-    }
+    function append(line, sender = 'bot') {
+  const div = document.createElement('div');
+  div.className = sender === 'bot' ? 'bot-msg' : 'user-msg';
+  div.textContent = line;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
 
     function answer(text){
         var t = (text||'').trim().toLowerCase();
@@ -156,13 +133,17 @@ Ask me anything like "price for 13kg?", "how to order?", "track my order", or "I
     }
 
     function sendMsg(){
-        var q = (msg.value||'').trim();
-        if (!q) return;
-        append('You: ' + q);
-        msg.value = '';
-        setTimeout(function(){ answer(q); }, 250);
-    }
-
+  const q = msg.value.trim();
+  if (!q) return;
+  append('You: ' + q, 'user');
+  msg.value = '';
+  append('GasBot is typing...', 'bot');
+  setTimeout(() => {
+    const last = log.lastChild;
+    if (last && last.textContent.includes('typing')) log.removeChild(last);
+    answer(q);
+  }, 1000);
+}
     if (send) send.addEventListener('click', sendMsg);
     if (msg) msg.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); sendMsg(); }});
 

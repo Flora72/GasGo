@@ -6,8 +6,9 @@
     <title>Emergency | GasGo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  
+    <link rel="stylesheet" href="{% static 'css/emer.css' %}">
 </head>
 <body>
 <header class="header">
@@ -37,37 +38,30 @@
         <p style="font-size:13px; color:#444;">Only return indoors after authorities confirm it is safe.</p>
     </section>
 
-    <section>
-        <h2>Quick contact options</h2>
-        <ul>
-            <li>
-                <strong>Call toll‑free (24/7):</strong>
-                <a href="tel:+254800720000">0800 720 000</a>
-            </li>
-            <li>
-                <strong>USSD support:</strong>
-                Dial <code>*384*123#</code> on your phone for quick emergency prompts.
-            </li>
-            <li>
-                <strong>Email support:</strong>
-                <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a>
-            </li>
-            <li>
-                <strong>Chat with our AI assistant (24/7):</strong>
-            </li>
-        </ul>
-        <div id="chatbox" aria-label="AI emergency assistant" style="border:1px solid #ddd; padding:10px;">
-            <div id="chatlog" style="height:140px; overflow:auto; white-space:pre-wrap;">
-                GasGo Assistant: Hello! I can help with LPG emergencies and troubleshooting. Type your issue (e.g., "I smell gas", "burner not lighting", "installation failed").
-            </div>
-            <div style="margin-top:8px;">
-                <label for="chatinput">Your message</label><br>
-                <input id="chatinput" type="text" placeholder="Describe the issue…" style="width:90%;">
-                <button id="chatsend" type="button">Send</button>
-            </div>
-            <p style="font-size:12px; color:#555; margin-top:6px;">Note: This is a demo helper. In life‑threatening situations, call 999/112 and our toll‑free line above.</p>
-        </div>
-    </section>
+    <section class="emergency-contact">
+  <h2>Quick contact options</h2>
+  <ul>
+    <li><strong>Call toll‑free (24/7):</strong> <a href="tel:+254800720000">0800 720 000</a></li>
+    <li><strong>USSD support:</strong> Dial <code>*384*123#</code> on your phone for quick emergency prompts.</li>
+    <li><strong>Email support:</strong> <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a></li>
+    <li><strong>Chat with our AI assistant (24/7):</strong></li>
+  </ul>
+
+  <div id="chatbox" class="emergency-chatbox" aria-label="AI emergency assistant">
+    <div id="chatlog" class="chat-log">
+      <div class="bot-msg">
+        GasGo Assistant: Hello! I can help with LPG emergencies and troubleshooting. Type your issue (e.g., “I smell gas”, “burner not lighting”, “installation failed”).
+      </div>
+    </div>
+    <div class="chat-input">
+      <label for="chatinput" class="visually-hidden">Your message</label>
+      <input id="chatinput" type="text" placeholder="Describe the issue…" />
+      <button id="chatsend" type="button">Send</button>
+    </div>
+    <p class="chat-note">Note: This is a demo helper. In life‑threatening situations, call 999/112 and our toll‑free line above.</p>
+  </div>
+</section>
+
 
     <section>
         <h2>Report an installation or safety issue</h2>
@@ -114,9 +108,8 @@
                 </p>
             </fieldset>
             <p>
-                <button type="submit">Submit emergency report</button>
-                <span> or </span>
-                <a href="{% url 'index' %}">Go back home</a>
+                <button type="submit" class="btn btn-primary">Submit emergency report</button>
+                <a class="btn btn-outline" href="{% url 'index' %}">Go back home</a>
             </p>
         </form>
     </section>
@@ -132,17 +125,12 @@
         </ul>
     </section>
 </main>
-
 <footer>
     <p>Follow Us:</p>
     <nav aria-label="Support and social">
-        <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>

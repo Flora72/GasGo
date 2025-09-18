@@ -6,10 +6,11 @@
     <title>Track Order | GasGo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/track.css' %}">
 </head>
 <body>
 <header class="header">
@@ -51,13 +52,9 @@
 <footer>
     <p>Follow Us:</p>
     <nav aria-label="Support and social">
-        <a href="mailto:gasgosupport@gmail.com" title="Email GasGo support"><span aria-hidden="true">✉️</span> <span>Email</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="X (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">𝕏</span> <span>X</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Instagram (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">📸</span> <span>Instagram</span></a>
-        <span style="margin:0 6px;">|</span>
-        <a href="#" title="Facebook (coming soon)" aria-disabled="true" onclick="return false;"><span aria-hidden="true">f</span> <span>Facebook</span></a>
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
