@@ -1,19 +1,66 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>GasGo Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
 </head>
 <body>
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">GasGo</div>
+            <div class="user-info">
+                <p class="welcome">Welcome, {{ user.first_name|default:"Guest" }} 👋</p>
+                <p class="tagline">Your space for safe, fast LPG service.</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'orders' %}"><i class="fas fa-box"></i> Order Now</a>
+            <a href="{% url 'vendors' %}"><i class="fas fa-store"></i> Vendors</a>
+            <a href="{% url 'track_order' %}"><i class="fas fa-truck"></i> Track Order</a>
+            <a href="{% url 'emergency' %}"><i class="fas fa-phone"></i> Emergency</a>
+            <a href="#"><i class="fas fa-mobile-alt"></i> USSD Access</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
+        </header>
+
+        <section class="welcome-card">
+            <h2>Welcome to GasGo</h2>
+            <p>Your trusted LPG partner. Safe. Fast. Reliable.</p>
+        </section>
+
+        <section class="card-container">
+            <div class="grid-cards">
+                <a href="{% url 'orders' %}" class="card"><i class="fas fa-box"></i> Order Now</a>
+                <a href="{% url 'track_order' %}" class="card"><i class="fas fa-truck"></i> Track Order</a>
+                <a href="{% url 'emergency' %}" class="card"><i class="fas fa-phone"></i> Emergency Help</a>
+                <a href="{% url 'vendors' %}" class="card"><i class="fas fa-store"></i> Vendors</a>
+                <a href="{% url 'track_order' %}" class="card"><i class="fas fa-map-marker-alt"></i> Map</a>
+                <a href="{% url 'orders' %}" class="card"><i class="fas fa-credit-card"></i>
+                    Payment</a>{#since we don't have a payment page the routing will point to orders but we'll work on it#}
+            </div>
+        </section>
+    </div>
+</div>
+
+<div id="gasbot-float">
+    <button onclick="window.location.href='{% url 'gasbot' %}'" title="Chat with GasBot">
+        <i class="fas fa-robot"></i> Ask for help
+    </button>
+</div>
 </body>
 </html>
