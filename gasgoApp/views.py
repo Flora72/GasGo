@@ -1,14 +1,15 @@
 import json
 from django.http import HttpResponse , JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm # ADDED AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 
 # -------------------------------------
-#                   GENERAL VIEWS
+#                   GENERAL VIEWS
 # --------------------------------------
 def index(request):
     return render(request, 'index.html')
@@ -28,7 +29,7 @@ def contact(request):
         best_time = request.POST.get('best_time')
         consent = request.POST.get('consent')
 
-        # Save users messages and send notification
+        # Save users messages and send notification (Placeholder)
         messages.success(request, "Your message has been sent. We'll get back to you shortly.")
         return redirect('contact')
 
@@ -43,7 +44,7 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 # -------------------------------------
-#         AUTH RELATED VIEWS
+#         AUTH RELATED VIEWS
 # --------------------------------------
 def signup(request):
     if request.method == 'POST':
@@ -64,14 +65,41 @@ def signup(request):
         return redirect('login')
 
     return render(request, 'signup.html')
+
+
 def login(request):
-    return render(request, 'login.html')
+    if request.method == 'POST':
+        # AuthenticationForm expects 'username' and 'password'
+        form = AuthenticationForm(request, data=request.POST)
+        
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                auth_login(request, user)
+                messages.success(request, f"Welcome back, {user.username}!")
+                return redirect('dashboard') 
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+            
+    # For GET requests or failed POST requests
+    form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+
+def logout_view(request):
+    auth_logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect('login')
+
+
 @csrf_exempt
 def forgot_password(request):
-    """
-    Handles both displaying the forgot_password form (GET)
-    and processing the email submission (POST) using Django's built-in flow.
-    """
     if request.method == 'POST':
         try:
             # 1. Get the email from the frontend request body
@@ -82,23 +110,17 @@ def forgot_password(request):
                 return JsonResponse({"message": "Email is required"}, status=400)
 
             # 2. Use Django's PasswordResetForm to handle the logic
-            # We must pass the request object so Django can build the correct domain/link
             form = PasswordResetForm({'email': email})
 
             if form.is_valid():
-                # This calls the internal Django logic to:
-                # a) Check if the user exists.
-                # b) Generate a unique token for the user.
-                # c) Send the password reset email using your Brevo settings.
                 form.save(
                     request=request,
-                    email_template_name='emails/password_reset_email.html',  # We will create this
-                    from_email='GasGo Assistance <gasgoassistance@gmail.com>',  # Use your verified Brevo sender
-                    subject_template_name='emails/password_reset_subject.txt',  # We will create this
+                    email_template_name='emails/password_reset_email.html',
+                    from_email='GasGo Assistance <gasgoassistance@gmail.com>',
+                    subject_template_name='emails/password_reset_subject.txt',
                 )
 
-            # 3. Security Best Practice: Always return a generic success message,
-            # regardless of whether the email was found, to prevent enumeration attacks.
+            # 3. Security Best Practice: Always return a generic success message
             return JsonResponse({
                 "message": "If the email is registered, a password reset link has been sent."
             }, status=200)
@@ -113,7 +135,7 @@ def forgot_password(request):
     return render(request, 'forgot_password.html')
 
 # -------------------------------------
-#         ORDER & VENDOR VIEWS
+#         ORDER & VENDOR VIEWS
 # --------------------------------------
 def order(request):
     return render(request, 'order.html')
