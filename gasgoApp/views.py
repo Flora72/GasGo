@@ -28,10 +28,8 @@ def vendors(request):
 
 def order(request):
     return render(request, 'order.html')
-
 def login(request):
     return render(request, 'login.html')
-
 def signup(request):
     return render(request, 'signup.html')
 def gasbot(request):
