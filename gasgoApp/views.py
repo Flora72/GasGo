@@ -1,10 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse , JsonResponse
+from django.shortcuts import render, redirect # ADDED 'redirect'
+from django.http import HttpResponse, JsonResponse
 import json 
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User # Assuming you use the default User model
+from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm 
+from django.contrib.auth.models import User 
 from django.core.exceptions import ValidationError
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
+from django.contrib import messages
 
 # -------------------------------------
 #                   GENERAL VIEWS
@@ -35,7 +37,33 @@ def order(request):
     return render(request, 'order.html')
 
 def login(request):
-    return render(request, 'login.html')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        
+        if form.is_valid():
+            # NOTE: Your HTML now uses 'username', which works with AuthenticationForm.
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                auth_login(request, user)
+                messages.success(request, f"Welcome back, {user.username}!")
+                return redirect('dashboard') 
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+            
+    # For GET requests or failed POST requests
+    form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    auth_logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect('login')
 
 def signup(request):
     return render(request, 'signup.html')
@@ -45,10 +73,6 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 @csrf_exempt
 def forgot_password(request):
-    """
-    Handles both displaying the forgot_password form (GET) 
-    and processing the email submission (POST) using Django's built-in flow.
-    """
     if request.method == 'POST':
         try:
             # 1. Get the email from the frontend request body
