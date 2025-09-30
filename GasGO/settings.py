@@ -9,11 +9,17 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from the .env file located in the project root
+# BASE_DIR points to your project root (the folder with manage.py)
+load_dotenv(BASE_DIR / '.env')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -124,3 +130,32 @@ LOGOUT_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#                         EMAIL CONFIGURATION (Brevo SMTP)
+# ----------------------------------------------------------------------
+
+# Use Django's built-in SMTP backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Brevo (formerly Sendinblue) SMTP settings
+EMAIL_HOST = 'smtp-relay.brevo.com' 
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Authentication: Reading the credentials from the environment (loaded from .env)
+# The login is usually your Brevo account email, and the password is the Master Password or API Key
+EMAIL_HOST_USER = os.environ.get('BREVO_SMTP_LOGIN')
+EMAIL_HOST_PASSWORD = os.environ.get('BREVO_API_KEY')
+
+# The verified sender email address
+DEFAULT_FROM_EMAIL = 'GasGo Assistance <gasgoassistance@gmail.com>' 
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Optional: Configuration for Django's built-in password reset
+# This ensures Django uses the correct sender address when sending password reset emails
+if EMAIL_HOST_USER:
+    # Login and Logout redirects are here for reference, typically further down in settings.py
+    # LOGIN_REDIRECT_URL = '/'
+    # LOGOUT_REDIRECT_URL = '/'
+    pass
+
