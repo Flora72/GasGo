@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
-
+from django.contrib.auth.decorators import login_required
 # -------------------------------------
 #                   GENERAL VIEWS
 # --------------------------------------
@@ -141,5 +141,36 @@ def order(request):
     return render(request, 'order.html')
 def track_order(request):
     return render(request, 'track_order.html')
+
+# @login_required # Uncomment this when user model is fully integrated
 def vendors(request):
+    if request.method == 'POST':
+        # Get data from the submitted form
+        vendor_choice = request.POST.get('vendor_choice')
+        payment_method = request.POST.get('payment_method')
+        notes = request.POST.get('notes')
+        
+        # --- LOGIC TO SAVE/UPDATE ORDER DATA ---
+        
+        # 1. Validation (Example)
+        if not vendor_choice or not payment_method:
+            messages.error(request, "Please select a vendor and a payment method.")
+            return render(request, 'vendors.html')
+            
+        # 2. Simulation of saving the final order
+        # In a real app, you would:
+        # a. Fetch the pending Order object (e.g., based on request.user or session)
+        # b. Update order.vendor = vendor_choice
+        # c. Update order.payment_method = payment_method
+        # d. Update order.notes = notes
+        # e. Update order.status = 'Confirmed'
+        # f. order.save()
+        
+        # 3. Success message and redirect
+        messages.success(request, f"Order confirmed! Vendor: {vendor_choice}, Payment: {payment_method}. We're assigning a rider now.")
+        
+        # Redirect the user to the tracking page
+        return redirect('track_order')
+
+    # For GET requests, just render the vendor selection page
     return render(request, 'vendors.html')
