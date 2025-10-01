@@ -137,40 +137,79 @@ def forgot_password(request):
 # -------------------------------------
 #         ORDER & VENDOR VIEWS
 # --------------------------------------
+# @login_required # Uncomment this when user model is fully integrated
 def order(request):
+    if request.method == 'POST':
+        # --- 1. Extract Order Data ---
+        order_details = {
+            'size': request.POST.get('size'),
+            'brand': request.POST.get('brand'),
+            'exchange': request.POST.get('exchange'),
+            'quantity': request.POST.get('quantity'),
+            'full_name': request.POST.get('full_name'),
+            'phone': request.POST.get('phone'),
+            'address': request.POST.get('address'),
+            'directions': request.POST.get('directions'),
+            'preferred_time': request.POST.get('preferred_time'),
+            'notes': request.POST.get('notes'),
+        }
+
+        # --- 2. Basic Validation ---
+        if not order_details['size'] or not order_details['address'] or not order_details['phone']:
+            messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
+            # Re-render the form with existing data if possible
+            return render(request, 'order.html', {'order_details': order_details})
+
+        # --- 3. Save/Store Initial Order (Simulation) ---
+        # In a real application, you would create an Order object here:
+        # new_order = Order.objects.create(user=request.user, **order_details, status='Draft')
+        
+        # Using session to pass data to the next step (vendors page)
+        request.session['pending_order_data'] = order_details
+        
+        messages.info(request, "Step 1 complete. Now choose your vendor and payment method.")
+        
+        # --- 4. Redirect to next step: Vendors ---
+        return redirect('vendors')
+        
+    # For GET requests (or initial load)
     return render(request, 'order.html')
+
 def track_order(request):
     return render(request, 'track_order.html')
 
 # @login_required # Uncomment this when user model is fully integrated
 def vendors(request):
     if request.method == 'POST':
-        # Get data from the submitted form
+        # Get data from the submitted form (Vendor/Payment)
         vendor_choice = request.POST.get('vendor_choice')
         payment_method = request.POST.get('payment_method')
         notes = request.POST.get('notes')
         
-        # --- LOGIC TO SAVE/UPDATE ORDER DATA ---
+        # Retrieve initial order data from session (simulation)
+        pending_order_data = request.session.get('pending_order_data', {})
         
-        # 1. Validation (Example)
+        # 1. Validation 
         if not vendor_choice or not payment_method:
             messages.error(request, "Please select a vendor and a payment method.")
             return render(request, 'vendors.html')
             
-        # 2. Simulation of saving the final order
+        # 2. Finalize Order (Simulation)
         # In a real app, you would:
-        # a. Fetch the pending Order object (e.g., based on request.user or session)
-        # b. Update order.vendor = vendor_choice
-        # c. Update order.payment_method = payment_method
-        # d. Update order.notes = notes
-        # e. Update order.status = 'Confirmed'
-        # f. order.save()
+        # a. Fetch the pending Order object 
+        # b. Update it: order.vendor = vendor_choice, order.payment_method = payment_method, etc.
+        # c. Set status: order.status = 'Confirmed'
+        # d. order.save()
         
+        # Clear session data once order is confirmed
+        if 'pending_order_data' in request.session:
+            del request.session['pending_order_data']
+
         # 3. Success message and redirect
         messages.success(request, f"Order confirmed! Vendor: {vendor_choice}, Payment: {payment_method}. We're assigning a rider now.")
         
         # Redirect the user to the tracking page
         return redirect('track_order')
 
-    # For GET requests, just render the vendor selection page
+    # For GET requests, render the vendor selection page
     return render(request, 'vendors.html')
