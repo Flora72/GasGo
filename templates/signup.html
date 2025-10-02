@@ -38,19 +38,26 @@
         <form method="post" action="">
             {% csrf_token %}
             <div class="grid">
-                <div class="field">
-                    <label for="id_first_name">First name</label>
-                    <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
-                </div>
-                <div class="field">
-                    <label for="id_last_name">Last name</label>
-                    <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
-                </div>
-            </div>
-            <div class="field">
-                <label for="id_email">Email</label>
-                <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
-            </div>
+    <div class="field">
+        <label for="id_first_name">First name</label>
+        <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
+    </div>
+    <div class="field">
+        <label for="id_last_name">Last name</label>
+        <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
+    </div>
+</div>
+
+<div class="field">
+    <label for="id_username">Username</label>
+    <input id="id_username" name="username" type="text" placeholder="amina123" autocomplete="username" required>
+</div>
+
+<div class="field">
+    <label for="id_email">Email</label>
+    <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
+</div>
+
             <div class="grid">
                 <div class="field">
                     <label for="id_phone">Phone</label>
