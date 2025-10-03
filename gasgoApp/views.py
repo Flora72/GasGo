@@ -175,6 +175,12 @@ def order(request):
     # For GET requests (or initial load)
     return render(request, 'order.html')
 
+def profile(request):
+    return render(request, 'profile.html')
+
+def history(request):
+    return render(request, 'history.html')
+
 def track_order(request):
     return render(request, 'track_order.html')
 

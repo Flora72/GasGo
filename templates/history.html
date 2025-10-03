@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History | GasGo</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            </aside>
+
+        <div class="main">
+            <header class="topbar">
+                <h2>Full Order History</h2>
+            </header>
+
+            <section class="order-list">
+                <h3>Your Past Orders</h3>
+                <p>This page will list all your completed orders, including details like date, size, vendor, and price.</p>
+                <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

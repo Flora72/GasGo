@@ -1,230 +1,397 @@
 /* Base Layout */
 html, body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #ffffff;
-  color: #4B2E2E;
-  display: flex;
-  flex-direction: column;
+    height: 100%;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffffff;
+    color: #4B2E2E;
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard {
-  flex: 1;
-  display: flex;
-  background-color: #ffffff;
+    flex: 1;
+    display: flex;
+    background-color: #ffffff;
 }
 
+/* Sidebar */
 .sidebar {
-  width: 220px;
-  background-color: rgba(245, 217, 195, 0.85);
-  backdrop-filter: blur(10px);
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    width: 220px;
+    background-color: rgba(245, 217, 195, 0.85);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
 }
-
 
 .sidebar-top {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 }
 
 .logo {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #D97706;
-  margin-bottom: 1rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #D97706;
+    margin-bottom: 1rem;
 }
 
 .user-info {
-  font-size: 0.95rem;
-  color: #4B2E2E;
+    font-size: 0.95rem;
+    color: #4B2E2E;
 }
 
 .welcome {
-  font-weight: 600;
-  margin-bottom: 0.2rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
 }
 
 .tagline {
-  font-size: 0.85rem;
-  color: #7B3F00;
+    font-size: 0.85rem;
+    color: #7B3F00;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    background-color: #EFEFEF; /* Lighter background for sidebar pic */
+    border-radius: 50%;
+    /* Removed margin-right as gap handles it */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    color: #A0A0A0; /* Neutral icon color */
 }
 
 .sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .sidebar-nav a {
-  text-decoration: none;
-  color: #4B2E2E;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  transition: color 0.3s ease;
+    text-decoration: none;
+    color: #4B2E2E;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: color 0.3s ease;
 }
 
 .sidebar-nav a:hover {
-  color: #D97706;
+    color: #D97706;
 }
 
 .sidebar-bottom {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid #ddd;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
 }
 
 .sidebar-bottom a {
-  text-decoration: none;
-  color: #4B2E2E;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+    text-decoration: none;
+    color: #4B2E2E;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
-/*Topbar */
+/* Topbar */
 .topbar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem 2rem;
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; /* Ensure vertical alignment */
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.profile {
-  font-weight: 500;
-  color: #7B3F00;
+.topbar .profile {
+    font-weight: 500;
+    color: #7B3F00;
+    display: flex; /* Added flex to align icon/text in topbar */
+    align-items: center;
 }
 
-/*Main Content */
+/* Main Content */
 .main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem; /* Added general padding to main area */
 }
 
+/* Old Welcome Card (Replaced by status-card) */
 .welcome-card {
-  text-align: center;
-  padding: 2rem;
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(10px);
-  margin: 2rem auto 1rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  max-width: 600px;
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    margin: 1rem auto; /* Adjusted margins */
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    max-width: 960px; /* Increased max-width for better use of space */
+    width: 95%;
 }
 
 .welcome-card h2 {
-  color: #D97706;
-  margin-bottom: 0.5rem;
+    color: #D97706;
+    margin-bottom: 0.5rem;
 }
 
-/* Updated Card Container */
+/* --- New Dashboard Cards (Status and Info) --- */
+
+.status-card {
+    /* Main container for order status */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin: 1rem auto; /* Centered in main content */
+    width: 95%;
+    max-width: 960px; /* Matches welcome-card/grid-cards max-width */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-active {
+    background-color: #f0fff4; /* Light Green */
+    border-left: 5px solid #00c853; /* Green bar */
+}
+
+.status-ready {
+    background-color: #fff8e1; /* Light Yellow */
+    border-left: 5px solid #ffab00; /* Yellow bar */
+}
+
+.status-info {
+    flex-grow: 1; /* Allows status info to take up available space */
+}
+
+.status-info h3 { 
+    margin: 0 0 5px 0; 
+    font-size: 1.5em; 
+}
+
+.status-info p { 
+    margin: 0; 
+    color: #555; 
+}
+
+.status-actions {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    align-items: center;
+    flex-shrink: 0; /* Prevents buttons from shrinking */
+}
+
+.status-actions a.btn { 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-actions .btn-primary { 
+    background-color: #3f51b5; 
+    color: white; 
+    /* Removed margin-left, using gap in status-actions */
+}
+
+.status-actions .btn-secondary { 
+    background-color: #ff9800; 
+    color: white; 
+}
+
+/* Info Cards & Grid */
+.card-container {
+    width: 95%;
+    max-width: 960px;
+    margin: 0 auto 2rem; /* Centers the container and adds bottom margin */
+}
+
+/* New: Added to make a 3-column layout */
+.three-column-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.info-card { 
+    background-color: #fff; 
+    padding: 15px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03); 
+    height: 100%; /* Ensures cards in a row have the same height */
+    display: flex;
+    flex-direction: column;
+}
+
+.info-card h4 { 
+    margin-top: 0; 
+    border-bottom: 1px solid #eee; 
+    padding-bottom: 5px; 
+    color: #3f51b5; 
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-card ul { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+
+.info-card li { 
+    padding: 5px 0; 
+    border-bottom: 1px dotted #eee; 
+    font-size: 0.9em; 
+    color: #444; 
+}
+
+.info-card li:last-child { 
+    border-bottom: none; 
+}
+
+/* Updated Card Container (for the smaller utility cards) */
 .grid-cards {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  padding: 2rem;
-  margin: 2rem auto;
-  max-width: 960px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.5rem;
-  justify-items: center;
+    background: none; /* Removing redundant background/shadow from here */
+    backdrop-filter: none;
+    box-shadow: none;
+    padding: 0; /* Removing redundant padding */
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
 }
 
-/* Updated Cards */
+/* Updated Cards (General utility cards) */
 .card {
-  background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  text-align: center;
-  font-weight: 600;
-  color: #4B2E2E;
-  text-decoration: none;
-  transition: transform 0.3s ease, background 0.3s ease;
-  width: 100%;
-  max-width: 160px;
+    /* Existing styles maintained */
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    font-weight: 600;
+    color: #4B2E2E;
+    text-decoration: none;
+    transition: transform 0.3s ease, background 0.3s ease;
+    width: 100%;
+    max-width: 160px;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  background-color: #FCEFE3;
+    transform: translateY(-4px);
+    background-color: #FCEFE3;
 }
 
 .card i {
-  display: block;
-  font-size: 1.4rem;
-  margin-bottom: 0.5rem;
-  color: #D97706;
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: #D97706;
 }
 
 /* Floating GasBot Button */
 #gasbot-float {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
 }
 
 #gasbot-float button {
-  background-color: #D97706;
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: background 0.3s ease;
+    background-color: #D97706;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.3s ease;
 }
 
 #gasbot-float button:hover {
-  background-color: #B45309;
+    background-color: #B45309;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
+    .sidebar {
+        display: none;
+    }
 
-  .topbar {
-    justify-content: center;
-  }
+    .main {
+        padding: 0.5rem; /* Less padding on small screens */
+    }
 
-  .grid-cards {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-    max-width: 100%;
-  }
+    .topbar {
+        justify-content: center;
+    }
 
-  .card {
-    padding: 1rem;
-    max-width: 100%;
-  }
+    /* Stack the new three info cards */
+    .three-column-grid {
+        grid-template-columns: 1fr;
+    }
 
-  #gasbot-float {
-    bottom: 16px;
-    right: 16px;
-  }
+    /* Stack status card elements */
+    .status-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+    }
 
-  #gasbot-float button {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.85rem;
-  }
+    .status-actions {
+        /* Force buttons to stack or spread horizontally */
+        width: 100%; 
+        justify-content: space-between;
+    }
+    
+    .status-actions a.btn {
+        flex-grow: 1; /* Make buttons expand */
+        text-align: center;
+        justify-content: center;
+    }
+
+    /* Stack the general utility cards */
+    .grid-cards {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for smaller devices */
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .card {
+        padding: 1rem;
+        max-width: 100%;
+    }
+
+    #gasbot-float {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    #gasbot-float button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
 }
