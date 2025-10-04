@@ -1,0 +1,56 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>{% block title %}GasGo{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">GasGo</div>
+            <div class="user-info">
+                <p class="welcome">Welcome, {{ user.first_name|default:"Guest" }} 👋</p>
+                <p class="tagline">Your space for safe, fast LPG service.</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'orders' %}"><i class="fas fa-box"></i> Order Now</a>
+            <a href="{% url 'vendors' %}"><i class="fas fa-store"></i> Vendors</a>
+            <a href="{% url 'track_order' %}"><i class="fas fa-truck"></i> Track Order</a>
+            <a href="{% url 'emergency' %}"><i class="fas fa-phone"></i> Emergency</a>
+            <a href="#"><i class="fas fa-mobile-alt"></i> USSD Access</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
+        </header>
+
+        {% block content %}
+        <!-- Default content can go here if needed -->
+        {% endblock %}
+    </div>
+</div>
+
+<div id="gasbot-float">
+    <button onclick="window.location.href='{% url 'gasbot' %}'" title="Chat with GasBot">
+        <i class="fas fa-robot"></i> Ask for help
+    </button>
+</div>
+</body>
+</html>
