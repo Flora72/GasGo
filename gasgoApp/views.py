@@ -175,7 +175,6 @@ def order(request):
     # For GET requests (or initial load)
     return render(request, 'order.html')
 
-<<<<<<< HEAD
 @login_required(login_url='login')
 def track_order(request):
     user = request.user
@@ -225,7 +224,6 @@ def track_order(request):
     return render(request, 'track_order.html', context)
 
 # @login_required
-=======
 def profile(request):
     return render(request, 'profile.html')
 
@@ -236,7 +234,7 @@ def track_order(request):
     return render(request, 'track_order.html')
 
 # @login_required # Uncomment this when user model is fully integrated
->>>>>>> 50686f642967aa7a74118f4238f3e08b3c0321b9
+
 def vendors(request):
     if request.method == 'POST':
         # Get data from the submitted form (Vendor/Payment)
