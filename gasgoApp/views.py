@@ -192,35 +192,51 @@ def order(request):
 
     return render(request, 'order.html')
 
-
-
-
-
 @login_required(login_url='login')
 def track_order(request):
-    order_id = request.GET.get('order_id')
     user = request.user
+    order_id = request.GET.get('order_id')
 
     order = None
+    tracking_mode = 'demo'
+
     if order_id:
         try:
             order = Order.objects.get(order_id=order_id, user=user)
+            tracking_mode = 'live'
         except Order.DoesNotExist:
             messages.warning(request, "We couldn't find an order with that ID.")
     else:
         order = Order.objects.filter(user=user).order_by('-created_at').first()
+        if order:
+            tracking_mode = 'latest'
 
     if not order:
         messages.info(request, "No active orders found. Showing demo tracking.")
-        return render(request, 'track_order.html', {'demo_mode': True})
+        return render(request, 'track_order.html', {
+            'demo_mode': True,
+            'tracking_mode': tracking_mode,
+            'rider_lat': None,
+            'rider_lng': None,
+            'user_lat': None,
+            'user_lng': None,
+            'order': None,
+        })
+
+    # Safely extract coordinates
+    rider_lat = getattr(order, 'rider_latitude', None)
+    rider_lng = getattr(order, 'rider_longitude', None)
+    user_lat = getattr(order, 'delivery_latitude', None)
+    user_lng = getattr(order, 'delivery_longitude', None)
 
     context = {
         'order': order,
         'demo_mode': False,
-        'rider_lat': order.rider_latitude,
-        'rider_lng': order.rider_longitude,
-        'user_lat': order.delivery_latitude,
-        'user_lng': order.delivery_longitude,
+        'tracking_mode': tracking_mode,
+        'rider_lat': rider_lat,
+        'rider_lng': rider_lng,
+        'user_lat': user_lat,
+        'user_lng': user_lng,
     }
     return render(request, 'track_order.html', context)
 
