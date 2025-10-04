@@ -1,29 +1,16 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Emergency | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/emer.css' %}">
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
 
+{% block title %}Emergency | GasGo{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/emer.css' %}">
+<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
 <main>
     <section>
         <h1>Emergency help</h1>
@@ -39,29 +26,28 @@
     </section>
 
     <section class="emergency-contact">
-  <h2>Quick contact options</h2>
-  <ul>
-    <li><strong>Call toll‑free (24/7):</strong> <a href="tel:+254800720000">0800 720 000</a></li>
-    <li><strong>USSD support:</strong> Dial <code>*384*123#</code> on your phone for quick emergency prompts.</li>
-    <li><strong>Email support:</strong> <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a></li>
-    <li><strong>Chat with our AI assistant (24/7):</strong></li>
-  </ul>
+        <h2>Quick contact options</h2>
+        <ul>
+            <li><strong>Call toll‑free (24/7):</strong> <a href="tel:+254800720000">0800 720 000</a></li>
+            <li><strong>USSD support:</strong> Dial <code>*384*123#</code> on your phone for quick emergency prompts.</li>
+            <li><strong>Email support:</strong> <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a></li>
+            <li><strong>Chat with our AI assistant (24/7):</strong></li>
+        </ul>
 
-  <div id="chatbox" class="emergency-chatbox" aria-label="AI emergency assistant">
-    <div id="chatlog" class="chat-log">
-      <div class="bot-msg">
-        GasGo Assistant: Hello! I can help with LPG emergencies and troubleshooting. Type your issue (e.g., “I smell gas”, “burner not lighting”, “installation failed”).
-      </div>
-    </div>
-    <div class="chat-input">
-      <label for="chatinput" class="visually-hidden">Your message</label>
-      <input id="chatinput" type="text" placeholder="Describe the issue…" />
-      <button id="chatsend" type="button">Send</button>
-    </div>
-    <p class="chat-note">Note: This is a demo helper. In life‑threatening situations, call 999/112 and our toll‑free line above.</p>
-  </div>
-</section>
-
+        <div id="chatbox" class="emergency-chatbox" aria-label="AI emergency assistant">
+            <div id="chatlog" class="chat-log">
+                <div class="bot-msg">
+                    GasGo Assistant: Hello! I can help with LPG emergencies and troubleshooting. Type your issue (e.g., “I smell gas”, “burner not lighting”, “installation failed”).
+                </div>
+            </div>
+            <div class="chat-input">
+                <label for="chatinput" class="visually-hidden">Your message</label>
+                <input id="chatinput" type="text" placeholder="Describe the issue…" />
+                <button id="chatsend" type="button">Send</button>
+            </div>
+            <p class="chat-note">Note: This is a demo helper. In life‑threatening situations, call 999/112 and our toll‑free line above.</p>
+        </div>
+    </section>
 
     <section>
         <h2>Report an installation or safety issue</h2>
@@ -69,23 +55,13 @@
             {% csrf_token %}
             <fieldset>
                 <legend>Your details</legend>
-                <p>
-                    <label for="id_name">Full name</label><br>
-                    <input id="id_name" name="name" type="text" placeholder="Amina Ali" required>
-                </p>
-                <p>
-                    <label for="id_phone">Phone</label><br>
-                    <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" required>
-                </p>
-                <p>
-                    <label for="id_address">Location/Address</label><br>
-                    <input id="id_address" name="address" type="text" placeholder="Estate, Area, City" required>
-                </p>
+                <p><label for="id_name">Full name</label><br><input id="id_name" name="name" type="text" placeholder="Amina Ali" required></p>
+                <p><label for="id_phone">Phone</label><br><input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" required></p>
+                <p><label for="id_address">Location/Address</label><br><input id="id_address" name="address" type="text" placeholder="Estate, Area, City" required></p>
             </fieldset>
             <fieldset>
                 <legend>Issue details</legend>
-                <p>
-                    <label for="id_issue">What went wrong?</label><br>
+                <p><label for="id_issue">What went wrong?</label><br>
                     <select id="id_issue" name="issue" required>
                         <option value="" disabled selected>Select an issue</option>
                         <option>Installation failed</option>
@@ -95,17 +71,13 @@
                         <option>Other safety concern</option>
                     </select>
                 </p>
-                <p>
-                    <label for="id_desc">Describe the problem</label><br>
+                <p><label for="id_desc">Describe the problem</label><br>
                     <textarea id="id_desc" name="description" rows="4" placeholder="Provide details so we can assist faster…" required></textarea>
                 </p>
-                <p>
-                    <label for="id_order">Order ID (optional)</label><br>
+                <p><label for="id_order">Order ID (optional)</label><br>
                     <input id="id_order" name="order_id" type="text" placeholder="e.g. GGO-2025-00123">
                 </p>
-                <p>
-                    <label><input type="checkbox" name="callback" value="1"> I’d like a safety specialist to call me back ASAP</label>
-                </p>
+                <p><label><input type="checkbox" name="callback" value="1"> I’d like a safety specialist to call me back ASAP</label></p>
             </fieldset>
             <p>
                 <button type="submit" class="btn btn-primary">Submit emergency report</button>
@@ -125,6 +97,9 @@
         </ul>
     </section>
 </main>
+{% endblock %}
+
+{% block content_end %}
 <footer>
     <p>Follow Us:</p>
     <nav aria-label="Support and social">
@@ -134,7 +109,9 @@
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
+{% endblock %}
 
+{% block scripts %}
 <script>
 (function(){
     var log = document.getElementById('chatlog');
@@ -164,5 +141,4 @@
     if (input) input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); sendMsg(); } });
 })();
 </script>
-</body>
-</html>
+{% endblock %}
