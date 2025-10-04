@@ -68,7 +68,7 @@ nav a:hover {
 
 /* Auth Container */
 .auth {
-  max-width: 600px;
+  max-width: 700px;
   margin: 3rem auto;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.6);
@@ -93,36 +93,38 @@ nav a:hover {
 }
 
 .auth .head p {
-  font-size: 1rem;
-  color: #4B2E2E;
+    font-size: 1rem;
+    color: #4B2E2E;
 }
 
 /* Form Fields */
 .field {
-  margin-bottom: 1.5rem;
+    /* 🛠️ MODIFIED: Increased vertical space below each standalone field */
+    margin-bottom: 2rem; /* Changed from 1.5rem to 2rem */
 }
 
 .field label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
 }
 
 .field input {
-  width: 100%;
-  padding: 0.6rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  background-color: #fff;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 0.2rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
 
 /* Grid Layout for Sign Up */
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 🛠️ MODIFIED: Increased horizontal and vertical space between grid items */
+    gap: 2rem; /* Changed from 1.5rem to 2rem */
 }
 
 /* Buttons */

@@ -8,7 +8,33 @@
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=6">
+    
+<style>
+    /* 1. General Container for icon positioning */
+    .password-container {
+        position: relative;
+    }
+    
+    /* 2. Styling for the actual input field */
+    
+    
+    /* 3. Eye icon styling */
+    .password-toggle {
+        position: absolute;
+        top: 50%; 
+        right: 0.5px; /* Positions the icon 15px from the right edge of the input */
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #777; /* Set to grey */
+        font-size: 1rem;
+        z-index: 10;
+        padding: 5px; 
+    }
+    .password-toggle:hover {
+        color: #444; 
+    }
+</style>
 </head>
 <body>
 <header class="header">
@@ -38,25 +64,25 @@
         <form method="post" action="">
             {% csrf_token %}
             <div class="grid">
-    <div class="field">
-        <label for="id_first_name">First name</label>
-        <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
-    </div>
-    <div class="field">
-        <label for="id_last_name">Last name</label>
-        <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
-    </div>
-</div>
+                <div class="field">
+                    <label for="id_first_name">First name</label>
+                    <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
+                </div>
+                <div class="field">
+                    <label for="id_last_name">Last name</label>
+                    <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
+                </div>
+            </div>
 
-<div class="field">
-    <label for="id_username">Username</label>
-    <input id="id_username" name="username" type="text" placeholder="amina123" autocomplete="username" required>
-</div>
+            <div class="field">
+                <label for="id_username">Username</label>
+                <input id="id_username" name="username" type="text" placeholder="amina123" autocomplete="username" required>
+            </div>
 
-<div class="field">
-    <label for="id_email">Email</label>
-    <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
-</div>
+            <div class="field">
+                <label for="id_email">Email</label>
+                <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
+            </div>
 
             <div class="grid">
                 <div class="field">
@@ -68,16 +94,26 @@
                     <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" autocomplete="street-address">
                 </div>
             </div>
+            
+            {# UPDATED: Password field 1 with toggle #}
             <div class="grid">
                 <div class="field">
                     <label for="id_password">Password</label>
-                    <input id="id_password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
+                    <div class="password-container">
+                        <input id="id_password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword1"></i>
+                    </div>
                 </div>
+                {# UPDATED: Password field 2 with toggle #}
                 <div class="field">
                     <label for="id_password2">Confirm password</label>
-                    <input id="id_password2" name="password2" type="password" placeholder="Re-enter password" autocomplete="new-password" required>
+                    <div class="password-container">
+                        <input id="id_password2" name="password2" type="password" placeholder="Re-enter password" autocomplete="new-password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword2"></i>
+                    </div>
                 </div>
             </div>
+            
             <p class="hint">By creating an account, you agree to our terms and privacy policy.</p>
             <div class="field" style="margin-top:12px;">
                 <button class="btn" type="submit">Create account</button>
@@ -98,5 +134,33 @@
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
+
+<script>
+    /**
+     * Sets up the password visibility toggle for a given input and icon.
+     * @param {string} toggleId - The ID of the Font Awesome icon element.
+     * @param {string} inputId - The ID of the password input element.
+     */
+    function setupPasswordToggle(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+
+        if (toggle && input) {
+            toggle.addEventListener('click', function () {
+                // Toggle the type attribute (password <-> text)
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                
+                // Toggle the eye icon class (fa-eye <-> fa-eye-slash)
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        }
+    }
+
+    // Initialize toggles for both Password and Confirm Password fields
+    setupPasswordToggle('togglePassword1', 'id_password');
+    setupPasswordToggle('togglePassword2', 'id_password2');
+</script>
 </body>
 </html>
