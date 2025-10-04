@@ -1,30 +1,15 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Choose Vendor | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/vendor.css' %}">
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
 
+{% block title %}Choose Vendor | GasGo{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/vendor.css' %}">
+<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+{% endblock %}
+
+{% block content %}
 <main>
     <section>
         <h1>Step 2 of 3: Choose a vendor</h1>
@@ -37,37 +22,29 @@
         <section>
             <h2>Available vendors</h2>
             <div role="group" aria-labelledby="vendors">
-                <article style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
-                    <label style="display:block; cursor:pointer;">
+                {% comment %} Repeatable vendor cards {% endcomment %}
+                <article>
+                    <label>
                         <input type="radio" name="vendor_choice" value="GasGo Partner - Westlands" required>
                         <strong>GasGo Partner - Westlands</strong>
-                        <span style="margin-left:8px;">⭐ 4.8</span>
-                        <span style="margin-left:8px;">ETA: 35–55 min</span>
-                        <div style="font-size: 14px; color:#444; margin-top:4px;">
-                            6kg from KSh 1,450 · 13kg from KSh 3,100 · Delivery KSh 150
-                        </div>
+                        <span>⭐ 4.8 · ETA: 35–55 min</span>
+                        <div>6kg from KSh 1,450 · 13kg from KSh 3,100 · Delivery KSh 150</div>
                     </label>
                 </article>
-                <article style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
-                    <label style="display:block; cursor:pointer;">
+                <article>
+                    <label>
                         <input type="radio" name="vendor_choice" value="CBD Gas Depot">
                         <strong>CBD Gas Depot</strong>
-                        <span style="margin-left:8px;">⭐ 4.6</span>
-                        <span style="margin-left:8px;">ETA: 45–60 min</span>
-                        <div style="font-size: 14px; color:#444; margin-top:4px;">
-                            6kg from KSh 1,400 · 13kg from KSh 3,050 · Delivery KSh 120
-                        </div>
+                        <span>⭐ 4.6 · ETA: 45–60 min</span>
+                        <div>6kg from KSh 1,400 · 13kg from KSh 3,050 · Delivery KSh 120</div>
                     </label>
                 </article>
-                <article style="border:1px solid #ddd; padding:10px; margin-bottom:10px;">
-                    <label style="display:block; cursor:pointer;">
+                <article>
+                    <label>
                         <input type="radio" name="vendor_choice" value="Kilimani Gas Hub">
                         <strong>Kilimani Gas Hub</strong>
-                        <span style="margin-left:8px;">⭐ 4.7</span>
-                        <span style="margin-left:8px;">ETA: 30–50 min</span>
-                        <div style="font-size: 14px; color:#444; margin-top:4px;">
-                            6kg from KSh 1,480 · 13kg from KSh 3,150 · Delivery KSh 150
-                        </div>
+                        <span>⭐ 4.7 · ETA: 30–50 min</span>
+                        <div>6kg from KSh 1,480 · 13kg from KSh 3,150 · Delivery KSh 150</div>
                     </label>
                 </article>
             </div>
@@ -100,7 +77,9 @@
         <p style="font-size: 13px; color:#555;">By confirming, you'll proceed to tracking while our team assigns the nearest rider.</p>
     </section>
 </main>
+{% endblock %}
 
+{% block content_end %}
 <footer>
     <p>Follow Us:</p>
     <nav aria-label="Support and social">
@@ -110,5 +89,4 @@
     </nav>
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
-</body>
-</html>
+{% endblock %}
