@@ -1,22 +1,15 @@
 import json
 from django.http import HttpResponse , JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm # ADDED AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Order
-import uuid
-from . import models
-
-
-
 # -------------------------------------
-#  GENERAL VIEWS
+#                   GENERAL VIEWS
 # --------------------------------------
 def index(request):
     return render(request, 'index.html')
@@ -47,19 +40,16 @@ def emergency(request):
     return render(request, 'emergency.html')
 def gasbot(request):
     return render(request, 'gasbot.html')
-
-@login_required(login_url='login')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 # -------------------------------------
-#  AUTH RELATED VIEWS
+#         AUTH RELATED VIEWS
 # --------------------------------------
 def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
@@ -70,48 +60,33 @@ def signup(request):
             messages.error(request, "Passwords do not match.")
             return render(request, 'signup.html')
 
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken.")
-            return render(request, 'signup.html')
-
-        # Create user
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-
-        # Optional: Save phone/address to user profile if you have a custom model
-        # e.g., Profile.objects.create(user=user, phone=phone, address=address)
-
+        # TODO: Save user to database or create account logic here
         messages.success(request, "Account created successfully.")
         return redirect('login')
 
     return render(request, 'signup.html')
 
+
 def login(request):
     if request.method == 'POST':
         # AuthenticationForm expects 'username' and 'password'
         form = AuthenticationForm(request, data=request.POST)
-
+        
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-
+            
             user = authenticate(username=username, password=password)
-
+            
             if user is not None:
                 auth_login(request, user)
                 messages.success(request, f"Welcome back, {user.username}!")
-                return redirect('dashboard')
+                return redirect('dashboard') 
             else:
                 messages.error(request, "Invalid username or password.")
         else:
             messages.error(request, "Invalid username or password.")
-
+            
     # For GET requests or failed POST requests
     form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -160,10 +135,9 @@ def forgot_password(request):
     return render(request, 'forgot_password.html')
 
 # -------------------------------------
-#    ORDER & VENDOR VIEWS
+#         ORDER & VENDOR VIEWS
 # --------------------------------------
-
-@login_required(login_url='login')
+# @login_required # Uncomment this when user model is fully integrated
 def order(request):
     if request.method == 'POST':
         # --- 1. Extract Order Data ---
@@ -183,15 +157,25 @@ def order(request):
         # --- 2. Basic Validation ---
         if not order_details['size'] or not order_details['address'] or not order_details['phone']:
             messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
+            # Re-render the form with existing data if possible
             return render(request, 'order.html', {'order_details': order_details})
 
         # --- 3. Save/Store Initial Order (Simulation) ---
+        # In a real application, you would create an Order object here:
+        # new_order = Order.objects.create(user=request.user, **order_details, status='Draft')
+        
+        # Using session to pass data to the next step (vendors page)
         request.session['pending_order_data'] = order_details
+        
         messages.info(request, "Step 1 complete. Now choose your vendor and payment method.")
+        
+        # --- 4. Redirect to next step: Vendors ---
         return redirect('vendors')
-
+        
+    # For GET requests (or initial load)
     return render(request, 'order.html')
 
+<<<<<<< HEAD
 @login_required(login_url='login')
 def track_order(request):
     user = request.user
@@ -241,6 +225,18 @@ def track_order(request):
     return render(request, 'track_order.html', context)
 
 # @login_required
+=======
+def profile(request):
+    return render(request, 'profile.html')
+
+def history(request):
+    return render(request, 'history.html')
+
+def track_order(request):
+    return render(request, 'track_order.html')
+
+# @login_required # Uncomment this when user model is fully integrated
+>>>>>>> 50686f642967aa7a74118f4238f3e08b3c0321b9
 def vendors(request):
     if request.method == 'POST':
         # Get data from the submitted form (Vendor/Payment)

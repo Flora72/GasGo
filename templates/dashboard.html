@@ -7,6 +7,7 @@
     <title>GasGo Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+
 </head>
 <body>
 <div class="dashboard">
@@ -20,13 +21,12 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a>
             <a href="{% url 'orders' %}"><i class="fas fa-box"></i> Order Now</a>
-            <a href="{% url 'vendors' %}"><i class="fas fa-store"></i> Vendors</a>
             <a href="{% url 'track_order' %}"><i class="fas fa-truck"></i> Track Order</a>
+            <a href="{% url 'profile'|default:'#' %}"><i class="fas fa-user-cog"></i> Profile & Settings</a>
             <a href="{% url 'emergency' %}"><i class="fas fa-phone"></i> Emergency</a>
-            <a href="#"><i class="fas fa-mobile-alt"></i> USSD Access</a>
-        </nav>
+            </nav>
 
         <div class="sidebar-bottom">
             <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -35,26 +35,71 @@
 
     <div class="main">
         <header class="topbar">
-            <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
+            <a href="{% url 'profile'|default:'#' %}" class="profile topbar-profile-link">
+                <div class="profile-pic"><i class="fas fa-user"></i></div> 
+                Hi, {{ user.first_name|default:"Guest" }}
+            </a>
         </header>
 
-        <section class="welcome-card">
-            <h2>Welcome to GasGo</h2>
-            <p>Your trusted LPG partner. Safe. Fast. Reliable.</p>
-        </section>
+        {% if active_order %}
+            <section class="status-card status-active">
+                <div class="status-info">
+                    <h3>Your Order is On Its Way! 🚀</h3>
+                    <p>Status: **{{ active_order.status|default:"Rider Assigned" }}** | ETA: **{{ active_order.eta|default:"35 min" }}**</p>
+                    <p>Details: {{ active_order.size|default:"13kg" }} from {{ active_order.vendor|default:"GasGo Partner" }}</p>
+                </div>
+                <div class="status-actions">
+                    <a href="{% url 'orders' %}?reorder=true" class="btn btn-secondary"><i class="fas fa-redo"></i> Reorder Last ({{ last_order.size|default:'6kg' }})</a>
+                    <a href="{% url 'track_order' %}" class="btn btn-primary"><i class="fas fa-map-marker-alt"></i> View Live Map</a>
+                </div>
+            </section>
+        {% else %}
+            <section class="status-card status-ready">
+                <div class="status-info">
+                    <h3>Ready for a Refill?</h3>
+                    <p>No active deliveries right now. Get your gas in minutes!</p>
+                </div>
+                <div class="status-actions">
+                    <a href="{% url 'orders' %}?reorder=true" class="btn btn-secondary"><i class="fas fa-redo"></i> Reorder Last ({{ last_order.size|default:'13kg' }})</a>
+                    <a href="{% url 'orders' %}" class="btn btn-primary"><i class="fas fa-box"></i> Order New Gas Now</a>
+                </div>
+            </section>
+        {% endif %}
 
         <section class="card-container">
-            <div class="grid-cards">
-                <a href="{% url 'orders' %}" class="card"><i class="fas fa-box"></i> Order Now</a>
-                <a href="{% url 'track_order' %}" class="card"><i class="fas fa-truck"></i> Track Order</a>
-                <a href="{% url 'emergency' %}" class="card"><i class="fas fa-phone"></i> Emergency Help</a>
-                <a href="{% url 'vendors' %}" class="card"><i class="fas fa-store"></i> Vendors</a>
-                <a href="{% url 'track_order' %}" class="card"><i class="fas fa-map-marker-alt"></i> Map</a>
-                <a href="{% url 'orders' %}" class="card"><i class="fas fa-credit-card"></i>
-                    Payment</a>{#since we don't have a payment page the routing will point to orders but we'll work on it#}
+            <div class="grid-cards three-column-grid">
+                <div class="info-card">
+                    <h4><i class="fas fa-burn"></i> Your Cylinder Details</h4>
+                    <p>Size: **{{ user_cylinder.size|default:"13kg" }}**</p>
+                    <p>Brand: **{{ user_cylinder.brand|default:"ProGas" }}**</p>
+                    <p>Last Delivery: {{ user_cylinder.last_delivery_date|default:"2 months ago" }}</p>
+                </div>
+
+                <div class="info-card">
+                    <h4><i class="fas fa-clock"></i> Usage Estimate</h4>
+                    <p style="font-size: 1.2em; font-weight: bold; color: #ff9800;">
+                        Estimated Runout: **{{ usage_estimate|default:"Mid-November" }}**
+                    </p>
+                    <small>Based on your average {{ usage_days|default:"60-day" }} usage cycle.</small>
+                    <p><a href="{% url 'orders' %}" style="font-size: 0.8em;">Order Now to be safe!</a></p>
+                </div>
+
+                <div class="info-card">
+                    <h4><i class="fas fa-history"></i> Recent Activity</h4>
+                    <ul>
+                        <li>**Oct 15:** 6kg, CBD Depot, KSh 1,400</li>
+                        <li>**Sep 20:** 13kg, Westlands Partner, KSh 3,100</li>
+                        <li>**Aug 01:** 6kg, Kilimani Hub, KSh 1,480</li>
+                    </ul>
+                    <p style="margin-top: 10px;"><a href="{% url 'history'|default:'#' %}">See Full History <i class="fas fa-arrow-right"></i></a></p>
+                </div>
             </div>
+            <div class="grid-cards utility-row">
+                <a href="{% url 'emergency' %}" class="card"><i class="fas fa-phone-alt"></i> Emergency Help</a>
+                <a href="{% url 'track_order' %}" class="card"><i class="fas fa-map-marked-alt"></i> Track on Map</a>
+                </div>
         </section>
-    </div>
+        </div>
 </div>
 
 <div id="gasbot-float">
