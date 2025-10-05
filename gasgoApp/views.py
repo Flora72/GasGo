@@ -224,7 +224,7 @@ def track_order(request):
     }
     return render(request, 'track_order.html', context)
 
-# @login_required
+@login_required
 def profile(request):
     return render(request, 'profile.html')
 
