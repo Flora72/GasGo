@@ -8,6 +8,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/track.css' %}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <style>
+#spinner {
+    display: none;
+    margin: 10px 0;
+    text-align: center;
+}
+.spinner-icon {
+    width: 24px;
+    height: 24px;
+    border: 4px solid #ccc;
+    border-top: 4px solid #0a7b34;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.pulse-marker {
+    animation: pulse 1s infinite;
+}
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 1; }
+}
+</style>
+
 {% endblock %}
 {% block content %}
 <main>
@@ -53,6 +81,9 @@
 
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<div id="spinner"><div class="spinner-icon"></div></div>
+<p id="arrivalMessage" style="display:none; color:#0a7b34; font-weight:bold;">Your rider is almost there!</p>
+
 <script>
 const demoMode = {{ demo_mode|yesno:"true,false" }};
 const riderLat = {{ rider_lat|default:"null"|safe }};
@@ -61,6 +92,20 @@ const userLat = {{ user_lat|default:"null"|safe }};
 const userLng = {{ user_lng|default:"null"|safe }};
 
 (function(){
+    const $status = document.getElementById('statusText');
+    const $distance = document.getElementById('distance');
+    const $eta = document.getElementById('eta');
+    const $spinner = document.getElementById('spinner');
+    const $arrivalMessage = document.getElementById('arrivalMessage');
+
+    const fallback = { lat: -1.286389, lng: 36.817223 };
+    let userPos = null;
+    let riderPos = null;
+    let riderMarker = null;
+    let userMarker = null;
+    let route = null;
+    let tickTimer = null;
+
     function distanceKm(a, b){
         const R = 6371;
         const dLat = (b.lat - a.lat) * Math.PI / 180;
@@ -84,10 +129,11 @@ const userLng = {{ user_lng|default:"null"|safe }};
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    const riderIcon = L.icon({
-        iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-red.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    const riderIcon = L.divIcon({
+        className: 'pulse-marker',
+        html: '<div style="width:24px;height:24px;background:#d00;border-radius:50%;"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
     });
 
     const userIcon = L.icon({
@@ -96,24 +142,19 @@ const userLng = {{ user_lng|default:"null"|safe }};
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
     });
 
-    const $status = document.getElementById('statusText');
-    const $distance = document.getElementById('distance');
-    const $eta = document.getElementById('eta');
-
-    const fallback = { lat: -1.286389, lng: 36.817223 };
-    let userPos = null;
-    let riderPos = null;
-    let riderMarker = null;
-    let userMarker = null;
-    let route = null;
-    let tickTimer = null;
-
     function setStatus(s){ $status.textContent = s; }
 
     function updateStats(){
         const km = distanceKm(riderPos, userPos);
         $distance.textContent = km.toFixed(2) + ' km';
-        $eta.textContent = formatEtaKmMins(km, 20);
+        const eta = formatEtaKmMins(km, 20);
+        $eta.textContent = eta;
+
+        if (eta.includes('3 min') || eta.includes('2 min')) {
+            $arrivalMessage.style.display = 'block';
+        } else {
+            $arrivalMessage.style.display = 'none';
+        }
     }
 
     function startSimulation(){
@@ -124,6 +165,7 @@ const userLng = {{ user_lng|default:"null"|safe }};
                 setStatus('Arrived');
                 $distance.textContent = '0.00 km';
                 $eta.textContent = 'Arrived';
+                $arrivalMessage.style.display = 'none';
                 if (route) map.removeLayer(route);
                 clearInterval(tickTimer);
                 return;
@@ -151,7 +193,7 @@ const userLng = {{ user_lng|default:"null"|safe }};
 
         map.setView([userPos.lat, userPos.lng], 13);
         userMarker = L.marker([userPos.lat, userPos.lng], {icon: userIcon}).addTo(map).bindPopup('You');
-                riderMarker = L.marker([riderPos.lat, riderPos.lng], {icon: riderIcon}).addTo(map).bindPopup('Your rider');
+        riderMarker = L.marker([riderPos.lat, riderPos.lng], {icon: riderIcon}).addTo(map).bindPopup('Your rider');
 
         route = L.polyline([[riderPos.lat, riderPos.lng], [userPos.lat, userPos.lng]], {color: '#0a7b34'}).addTo(map);
         map.fitBounds(route.getBounds(), { padding: [30,30] });
@@ -161,31 +203,42 @@ const userLng = {{ user_lng|default:"null"|safe }};
     }
 
     function geolocateAndStart(){
-        if (!navigator.geolocation){
-            setStatus('Geolocation not supported. Using city center.');
-            initMapPositions();
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(function(pos){
-            userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            setStatus('Location found. Tracking…');
-            initMapPositions();
-        }, function(){
-            setStatus('Could not get your location. Using city center.');
-            initMapPositions();
-        }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+    $spinner.style.display = 'block';
+    if (!navigator.geolocation){
+        setStatus('Geolocation not supported. Using city center.');
+        $spinner.style.display = 'none';
+        initMapPositions();
+        return;
     }
+    navigator.geolocation.getCurrentPosition(function(pos){
+        userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setStatus('Location found. Tracking…');
+        $spinner.style.display = 'none';
+        initMapPositions();
+    }, function(){
+        setStatus('Could not get your location. Using city center.');
+        $spinner.style.display = 'none';
+        initMapPositions();
+    }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 });
+}
+
 
     document.getElementById('btnTrack').addEventListener('click', function(){
         setStatus('Starting tracking…');
+        $spinner.style.display = 'block';
         if (!demoMode && riderLat !== null && userLat !== null){
             userPos = { lat: userLat, lng: userLng };
             riderPos = { lat: riderLat, lng: riderLng };
+            $spinner.style.display = 'none';
             initMapPositions();
         } else {
             geolocateAndStart();
         }
     });
+    map.whenReady(() => {
+    $spinner.style.display = 'none';
+});
+
 
     // Auto-start tracking on page load
     if (!demoMode && riderLat !== null && userLat !== null){
@@ -197,5 +250,6 @@ const userLng = {{ user_lng|default:"null"|safe }};
     }
 })();
 </script>
+
 {% endblock %}
 
