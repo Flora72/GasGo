@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
 from .models import Order
+
 # -------------------------------------
 #                   GENERAL VIEWS
 # --------------------------------------
@@ -53,8 +54,8 @@ def signup(request):
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
+        phone = request.POST.get('phone') 
+        address = request.POST.get('address')  
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
 
@@ -62,12 +63,23 @@ def signup(request):
             messages.error(request, "Passwords do not match.")
             return render(request, 'signup.html')
 
-        # TODO: Save user to database or create account logic here
+        if User.objects.filter(username=email).exists():
+            messages.error(request, "An account with that email already exists.")
+            return render(request, 'signup.html')
+
+        user = User.objects.create_user(
+            username=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        user.save()
+
         messages.success(request, "Account created successfully.")
         return redirect('login')
 
     return render(request, 'signup.html')
-
 
 def login(request):
     if request.method == 'POST':
