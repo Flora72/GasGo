@@ -30,13 +30,14 @@ def contact(request):
         best_time = request.POST.get('best_time')
         consent = request.POST.get('consent')
 
-        # Save users messages and send notification (Placeholder)
         messages.success(request, "Your message has been sent. We'll get back to you shortly.")
         return redirect('contact')
 
     return render(request, 'contact.html')
 def testimonials(request):
     return render(request, 'testimonials.html')
+
+@login_required(login_url='login')
 def emergency(request):
     return render(request, 'emergency.html')
 def gasbot(request):
@@ -138,7 +139,7 @@ def forgot_password(request):
 # -------------------------------------
 #         ORDER & VENDOR VIEWS
 # --------------------------------------
-# @login_required # Uncomment this when user model is fully integrated
+@login_required(login_url='login')
 def order(request):
     if request.method == 'POST':
         # --- 1. Extract Order Data ---
@@ -173,7 +174,6 @@ def order(request):
         # --- 4. Redirect to next step: Vendors ---
         return redirect('vendors')
         
-    # For GET requests (or initial load)
     return render(request, 'order.html')
 
 @login_required(login_url='login')
@@ -231,11 +231,7 @@ def profile(request):
 def history(request):
     return render(request, 'history.html')
 
-def track_order(request):
-    return render(request, 'track_order.html')
-
-# @login_required # Uncomment this when user model is fully integrated
-
+@login_required 
 def vendors(request):
     if request.method == 'POST':
         # Get data from the submitted form (Vendor/Payment)
