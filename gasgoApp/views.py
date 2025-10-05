@@ -53,6 +53,43 @@ def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        username = request.POST.get('username') 
+        email = request.POST.get('email')
+        phone = request.POST.get('phone') 
+        address = request.POST.get('address')  
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+
+        if password != password2:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'signup.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "That username is already taken.")
+            return render(request, 'signup.html')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "An account with that email already exists.")
+            return render(request, 'signup.html')
+
+        user = User.objects.create_user(
+            username=username,  # ← corrected
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            email=email
+        )
+        user.save()
+
+        messages.success(request, "Account created successfully.")
+        return redirect('login')
+
+    return render(request, 'signup.html')
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
         email = request.POST.get('email')
         phone = request.POST.get('phone') 
         address = request.POST.get('address')  
@@ -219,20 +256,14 @@ def track_order(request):
             'order': None,
         })
 
-    # Safely extract coordinates
-    rider_lat = getattr(order, 'rider_latitude', None)
-    rider_lng = getattr(order, 'rider_longitude', None)
-    user_lat = getattr(order, 'delivery_latitude', None)
-    user_lng = getattr(order, 'delivery_longitude', None)
-
     context = {
         'order': order,
         'demo_mode': False,
         'tracking_mode': tracking_mode,
-        'rider_lat': rider_lat,
-        'rider_lng': rider_lng,
-        'user_lat': user_lat,
-        'user_lng': user_lng,
+        'rider_lat': float(order.rider_latitude or 0),
+        'rider_lng': float(order.rider_longitude or 0),
+        'user_lat': float(order.delivery_latitude or 0),
+        'user_lng': float(order.delivery_longitude or 0),
     }
     return render(request, 'track_order.html', context)
 
