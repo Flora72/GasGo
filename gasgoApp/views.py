@@ -148,7 +148,6 @@ def logout_view(request):
     messages.info(request, "You have been logged out.")
     return redirect('login')
 
-
 @csrf_exempt
 def forgot_password(request):
     if request.method == 'POST':
@@ -268,8 +267,6 @@ def track_order(request):
     }
     return render(request, 'track_order.html', context)
 
-# @login_required
-
 
 @login_required
 def profile(request):
@@ -329,6 +326,9 @@ def vendors(request):
     # For GET requests, render the vendor selection page
     return render(request, 'vendors.html')
 
+# -------------------------------------
+# PAYMENT VIEWS (m-pesa integration)
+# --------------------------------------
 @login_required
 def initiate_payment(request, order_id):
     order = Order.objects.get(order_id=order_id, user=request.user)
