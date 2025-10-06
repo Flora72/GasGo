@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile | GasGo</title>
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/> 
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}"/> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <style>
         .profile-container {
@@ -16,7 +16,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .profile-header {
-            text-align: center;
+            text-align: left;
             margin-bottom: 2rem;
         }
         .profile-pic-large {
@@ -75,12 +75,14 @@
                     <h3>Manage Your Profile & Settings</h3>
 
                     <div class="profile-pic-large">
-                        {% if user.profile_image %}
-                            <img src="{{ user.profile_image.url }}" alt="Profile Picture">
+                        {% if user_profile.profile_image %}
+                            <img src="{{ user_profile.profile_image.url }}" alt="Profile Picture">
                         {% else %}
                             <i class="fas fa-user"></i>
                         {% endif %}
                     </div>
+
+                    <p style="margin-top: 2rem;">Welcome, **{{ user.get_full_name|default:user.username }}**</p>
 
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
@@ -90,7 +92,6 @@
                         </div>
                     </form>
 
-                    <p style="margin-top: 2rem;">Welcome, **{{ user.get_full_name|default:user.username }}**</p>
                 </div>
                 
                 <p>Use this page to update your account details, addresses, and payment information.</p>

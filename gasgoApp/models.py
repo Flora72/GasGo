@@ -44,3 +44,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.order_id} - {self.user.username}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(
+        upload_to='profile_pics', # Files will be stored in media/profile_pics/
+        default='default.png',    # Path to a default image in static files or your media folder
+        blank=True, 
+        null=True
+    )

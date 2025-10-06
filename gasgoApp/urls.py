@@ -21,4 +21,6 @@ urlpatterns = [
     path('gasbot/', views.gasbot, name='gasbot'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='reset_password.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),  name='password_reset_complete'),
+    path('payment/<str:order_id>/initiate/', views.initiate_payment, name='initiate_payment'),
+    path('mpesa/callback/', views.mpesa_callback, name='mpesa_callback'),
 ]
