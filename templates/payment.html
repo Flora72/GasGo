@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payment | GasGo{% endblock %}
+
+{% block styles %}
+<style>
+.payment-container {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 30px;
+    background-color: #fdf6f0; /* soft desert tan */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.payment-container h2 {
+    text-align: center;
+    color: #6b4f3b; /* warm caramel */
+    margin-bottom: 20px;
+}
+
+.payment-container p {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.payment-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #5c3d2e;
+}
+
+.payment-container input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d8cfc7;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    background-color: #fffaf7;
+}
+
+.payment-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #d89f6f; /* soft amber */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.payment-container button:hover {
+    background-color: #c88a5c;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <h2>Complete Your Payment</h2>
+    <p>Order ID: {{ order.order_id }}</p>
+    <p>Total Amount: KES {{ order.total_cost }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="phone_number">Phone Number (e.g. 0712345678):</label>
+        <input type="text" name="phone_number" required>
+        <button type="submit">Pay with M-Pesa</button>
+    </form>
+</div>
+{% endblock %}
