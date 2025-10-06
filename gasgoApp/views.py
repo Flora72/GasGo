@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Order
 
 # -------------------------------------
-#                   GENERAL VIEWS
+# GENERAL VIEWS
 # --------------------------------------
 def index(request):
     return render(request, 'index.html')
@@ -47,7 +47,7 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 # -------------------------------------
-#         AUTH RELATED VIEWS
+# AUTH RELATED VIEWS
 # --------------------------------------
 def signup(request):
     if request.method == 'POST':
@@ -186,7 +186,7 @@ def forgot_password(request):
     return render(request, 'forgot_password.html')
 
 # -------------------------------------
-#         ORDER & VENDOR VIEWS
+#  ORDER & VENDOR VIEWS
 # --------------------------------------
 @login_required(login_url='login')
 def order(request):
