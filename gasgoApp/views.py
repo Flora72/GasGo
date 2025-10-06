@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
-from .models import Order
+from .models import Order , Profile
 
 # -------------------------------------
 # GENERAL VIEWS
@@ -225,6 +225,7 @@ def order(request):
         
     return render(request, 'order.html')
 
+
 @login_required(login_url='login')
 def track_order(request):
     user = request.user
@@ -267,9 +268,27 @@ def track_order(request):
     }
     return render(request, 'track_order.html', context)
 
+# @login_required
+
+
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    user_profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        # Check if a file was sent with the request
+        if 'profile_image' in request.FILES:
+            # Assign the uploaded file to the model field
+            user_profile.profile_image = request.FILES['profile_image']
+            user_profile.save()
+            # Redirect to the profile page to prevent form resubmission
+            return redirect('profile') 
+
+    context = {
+        'user_profile': user_profile,
+        # ... other context data
+    }
+    return render(request, 'profile.html', context)
 
 def history(request):
     return render(request, 'history.html')
@@ -309,3 +328,61 @@ def vendors(request):
 
     # For GET requests, render the vendor selection page
     return render(request, 'vendors.html')
+
+@login_required
+def initiate_payment(request, order_id):
+    order = Order.objects.get(order_id=order_id, user=request.user)
+    
+    # Get customer phone number (assuming it's stored on the Profile or Order)
+    # ⚠️ IMPORTANT: Safaricom requires the number to be in the format 2547...
+    phone_number = order.phone # Example: order.phone should be 2547...
+    amount = 1 # Example: Replace with order.total_cost
+
+    if request.method == 'POST':
+        response_data = initiate_stk_push(phone_number, amount, order.order_id)
+        
+        if response_data.get('ResponseCode') == '0':
+            # STK Push was successfully initiated (the user will see a prompt)
+            return JsonResponse({'success': True, 'message': 'M-Pesa prompt sent to your phone.'})
+        else:
+            # Handle failure to initiate push (e.g., invalid phone format)
+            return JsonResponse({'success': False, 'message': response_data.get('ErrorMessage', 'Payment initiation failed')})
+            
+    return render(request, 'payment.html', {'order': order})
+
+@csrf_exempt # M-Pesa sends a POST request without Django's CSRF token
+def mpesa_callback(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            
+            # Extract relevant payment information from the M-Pesa payload
+            result_code = data['Body']['stkCallback']['ResultCode']
+            merchant_request_id = data['Body']['stkCallback']['MerchantRequestID']
+            checkout_request_id = data['Body']['stkCallback']['CheckoutRequestID']
+
+            if result_code == 0:
+                # PAYMENT SUCCESSFUL!
+                # Extract details (amount, MpesaReceiptNumber, TransactionDate, AccountReference)
+                items = data['Body']['stkCallback']['CallbackMetadata']['Item']
+                
+                # Logic to parse items and update order status in your database
+                # (You would use the AccountReference to find the Order model instance)
+                # Example: order_id = next(item['Value'] for item in items if item['Name'] == 'AccountReference').split('-')[1]
+                
+                # 1. Update the Order status to 'Paid'
+                # 2. Log the transaction details (receipt number, amount)
+                pass 
+            else:
+                # PAYMENT FAILED or was CANCELLED by the user
+                # 1. Update the Order status to 'Payment Failed'
+                pass
+
+        except Exception as e:
+            # Handle JSON parsing errors or unexpected M-Pesa format
+            print(f"Error processing M-Pesa callback: {e}")
+            
+        # M-Pesa requires a specific success response:
+        return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
+    
+    return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid Method"}, status=405)

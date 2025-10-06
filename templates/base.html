@@ -39,6 +39,16 @@
     <div class="main">
         <header class="topbar">
             <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
+
+            <a href="{% url 'profile' %}" class="topbar-profile-link">
+                <div class="topbar-profile-pic">
+                    {% if user.profile.profile_image %}
+                        <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }} Profile Picture">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i> 
+                    {% endif %}
+                </div>
+            </a>
         </header>
 
         {% block content %}

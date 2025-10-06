@@ -110,6 +110,7 @@ html, body {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(6px);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    gap: 1rem;
 }
 
 .topbar .profile {
@@ -118,6 +119,77 @@ html, body {
     display: flex; /* Added flex to align icon/text in topbar */
     align-items: center;
 }
+
+.topbar-profile-link {
+    overflow: hidden; 
+    text-decoration: none;
+    color: inherit;
+    /* Ensure the link container doesn't disrupt flex alignment */
+    display: flex; 
+    align-items: center;
+}
+
+.topbar-profile-pic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #EFEFEF; /* Matches sidebar default background */
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #D97706; /* GasGo accent color */
+    transition: transform 0.2s;
+}
+
+.topbar-profile-pic:hover {
+    transform: scale(1.05);
+}
+
+.topbar-profile-pic img,
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* Makes sure image covers the circle without distortion */
+    object-position: center; /* Centers the face or main subject */
+    border-radius: 50%;      /* Keeps it circular */
+    display: block;          /* Prevents inline spacing issues */
+    aspect-ratio: 1 / 1;
+}
+
+/* Replace the existing .topbar-profile-pic img block with this highly specific version */
+.topbar-profile-pic img {
+    /* Critical: Force the image to ignore any max-width/height rules */
+    max-width: 100% ; 
+    max-height: 100% ;
+
+    /* These rules ensure it fills the 48px circle and clips */
+    width: 100% ;
+    height: 100% ;
+    object-fit: cover ;
+    
+    /* Ensure no unwanted spacing */
+    display: block; 
+    margin: 0 ;
+    padding: 0 ;
+    
+    /* Keep appearance rules, but ensure they are prioritized */
+    object-position: center;
+    border-radius: 50%; 
+}
+
+.topbar-profile-pic i {
+    font-size: 1.8rem;
+    color: #A0A0A0; /* Neutral icon color */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 
 /* Main Content */
 .main {
@@ -345,7 +417,8 @@ html, body {
     }
 
     .topbar {
-        justify-content: center;
+        justify-content: space-between; 
+        padding: 0.5rem 1rem;
     }
 
     /* Stack the new three info cards */
