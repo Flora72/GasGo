@@ -1,7 +1,7 @@
 import json
 from django.http import HttpResponse , JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm # ADDED AuthenticationForm
+from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect
@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
 from .models import Order , Profile
+from .mpesa_integration import initiate_stk_push
 
 # -------------------------------------
 # GENERAL VIEWS
@@ -17,6 +18,7 @@ def index(request):
     return render(request, 'index.html')
 def about(request):
     return render(request, 'about.html')
+
 def contact(request):
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
@@ -53,10 +55,10 @@ def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        username = request.POST.get('username') 
+        username = request.POST.get('username')
         email = request.POST.get('email')
-        phone = request.POST.get('phone') 
-        address = request.POST.get('address')  
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
 
@@ -73,39 +75,7 @@ def signup(request):
             return render(request, 'signup.html')
 
         user = User.objects.create_user(
-            username=username,  # ← corrected
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            email=email
-        )
-        user.save()
-
-        messages.success(request, "Account created successfully.")
-        return redirect('login')
-
-    return render(request, 'signup.html')
-
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone') 
-        address = request.POST.get('address')  
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-
-        if password != password2:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'signup.html')
-
-        if User.objects.filter(username=email).exists():
-            messages.error(request, "An account with that email already exists.")
-            return render(request, 'signup.html')
-
-        user = User.objects.create_user(
-            username=email,
+            username=username,
             password=password,
             first_name=first_name,
             last_name=last_name,
@@ -329,12 +299,22 @@ def vendors(request):
 # -------------------------------------
 # PAYMENT VIEWS (m-pesa integration)
 # --------------------------------------
+def format_phone_number(number):
+    number = str(number)
+    if number.startswith('0'):
+        return '254' + number[1:]
+    elif number.startswith('+254'):
+        return number[1:]
+    elif number.startswith('254'):
+        return number
+    return '254' + number[-9:]
+
 @login_required
 def initiate_payment(request, order_id):
     order = Order.objects.get(order_id=order_id, user=request.user)
     
     # Get customer phone number (assuming it's stored on the Profile or Order)
-    # ⚠️ IMPORTANT: Safaricom requires the number to be in the format 2547...
+    # IMPORTANT: Safaricom requires the number to be in the format 2547...
     phone_number = order.phone # Example: order.phone should be 2547...
     amount = 1 # Example: Replace with order.total_cost
 
@@ -350,7 +330,10 @@ def initiate_payment(request, order_id):
             
     return render(request, 'payment.html', {'order': order})
 
-@csrf_exempt # M-Pesa sends a POST request without Django's CSRF token
+def payment(request):
+    return render(request, 'payment.html')
+
+@csrf_exempt 
 def mpesa_callback(request):
     if request.method == 'POST':
         try:
