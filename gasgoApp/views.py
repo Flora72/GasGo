@@ -369,3 +369,19 @@ def mpesa_callback(request):
         return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
     
     return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid Method"}, status=405)
+
+
+@login_required
+def history_view(request):
+    try:
+        user_orders = Order.objects.filter(
+            user=request.user
+        ).order_by('-order_date') # Sort by newest first
+    except NameError:
+        # Fallback if the Order model isn't imported or defined yet
+        user_orders = [] 
+    
+    context = {
+        'orders': user_orders, # Pass the list of orders to the template
+    }
+    return render(request, 'history.html', context)

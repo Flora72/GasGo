@@ -1,28 +1,64 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Order History | GasGo</title>
-    <link rel="stylesheet" href="{% static 'css/history.css' %}"/> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-</head>
-<body>
-    <div class="dashboard">
-        <aside class="sidebar">
-            </aside>
 
-        <div class="main">
-            <header class="topbar">
-                <h2>Full Order History</h2>
-            </header>
+{% block title %}Order History | GasGo{% endblock %}
 
-            <section class="order-list">
-                <h3>Your Past Orders</h3>
-                <p>This page will list all your completed orders, including details like date, size, vendor, and price.</p>
-                <p><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
-            </section>
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/history.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<section class="history-container">
+    <div class="history-header">
+        <h2>Full Order History</h2>
         </div>
-    </div>
-</body>
-</html>
+    
+    {% if orders %}
+        <p class="history-summary">You have **{{ orders|length }}** past orders in your record.</p>
+
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Vendor</th>
+                    <th>Size (kg)</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td data-label="Order ID">#{{ order.id }}</td>
+                    <td data-label="Date">{{ order.order_date|date:"M d, Y" }}</td>
+                    <td data-label="Vendor">{{ order.vendor.name|default:"N/A" }}</td>
+                    <td data-label="Size (kg)">{{ order.cylinder_size }}</td>
+                    <td data-label="Total Price">Ksh {{ order.total_price|floatformat:2 }}</td>
+                    
+                    <td data-label="Status">
+                        {% if order.status == 'Paid' or order.status == 'Completed' %}
+                            <span class="status-paid">{{ order.status }}</span>
+                        {% elif order.status == 'Pending' or order.status == 'In Progress' %}
+                            <span class="status-pending">{{ order.status }}</span>
+                        {% else %}
+                            <span class="status-failed">{{ order.status|default:"Failed/Cancelled" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-orders">
+            <i class="fas fa-file-invoice-dollar"></i> 
+            You haven't placed any orders yet.
+        </p>
+        <p class="history-cta" style="text-align: center;">
+            <a href="{% url 'orders' %}" class="btn-primary">Place Your First Order</a>
+        </p>
+    {% endif %}
+
+    <p style="text-align: center; margin-top: 2rem;"><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+</section>
+{% endblock %}
