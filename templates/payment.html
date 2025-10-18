@@ -68,11 +68,11 @@
     <p>Order ID: {{ order.order_id }}</p>
     <p>Total Amount: KES {{ order.total_cost }}</p>
 
-    <form method="POST">
-        {% csrf_token %}
-        <label for="phone_number">Phone Number (e.g. 0712345678):</label>
-        <input type="text" name="phone_number" required>
-        <button type="submit">Pay with M-Pesa</button>
-    </form>
+  <form method="POST" action="{% url 'initiate_payment' order.order_id %}">
+    {% csrf_token %}
+    <label for="phone_number">Phone Number (e.g. 0712345678):</label>
+    <input type="text" name="phone_number" required>
+    <button type="submit">Pay with M-Pesa</button>
+  </form>
 </div>
 {% endblock %}

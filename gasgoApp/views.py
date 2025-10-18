@@ -1,4 +1,4 @@
-import json
+import json, requests
 from django.http import HttpResponse , JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
@@ -8,8 +8,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
-from .models import Order , Profile
+from .models import Order , Profile , Vendor
 from .mpesa_integration import initiate_stk_push
+
+MAPBOX_TOKEN = 'pk.eyJ1Ijoid2Fvd2VuZHkiLCJhIjoiY21nd3ExcDVqMGM3ejJqc2R6cm1iaDR5cSJ9.B4yA8RZazpSu3s6Q-j5yIg'
 
 # -------------------------------------
 # GENERAL VIEWS
@@ -190,7 +192,7 @@ def order(request):
         messages.info(request, "Step 1 complete. Now choose your vendor and payment method.")
         
         # --- 4. Redirect to next step: Vendors ---
-        return redirect('vendors')
+        return redirect('available_vendors')
         
     return render(request, 'order.html')
 
@@ -263,40 +265,55 @@ def history(request):
 @login_required 
 def vendors(request):
     if request.method == 'POST':
-        # Get data from the submitted form (Vendor/Payment)
         vendor_choice = request.POST.get('vendor_choice')
         payment_method = request.POST.get('payment_method')
-        notes = request.POST.get('notes')
+        final_notes = request.POST.get('notes')
         
-        # Retrieve initial order data from session (simulation)
         pending_order_data = request.session.get('pending_order_data', {})
         
-        # 1. Validation 
-        if not vendor_choice or not payment_method:
-            messages.error(request, "Please select a vendor and a payment method.")
-            return render(request, 'vendors.html')
-            
-        # 2. Finalize Order (Simulation)
-        # In a real app, you would:
-        # a. Fetch the pending Order object 
-        # b. Update it: order.vendor = vendor_choice, order.payment_method = payment_method, etc.
-        # c. Set status: order.status = 'Confirmed'
-        # d. order.save()
+        # 1. VALIDATION
+        if not vendor_choice or not payment_method or not pending_order_data:
+            messages.error(request, "Order data is incomplete. Please start the order again.")
+            return redirect('orders')
         
-        # Clear session data once order is confirmed
-        if 'pending_order_data' in request.session:
-            del request.session['pending_order_data']
+        # 2. CREATE OR GET VENDOR
+        selected_vendor, _ = Vendor.objects.get_or_create(name=vendor_choice)
 
-        # 3. Success message and redirect
-        messages.success(request, f"Order confirmed! Vendor: {vendor_choice}, Payment: {payment_method}. We're assigning a rider now.")
+        # 3. CREATE ORDER
+        total_cost = 3200.00  # Replace with dynamic pricing if needed
+        new_order = Order.objects.create(
+            user=request.user,
+            vendor=selected_vendor,
+            status='Pending Payment', 
+            total_cost=total_cost,
+            notes=final_notes,
+            size=pending_order_data.get('size'),
+            brand=pending_order_data.get('brand'),
+            exchange=pending_order_data.get('exchange'),
+            quantity=pending_order_data.get('quantity', 1),
+            full_name=pending_order_data.get('full_name'),
+            phone=pending_order_data.get('phone'),
+            address=pending_order_data.get('address'),
+            directions=pending_order_data.get('directions'),
+            preferred_time=pending_order_data.get('preferred_time'),
+        )
         
-        # Redirect the user to the tracking page
-        return redirect('track_order')
+        # 4. CLEAR SESSION
+        request.session.pop('pending_order_data', None)
+        
+        # 5. REDIRECT
+        if payment_method == 'M-Pesa':
+            messages.info(request, "Redirecting to M-Pesa payment portal...")
+            return redirect('initiate_payment', order_id=new_order.order_id)
+        else:
+            new_order.status = 'Confirmed'
+            new_order.save()
+            messages.success(request, f"Order {new_order.order_id} confirmed! Rider assignment in progress.")
+            return redirect('track_order')
 
-    # For GET requests, render the vendor selection page
-    return render(request, 'vendors.html')
-
-# -------------------------------------
+    # GET request fallback
+    vendors = Vendor.objects.all()
+    return render(request, 'vendors.html', {'vendors': vendors})
 # PAYMENT VIEWS (m-pesa integration)
 # --------------------------------------
 def format_phone_number(number):
@@ -313,25 +330,37 @@ def format_phone_number(number):
 def initiate_payment(request, order_id):
     order = Order.objects.get(order_id=order_id, user=request.user)
     
-    # Get customer phone number (assuming it's stored on the Profile or Order)
-    # IMPORTANT: Safaricom requires the number to be in the format 2547...
-    phone_number = order.phone # Example: order.phone should be 2547...
-    amount = 1 # Example: Replace with order.total_cost
-
     if request.method == 'POST':
+        raw_phone_number = request.POST.get('phone_number') # <--- Get phone from form
+        
+        if not raw_phone_number:
+            messages.error(request, "Phone number is required.")
+            return render(request, 'payment.html', {'order': order})
+            
+        phone_number = format_phone_number(raw_phone_number)
+        
+        # Ensure amount is a whole number (integer) as required by M-Pesa
+        amount = int(order.total_cost) 
+        
+        # --- API Call ---
         response_data = initiate_stk_push(phone_number, amount, order.order_id)
         
+        # Check M-Pesa Response Code
         if response_data.get('ResponseCode') == '0':
-            # STK Push was successfully initiated (the user will see a prompt)
-            return JsonResponse({'success': True, 'message': 'M-Pesa prompt sent to your phone.'})
+            messages.success(request, 'M-Pesa prompt sent! Check your phone to complete the payment.')
+            # You can store CheckoutRequestID here for tracking later
+            # order.checkout_request_id = response_data.get('CheckoutRequestID')
+            # order.save()
+            return redirect('track_order') # Or a confirmation page
         else:
-            # Handle failure to initiate push (e.g., invalid phone format)
-            return JsonResponse({'success': False, 'message': response_data.get('ErrorMessage', 'Payment initiation failed')})
-            
+            # Failed to initiate STK Push (e.g., Daraja error, invalid phone format)
+            error_message = response_data.get('CustomerMessage', 'Payment initiation failed. Check Daraja logs.')
+            messages.error(request, error_message)
+            return render(request, 'payment.html', {'order': order})
+
+    # GET Request: Renders the payment form
     return render(request, 'payment.html', {'order': order})
 
-def payment(request):
-    return render(request, 'payment.html')
 
 @csrf_exempt 
 def mpesa_callback(request):
@@ -385,3 +414,53 @@ def history_view(request):
         'orders': user_orders, # Pass the list of orders to the template
     }
     return render(request, 'history.html', context)
+
+@login_required
+def available_vendors(request):
+    pending_order_data = request.session.get('pending_order_data', {})
+    address = pending_order_data.get('address')
+
+    if not address:
+        messages.error(request, "Address not found. Please start the order again.")
+        return redirect('orders')
+
+    lng, lat = geocode_address_mapbox(address)
+    if not lng or not lat:
+        messages.error(request, "Unable to locate your address. Try again.")
+        return redirect('orders')
+
+    vendors = find_petrol_stations_mapbox(lng, lat)
+
+    return render(request, 'available_vendors.html', {
+    'vendors': vendors,
+    'user_lat': float(lat),
+    'user_lng': float(lng),
+    'mapbox_token': MAPBOX_TOKEN
+})
+
+
+def geocode_address_mapbox(address):
+    url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
+    params = {
+        'access_token': MAPBOX_TOKEN,
+        'limit': 1,
+        'country': 'KE'
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    if data['features']:
+        coords = data['features'][0]['geometry']['coordinates']
+        return coords[0], coords[1]  # lng, lat
+    return None, None
+
+def find_petrol_stations_mapbox(lng, lat):
+    url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
+    params = {
+        'access_token': MAPBOX_TOKEN,
+        'proximity': f"{lng},{lat}",
+        'limit': 10,
+        'country': 'KE'
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    return data['features']

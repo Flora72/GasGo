@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'GasGO.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'NAME': 'gasgo',        # The name of the database you created
+        'USER': 'postgres',     # Your PostgreSQL superuser name
+        'PASSWORD': config('DB_PASSWORD'), # ⚠️ IMPORTANT: Replace with your actual password
+        'HOST': 'localhost',    # Or the IP address where PostgreSQL is running
+        'PORT': '5432',
     }
 }
 
@@ -165,3 +165,10 @@ if EMAIL_HOST_USER:
     # LOGIN_REDIRECT_URL = '/'
     # LOGOUT_REDIRECT_URL = '/'
     pass
+
+# Media files (User-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Tells Django where to redirect users when @login_required is used
+LOGIN_URL = '/login/'

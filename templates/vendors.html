@@ -18,60 +18,50 @@
     </section>
 
     <form method="post" action="{% url 'vendors' %}">
-        {% csrf_token %}
-        <section>
-            <h2>Available vendors</h2>
-            <div role="group" aria-labelledby="vendors">
-                {% comment %} Repeatable vendor cards {% endcomment %}
-                <article>
-                    <label>
-                        <input type="radio" name="vendor_choice" value="GasGo Partner - Westlands" required>
-                        <strong>GasGo Partner - Westlands</strong>
-                        <span>⭐ 4.8 · ETA: 35–55 min</span>
-                        <div>6kg from KSh 1,450 · 13kg from KSh 3,100 · Delivery KSh 150</div>
-                    </label>
-                </article>
-                <article>
-                    <label>
-                        <input type="radio" name="vendor_choice" value="CBD Gas Depot">
-                        <strong>CBD Gas Depot</strong>
-                        <span>⭐ 4.6 · ETA: 45–60 min</span>
-                        <div>6kg from KSh 1,400 · 13kg from KSh 3,050 · Delivery KSh 120</div>
-                    </label>
-                </article>
-                <article>
-                    <label>
-                        <input type="radio" name="vendor_choice" value="Kilimani Gas Hub">
-                        <strong>Kilimani Gas Hub</strong>
-                        <span>⭐ 4.7 · ETA: 30–50 min</span>
-                        <div>6kg from KSh 1,480 · 13kg from KSh 3,150 · Delivery KSh 150</div>
-                    </label>
-                </article>
-            </div>
-        </section>
+    {% csrf_token %}
+    
+    <!-- Vendor Selection -->
+    <section>
+        <h2>Available vendors</h2>
+        <div role="group" aria-labelledby="vendors">
+            {% for vendor in vendors %}
+            <article>
+                <label>
+                    <input type="radio" name="vendor_choice" value="{{ vendor.name }}" required>
+                    <strong>{{ vendor.name }}</strong>
+                    <span>⭐ 4.7 · ETA: 30–50 min</span>
+                    <div>6kg from KSh 1,480 · 13kg from KSh 3,150 · Delivery KSh 150</div>
+                </label>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
 
-        <section>
-            <h2>Step 3 of 3: Payment</h2>
-            <p>
-                <label for="id_payment">Payment method</label><br>
-                <select id="id_payment" name="payment_method" required>
-                    <option value="" disabled selected>Select payment method</option>
-                    <option value="Cash">Cash on delivery</option>
-                    <option value="M-Pesa">M-Pesa on delivery</option>
-                    <option value="Card">Card on delivery</option>
-                </select>
-            </p>
-            <p>
-                <label for="id_notes">Notes (optional)</label><br>
-                <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
-            </p>
-        </section>
-
+    <!-- Payment Method -->
+    <section>
+        <h2>Step 3 of 3: Payment</h2>
         <p>
-            <button type="submit" class="btn btn-primary">Confirm and start delivery</button>
-            <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
+            <label for="id_payment">Payment method</label><br>
+            <select id="id_payment" name="payment_method" required>
+                <option value="" disabled selected>Select payment method</option>
+                <option value="Cash">Cash on delivery</option>
+                <option value="M-Pesa">M-Pesa on delivery</option>
+                <option value="Card">Card on delivery</option>
+            </select>
         </p>
-    </form>
+        <p>
+            <label for="id_notes">Notes (optional)</label><br>
+            <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
+        </p>
+    </section>
+
+    <!-- Submit -->
+    <p>
+        <button type="submit" class="btn btn-primary">Confirm and start delivery</button>
+        <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
+    </p>
+</form>
+
 
     <section>
         <p style="font-size: 13px; color:#555;">By confirming, you'll proceed to tracking while our team assigns the nearest rider.</p>

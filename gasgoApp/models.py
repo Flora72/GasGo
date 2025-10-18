@@ -33,6 +33,8 @@ class Order(models.Model):
     brand = models.CharField(max_length=50, blank=True)
     exchange = models.CharField(max_length=10)
     quantity = models.PositiveIntegerField(default=1)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
+
 
     # Location tracking
     delivery_latitude = models.FloatField(null=True, blank=True)

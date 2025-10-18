@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Available Vendors | GasGo{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<style>
+  #map { height: 400px; margin-bottom: 20px; }
+  .vendor-card { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
+</style>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section>
+    <h1>Choose a nearby vendor</h1>
+    <p>We’ve scanned petrol stations near your delivery address. Select one to proceed to payment.</p>
+  </section>
+
+  <section>
+    <div id="map"></div>
+
+    <form method="post" action="{% url 'vendors' %}">
+      {% csrf_token %}
+      <input type="hidden" name="payment_method" value="M-Pesa">
+      {% for vendor in vendors %}
+        <div class="vendor-card">
+          <label>
+            <input type="radio" name="vendor_choice" value="{{ vendor.text }}" required>
+            <strong>{{ vendor.text }}</strong><br>
+            <span>{{ vendor.place_name }}</span>
+          </label>
+        </div>
+      {% endfor %}
+      <p>
+        <label for="notes">Final notes (optional)</label><br>
+        <textarea name="notes" rows="3" placeholder="Any extra instructions?"></textarea>
+      </p>
+      <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+    </form>
+  </section>
+
+  <script>
+  mapboxgl.accessToken = "{{ mapbox_token }}";
+
+  // ✅ Wrap in quotes and parse as float
+  const userLng = parseFloat("{{ user_lng }}");
+  const userLat = parseFloat("{{ user_lat }}");
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [userLng, userLat],
+    zoom: 13
+  });
+
+  map.addControl(new mapboxgl.NavigationControl());
+  map.addControl(new mapboxgl.GeolocateControl({
+    positionOptions: { enableHighAccuracy: true },
+    trackUserLocation: true,
+    showUserHeading: true
+  }));
+</script>
+
+
+
+</main>
+{% endblock %}
