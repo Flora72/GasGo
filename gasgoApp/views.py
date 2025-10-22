@@ -1,5 +1,5 @@
 import json, requests
-from django.http import HttpResponse , JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from .models import Order , Profile , Vendor
 from .mpesa_integration import initiate_stk_push
+from decouple import config
 
 # -------------------------------------
 # GENERAL VIEWS
@@ -195,6 +196,47 @@ def order(request):
     return render(request, 'order.html')
 
 @login_required(login_url='login')
+def confirm_order(request):
+    if request.method == 'POST':
+        # --- 1. Retrieve Pending Order Data from Session ---
+        pending_order_data = request.session.get('pending_order_data')
+        if not pending_order_data:
+            messages.error(request, "Session expired or missing order data. Please start again.")
+            return redirect('order')
+
+        # --- 2. Extract Vendor and Notes from Form ---
+        vendor_name = request.POST.get('vendor_choice')
+        notes = request.POST.get('notes', '')
+
+        if not vendor_name:
+            messages.error(request, "Please select a vendor to proceed.")
+            return redirect('available_vendors')
+
+        # --- 3. Combine All Data ---
+        final_order_data = {
+            **pending_order_data,
+            'vendor': vendor_name,
+            'notes': notes,
+            'user': request.user,
+            'status': 'Pending'
+        }
+
+        # --- 4. Save to Database ---
+        try:
+            new_order = Order.objects.create(**final_order_data)
+            # Optionally clear session
+            del request.session['pending_order_data']
+            messages.success(request, "Order confirmed! Proceed to payment.")
+            return redirect('payment', order_id=new_order.id)
+        except Exception as e:
+            print("Order creation failed:", e)
+            messages.error(request, "Something went wrong while confirming your order.")
+            return redirect('available_vendors')
+
+    # If GET request, redirect to order page
+    return redirect('order')
+
+@login_required(login_url='login')
 def track_order(request):
     user = request.user
     order_id = request.GET.get('order_id')
@@ -357,7 +399,6 @@ def initiate_payment(request, order_id):
     # GET Request: Renders the payment form
     return render(request, 'payment.html', {'order': order})
 
-
 @csrf_exempt 
 def mpesa_callback(request):
     if request.method == 'POST':
@@ -395,7 +436,6 @@ def mpesa_callback(request):
     
     return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid Method"}, status=405)
 
-
 @login_required
 def history_view(request):
     try:
@@ -412,7 +452,7 @@ def history_view(request):
     return render(request, 'history.html', context)
 
 @login_required
-def available_vendors(request, MAPBOX_TOKEN=None):
+def available_vendors(request):
     pending_order_data = request.session.get('pending_order_data', {})
     address = pending_order_data.get('address')
 
@@ -428,30 +468,39 @@ def available_vendors(request, MAPBOX_TOKEN=None):
     vendors = find_petrol_stations_mapbox(lng, lat)
 
     return render(request, 'available_vendors.html', {
-    'vendors': vendors,
+    'vendors': json.dumps(vendors),
     'user_lat': float(lat),
     'user_lng': float(lng),
-    'mapbox_token': MAPBOX_TOKEN,
+    'mapbox_token': config('MAPBOX_TOKEN'),
 })
 
-def geocode_address_mapbox(address, MAPBOX_TOKEN=None):
+def geocode_address_mapbox(address):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
     params = {
-        'access_token': MAPBOX_TOKEN,
+        'access_token': config ('MAPBOX_TOKEN'),
         'limit': 1,
         'country': 'KE'
     }
-    response = requests.get(url, params=params)
-    data = response.json()
-    if data['features']:
-        coords = data['features'][0]['geometry']['coordinates']
-        return coords[0], coords[1]
-    return None, None
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
 
-def find_petrol_stations_mapbox(lng, lat, MAPBOX_TOKEN=None):
+        # Defensive check
+        if 'features' in data and data['features']:
+            coords = data['features'][0]['geometry']['coordinates']
+            return coords[0], coords[1]  # lng, lat
+        else:
+            print("No features found in Mapbox response:", data)
+            return None, None
+    except requests.RequestException as e:
+        print("Mapbox geocoding request failed:", e)
+        return None, None
+
+def find_petrol_stations_mapbox(lng, lat):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
     params = {
-        'access_token': MAPBOX_TOKEN,
+        'access_token': config ('MAPBOX_TOKEN'),
         'proximity': f"{lng},{lat}",
         'limit': 10,
         'country': 'KE'
