@@ -11,8 +11,6 @@ from django.contrib.auth.decorators import login_required
 from .models import Order , Profile , Vendor
 from .mpesa_integration import initiate_stk_push
 
-MAPBOX_TOKEN = 'pk.eyJ1Ijoid2Fvd2VuZHkiLCJhIjoiY21nd3ExcDVqMGM3ejJqc2R6cm1iaDR5cSJ9.B4yA8RZazpSu3s6Q-j5yIg'
-
 # -------------------------------------
 # GENERAL VIEWS
 # --------------------------------------
@@ -196,7 +194,6 @@ def order(request):
         
     return render(request, 'order.html')
 
-
 @login_required(login_url='login')
 def track_order(request):
     user = request.user
@@ -238,7 +235,6 @@ def track_order(request):
         'user_lng': float(order.delivery_longitude or 0),
     }
     return render(request, 'track_order.html', context)
-
 
 @login_required
 def profile(request):
@@ -416,7 +412,7 @@ def history_view(request):
     return render(request, 'history.html', context)
 
 @login_required
-def available_vendors(request):
+def available_vendors(request, MAPBOX_TOKEN=None):
     pending_order_data = request.session.get('pending_order_data', {})
     address = pending_order_data.get('address')
 
@@ -435,11 +431,10 @@ def available_vendors(request):
     'vendors': vendors,
     'user_lat': float(lat),
     'user_lng': float(lng),
-    'mapbox_token': MAPBOX_TOKEN
+    'mapbox_token': MAPBOX_TOKEN,
 })
 
-
-def geocode_address_mapbox(address):
+def geocode_address_mapbox(address, MAPBOX_TOKEN=None):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
     params = {
         'access_token': MAPBOX_TOKEN,
@@ -450,10 +445,10 @@ def geocode_address_mapbox(address):
     data = response.json()
     if data['features']:
         coords = data['features'][0]['geometry']['coordinates']
-        return coords[0], coords[1]  # lng, lat
+        return coords[0], coords[1]
     return None, None
 
-def find_petrol_stations_mapbox(lng, lat):
+def find_petrol_stations_mapbox(lng, lat, MAPBOX_TOKEN=None):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
     params = {
         'access_token': MAPBOX_TOKEN,
