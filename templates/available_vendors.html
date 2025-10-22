@@ -11,7 +11,7 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 <style>
   #map { height: 400px; margin-bottom: 20px; }
-  .vendor-card { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
+  .selected-vendor { margin-top: 10px; font-weight: bold; color: #007bff; }
 </style>
 {% endblock %}
 
@@ -28,30 +28,27 @@
     <form method="post" action="{% url 'vendors' %}">
       {% csrf_token %}
       <input type="hidden" name="payment_method" value="M-Pesa">
-      {% for vendor in vendors %}
-        <div class="vendor-card">
-          <label>
-            <input type="radio" name="vendor_choice" value="{{ vendor.text }}" required>
-            <strong>{{ vendor.text }}</strong><br>
-            <span>{{ vendor.place_name }}</span>
-          </label>
-        </div>
-      {% endfor %}
+      <input type="hidden" name="vendor_choice" id="vendor-choice-input">
+      <div id="selected-vendor-display" class="selected-vendor"></div>
+
       <p>
         <label for="notes">Final notes (optional)</label><br>
         <textarea name="notes" rows="3" placeholder="Any extra instructions?"></textarea>
       </p>
-      <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+      <button type="submit" class="btn btn-primary" id="proceed-button" disabled>Proceed to Payment</button>
     </form>
   </section>
 
-  <script>
+ <script>
   mapboxgl.accessToken = "{{ mapbox_token }}";
 
-  // ✅ Wrap in quotes and parse as float
   const userLng = parseFloat("{{ user_lng }}");
   const userLat = parseFloat("{{ user_lat }}");
 
+  // Parse vendors safely
+  const vendors = JSON.parse('{{ vendors|escapejs }}');
+
+  // Initialize map
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
@@ -59,15 +56,47 @@
     zoom: 13
   });
 
+  // Add controls
   map.addControl(new mapboxgl.NavigationControl());
   map.addControl(new mapboxgl.GeolocateControl({
     positionOptions: { enableHighAccuracy: true },
     trackUserLocation: true,
     showUserHeading: true
   }));
+
+  let selectedVendor = null;
+
+  function selectVendor(vendor) {
+    const name = vendor.text || vendor.properties?.name || "Unnamed Vendor";
+    selectedVendor = vendor;
+
+    // Update hidden input and display
+    document.getElementById('vendor-choice-input').value = name;
+    document.getElementById('selected-vendor-display').textContent = `Selected: ${name}`;
+    document.getElementById('proceed-button').disabled = false;
+
+    console.log("Vendor selected:", name);
+  }
+
+  // Add markers for each vendor
+  vendors.forEach(vendor => {
+    const coords = vendor.geometry.coordinates;
+    const name = vendor.text || vendor.properties?.name || "Unnamed Vendor";
+    const place = vendor.place_name || "";
+
+    const marker = new mapboxgl.Marker()
+      .setLngLat(coords)
+      .setPopup(new mapboxgl.Popup().setHTML(`<strong>${name}</strong><br>${place}`))
+      .addTo(map);
+
+    marker.getElement().addEventListener('click', () => {
+      selectVendor(vendor);
+    });
+  });
+
+  // Debug: confirm vendors loaded
+  console.log("Loaded vendors:", vendors);
 </script>
-
-
 
 </main>
 {% endblock %}
