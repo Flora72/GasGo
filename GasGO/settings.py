@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'GasGO.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gasgo',        # The name of the database you created
-        'USER': 'postgres',     # Your PostgreSQL superuser name
-        'PASSWORD': config('DB_PASSWORD'), # ⚠️ IMPORTANT: Replace with your actual password
-        'HOST': 'localhost',    # Or the IP address where PostgreSQL is running
-        'PORT': '5432',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
