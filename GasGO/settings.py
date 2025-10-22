@@ -172,3 +172,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Tells Django where to redirect users when @login_required is used
 LOGIN_URL = '/login/'
+
+GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
+
+

@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Order , Profile , Vendor
 from .mpesa_integration import initiate_stk_push
 from decouple import config
+from django.conf import settings
+
 
 # -------------------------------------
 # GENERAL VIEWS
@@ -304,21 +306,25 @@ def history(request):
 def vendors(request):
     if request.method == 'POST':
         vendor_choice = request.POST.get('vendor_choice')
+        vendor_lat = request.POST.get('vendor_lat')
+        vendor_lng = request.POST.get('vendor_lng')
         payment_method = request.POST.get('payment_method')
         final_notes = request.POST.get('notes')
-        
         pending_order_data = request.session.get('pending_order_data', {})
-        
-        # 1. VALIDATION
-        if not vendor_choice or not payment_method or not pending_order_data:
-            messages.error(request, "Order data is incomplete. Please start the order again.")
-            return redirect('orders')
-        
-        # 2. CREATE OR GET VENDOR
-        selected_vendor, _ = Vendor.objects.get_or_create(name=vendor_choice)
 
-        # 3. CREATE ORDER
-        total_cost = 3200.00  # Replace with dynamic pricing if needed
+        if not vendor_choice or not vendor_lat or not vendor_lng or not payment_method or not pending_order_data:
+            messages.error(request, "Vendor location or order data is incomplete. Please try again.")
+            return redirect('available_vendors')
+
+        selected_vendor, _ = Vendor.objects.get_or_create(
+            name=vendor_choice,
+            defaults={
+                'location_lat': vendor_lat,
+                'location_lng': vendor_lng
+            }
+        )
+
+        total_cost = 3200.00
         new_order = Order.objects.create(
             user=request.user,
             vendor=selected_vendor,
@@ -335,11 +341,9 @@ def vendors(request):
             directions=pending_order_data.get('directions'),
             preferred_time=pending_order_data.get('preferred_time'),
         )
-        
-        # 4. CLEAR SESSION
+
         request.session.pop('pending_order_data', None)
-        
-        # 5. REDIRECT
+
         if payment_method == 'M-Pesa':
             messages.info(request, "Redirecting to M-Pesa payment portal...")
             return redirect('initiate_payment', order_id=new_order.order_id)
@@ -349,9 +353,9 @@ def vendors(request):
             messages.success(request, f"Order {new_order.order_id} confirmed! Rider assignment in progress.")
             return redirect('track_order')
 
-    # GET request fallback
     vendors = Vendor.objects.all()
     return render(request, 'vendors.html', {'vendors': vendors})
+
 # PAYMENT VIEWS (m-pesa integration)
 # --------------------------------------
 def format_phone_number(number):
@@ -453,26 +457,16 @@ def history_view(request):
 
 @login_required
 def available_vendors(request):
-    pending_order_data = request.session.get('pending_order_data', {})
-    address = pending_order_data.get('address')
+    # You can customize this to use session or user profile data
+    user_lat = -1.2921
+    user_lng = 36.8219
+    google_api_key = settings.GOOGLE_MAPS_API_KEY  # Add this to your settings.py
 
-    if not address:
-        messages.error(request, "Address not found. Please start the order again.")
-        return redirect('orders')
-
-    lng, lat = geocode_address_mapbox(address)
-    if not lng or not lat:
-        messages.error(request, "Unable to locate your address. Try again.")
-        return redirect('orders')
-
-    vendors = find_petrol_stations_mapbox(lng, lat)
-
-    return render(request, 'available_vendors.html', {
-    'vendors': json.dumps(vendors),
-    'user_lat': float(lat),
-    'user_lng': float(lng),
-    'mapbox_token': config('MAPBOX_TOKEN'),
-})
+    return render(request, "available_vendors.html", {
+        "user_lat": user_lat,
+        "user_lng": user_lng,
+        "google_api_key": google_api_key
+    })
 
 def geocode_address_mapbox(address):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
