@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order Confirmed | GasGo{% endblock %}
+
+{% block content %}
+<main style="max-width: 600px; margin: 60px auto; padding: 30px; background: #f9f9f9; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+  <h2 style="color: #28a745;"> Order Confirmed!</h2>
+  <p>Thank you, {{ order.full_name }}. Your order has been received and is being processed.</p>
+
+  <div style="margin: 20px 0; font-size: 16px;">
+    <p><strong>Order ID:</strong> {{ order.order_id }}</p>
+    <p><strong>Vendor:</strong> {{ order.vendor.name }}</p>
+    <p><strong>Total:</strong> KES {{ order.total_cost }}</p>
+    <p><strong>Delivery Address:</strong> {{ order.address }}</p>
+    <p><strong>Preferred Time:</strong> {{ order.preferred_time }}</p>
+  </div>
+
+  <p>Our team is assigning the nearest rider. You’ll receive a call shortly to confirm delivery.</p>
+
+  <a href="{% url 'track_order' %}" class="btn btn-primary" style="margin-top: 20px;">Track My Order</a>
+</main>
+{% endblock %}

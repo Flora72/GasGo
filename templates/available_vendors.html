@@ -20,7 +20,7 @@
 <main>
   <section>
     <h1>Choose a nearby vendor</h1>
-    <p>We’ve scanned petrol stations near your delivery address. Select one to proceed to payment.</p>
+    <p>We’ve scanned petrol stations near your current location. Select one to proceed.</p>
   </section>
 
   <section class="location-filter">
@@ -45,7 +45,6 @@
 
     <form method="post" action="{% url 'vendors' %}">
       {% csrf_token %}
-      <input type="hidden" name="payment_method" value="M-Pesa">
       <input type="hidden" name="vendor_choice" id="vendor-choice-input">
       <input type="hidden" name="vendor_lat" id="vendor-lat">
       <input type="hidden" name="vendor_lng" id="vendor-lng">
@@ -60,9 +59,23 @@
   </section>
 
   <script>
-    const userLocation = { lat: {{ user_lat }}, lng: {{ user_lng }} };
-
     function initMap() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          loadMapAndScan(userLocation);
+        }, () => {
+          alert("Location access denied. Please enable location services.");
+        });
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+
+    function loadMapAndScan(userLocation) {
       const map = new google.maps.Map(document.getElementById("map"), {
         center: userLocation,
         zoom: 14,
@@ -71,8 +84,8 @@
       const service = new google.maps.places.PlacesService(map);
       const request = {
         location: userLocation,
-        radius: 5000,
-        keyword: "petrol station"
+        radius: 8000,
+        type: "gas_station"
       };
 
       service.nearbySearch(request, (results, status) => {
@@ -128,6 +141,8 @@
   </script>
 </main>
 {% endblock %}
+
+
 
 
 

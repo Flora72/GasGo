@@ -305,15 +305,89 @@ def history(request):
 @login_required 
 def vendors(request):
     if request.method == 'POST':
+        # Step 1: Vendor selection from available_vendors.html
+        if 'vendor_lat' in request.POST and 'vendor_lng' in request.POST:
+            vendor_choice = request.POST.get('vendor_choice')
+            vendor_lat = request.POST.get('vendor_lat')
+            vendor_lng = request.POST.get('vendor_lng')
+            final_notes = request.POST.get('notes')
+
+            if not vendor_choice:
+                messages.error(request, "Please select a vendor.")
+                return redirect('available_vendors')
+
+            # Store vendor info in session
+            request.session['selected_vendor'] = {
+                'name': vendor_choice,
+                'lat': vendor_lat,
+                'lng': vendor_lng,
+                'notes': final_notes
+            }
+
+            return redirect('vendors')  # ✅ Redirect to vendors.html for payment method
+
+        # Step 2: Payment method selection from vendors.html
         vendor_choice = request.POST.get('vendor_choice')
-        vendor_lat = request.POST.get('vendor_lat')
+        payment_method = request.POST.get('payment_method')
+        final_notes = request.POST.get('notes')
+        pending_order_data = request.session.get('pending_order_data', {})
+        vendor_data = request.session.get('selected_vendor', {})
+
+        if not vendor_choice or not payment_method or not pending_order_data or not vendor_data:
+            messages.error(request, "Missing vendor or payment details. Please try again.")
+            return redirect('available_vendors')
+
+        selected_vendor, _ = Vendor.objects.get_or_create(
+            name=vendor_choice,
+            defaults={
+                'location_lat': vendor_data.get('lat'),
+                'location_lng': vendor_data.get('lng')
+            }
+        )
+
+        total_cost = 3200.00
+        new_order = Order.objects.create(
+            user=request.user,
+            vendor=selected_vendor,
+            status='Pending Payment',
+            total_cost=total_cost,
+            notes=final_notes or vendor_data.get('notes'),
+            size=pending_order_data.get('size'),
+            brand=pending_order_data.get('brand'),
+            exchange=pending_order_data.get('exchange'),
+            quantity=pending_order_data.get('quantity', 1),
+            full_name=pending_order_data.get('full_name'),
+            phone=pending_order_data.get('phone'),
+            address=pending_order_data.get('address'),
+            directions=pending_order_data.get('directions'),
+            preferred_time=pending_order_data.get('preferred_time'),
+        )
+
+        request.session.pop('pending_order_data', None)
+        request.session.pop('selected_vendor', None)
+
+        if payment_method == 'M-Pesa':
+            return render(request, 'payment.html', {'order': new_order})
+        else:
+            new_order.status = 'Confirmed'
+            new_order.save()
+            return render(request, 'confirm_order.html', {'order': new_order})
+
+    # GET request: show vendor selection and payment method form
+    vendors = Vendor.objects.all()
+    return render(request, 'vendors.html', {'vendors': vendors})
+
+
+    if request.method == 'POST':
+        vendor_choice = request.POST.get('vendor_choice')
+        vendor_lat = request.POST.get('vendor_lat')  # Optional if not from map
         vendor_lng = request.POST.get('vendor_lng')
         payment_method = request.POST.get('payment_method')
         final_notes = request.POST.get('notes')
         pending_order_data = request.session.get('pending_order_data', {})
 
-        if not vendor_choice or not vendor_lat or not vendor_lng or not payment_method or not pending_order_data:
-            messages.error(request, "Vendor location or order data is incomplete. Please try again.")
+        if not vendor_choice or not payment_method or not pending_order_data:
+            messages.error(request, "Vendor or payment method missing. Please try again.")
             return redirect('available_vendors')
 
         selected_vendor, _ = Vendor.objects.get_or_create(
@@ -345,17 +419,14 @@ def vendors(request):
         request.session.pop('pending_order_data', None)
 
         if payment_method == 'M-Pesa':
-            messages.info(request, "Redirecting to M-Pesa payment portal...")
-            return redirect('initiate_payment', order_id=new_order.order_id)
+            return render(request, 'payment.html', {'order': new_order})
         else:
             new_order.status = 'Confirmed'
             new_order.save()
-            messages.success(request, f"Order {new_order.order_id} confirmed! Rider assignment in progress.")
-            return redirect('track_order')
+            return render(request, 'confirm_order.html', {'order': new_order})
 
     vendors = Vendor.objects.all()
     return render(request, 'vendors.html', {'vendors': vendors})
-
 # PAYMENT VIEWS (m-pesa integration)
 # --------------------------------------
 def format_phone_number(number):
@@ -457,10 +528,9 @@ def history_view(request):
 
 @login_required
 def available_vendors(request):
-    # You can customize this to use session or user profile data
     user_lat = -1.2921
     user_lng = 36.8219
-    google_api_key = settings.GOOGLE_MAPS_API_KEY  # Add this to your settings.py
+    google_api_key = settings.GOOGLE_MAPS_API_KEY  
 
     return render(request, "available_vendors.html", {
         "user_lat": user_lat,
