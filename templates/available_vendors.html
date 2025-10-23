@@ -7,11 +7,12 @@
 <link rel="stylesheet" href="{% static 'css/orders.css' %}">
 <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
 <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
 <style>
   #map { height: 400px; margin-bottom: 20px; }
   .selected-vendor { margin-top: 10px; font-weight: bold; color: #007bff; }
+  .location-filter { margin-bottom: 20px; }
+  .location-filter label { margin-right: 10px; }
 </style>
 {% endblock %}
 
@@ -19,7 +20,24 @@
 <main>
   <section>
     <h1>Choose a nearby vendor</h1>
-    <p>We’ve scanned petrol stations near your delivery address. Select one to proceed to payment.</p>
+    <p>We’ve scanned petrol stations near your current location. Select one to proceed.</p>
+  </section>
+
+  <section class="location-filter">
+    <form id="location-filter-form">
+      <label for="county">County:</label>
+      <select id="county" name="county" required>
+        <option value="">-- Select County --</option>
+        <option value="Nairobi">Nairobi</option>
+        <option value="Kiambu">Kiambu</option>
+        <option value="Machakos">Machakos</option>
+      </select>
+
+      <label for="district">District:</label>
+      <select id="district" name="district" required disabled>
+        <option value="">-- Select District --</option>
+      </select>
+    </form>
   </section>
 
   <section>
@@ -27,8 +45,9 @@
 
     <form method="post" action="{% url 'vendors' %}">
       {% csrf_token %}
-      <input type="hidden" name="payment_method" value="M-Pesa">
       <input type="hidden" name="vendor_choice" id="vendor-choice-input">
+      <input type="hidden" name="vendor_lat" id="vendor-lat">
+      <input type="hidden" name="vendor_lng" id="vendor-lng">
       <div id="selected-vendor-display" class="selected-vendor"></div>
 
       <p>
@@ -39,64 +58,90 @@
     </form>
   </section>
 
- <script>
-  mapboxgl.accessToken = "{{ mapbox_token }}";
+  <script>
+    function initMap() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          loadMapAndScan(userLocation);
+        }, () => {
+          alert("Location access denied. Please enable location services.");
+        });
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
 
-  const userLng = parseFloat("{{ user_lng }}");
-  const userLat = parseFloat("{{ user_lat }}");
+    function loadMapAndScan(userLocation) {
+      const map = new google.maps.Map(document.getElementById("map"), {
+        center: userLocation,
+        zoom: 14,
+      });
 
-  // Parse vendors safely
-  const vendors = JSON.parse('{{ vendors|escapejs }}');
+      const service = new google.maps.places.PlacesService(map);
+      const request = {
+        location: userLocation,
+        radius: 8000,
+        type: "gas_station"
+      };
 
-  // Initialize map
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v11',
-    center: [userLng, userLat],
-    zoom: 13
-  });
+      service.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          results.forEach(place => {
+            const marker = new google.maps.Marker({
+              map,
+              position: place.geometry.location,
+              title: place.name
+            });
 
-  // Add controls
-  map.addControl(new mapboxgl.NavigationControl());
-  map.addControl(new mapboxgl.GeolocateControl({
-    positionOptions: { enableHighAccuracy: true },
-    trackUserLocation: true,
-    showUserHeading: true
-  }));
+            marker.addListener("click", () => {
+              document.getElementById("vendor-choice-input").value = place.name;
+              document.getElementById("vendor-lat").value = place.geometry.location.lat();
+              document.getElementById("vendor-lng").value = place.geometry.location.lng();
+              document.getElementById("selected-vendor-display").textContent = `Selected: ${place.name}`;
+              document.getElementById("proceed-button").disabled = false;
+            });
+          });
+        } else {
+          alert("No petrol stations found nearby.");
+        }
+      });
+    }
 
-  let selectedVendor = null;
+    window.onload = initMap;
 
-  function selectVendor(vendor) {
-    const name = vendor.text || vendor.properties?.name || "Unnamed Vendor";
-    selectedVendor = vendor;
+    const districtOptions = {
+      Nairobi: ["Westlands", "Lang'ata", "Embakasi", "Kasarani", "Starehe"],
+      Kiambu: ["Thika", "Ruiru", "Limuru", "Githunguri"],
+      Machakos: ["Mlolongo", "Athi River", "Kangundo"]
+    };
 
-    // Update hidden input and display
-    document.getElementById('vendor-choice-input').value = name;
-    document.getElementById('selected-vendor-display').textContent = `Selected: ${name}`;
-    document.getElementById('proceed-button').disabled = false;
+    const countySelect = document.getElementById('county');
+    const districtSelect = document.getElementById('district');
 
-    console.log("Vendor selected:", name);
-  }
+    countySelect.addEventListener('change', () => {
+      const selectedCounty = countySelect.value;
+      districtSelect.innerHTML = '<option value="">-- Select District --</option>';
 
-  // Add markers for each vendor
-  vendors.forEach(vendor => {
-    const coords = vendor.geometry.coordinates;
-    const name = vendor.text || vendor.properties?.name || "Unnamed Vendor";
-    const place = vendor.place_name || "";
-
-    const marker = new mapboxgl.Marker()
-      .setLngLat(coords)
-      .setPopup(new mapboxgl.Popup().setHTML(`<strong>${name}</strong><br>${place}`))
-      .addTo(map);
-
-    marker.getElement().addEventListener('click', () => {
-      selectVendor(vendor);
+      if (districtOptions[selectedCounty]) {
+        districtOptions[selectedCounty].forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+        districtSelect.disabled = false;
+      } else {
+        districtSelect.disabled = true;
+      }
     });
-  });
-
-  // Debug: confirm vendors loaded
-  console.log("Loaded vendors:", vendors);
-</script>
-
+  </script>
 </main>
 {% endblock %}
+
+
+
+
