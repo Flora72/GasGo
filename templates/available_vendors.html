@@ -28,9 +28,6 @@
       <label for="county">County:</label>
       <select id="county" name="county" required>
         <option value="">-- Select County --</option>
-        <option value="Nairobi">Nairobi</option>
-        <option value="Kiambu">Kiambu</option>
-        <option value="Machakos">Machakos</option>
       </select>
 
       <label for="district">District:</label>
@@ -59,20 +56,113 @@
   </section>
 
   <script>
+    const districtOptions = {
+      Nairobi: ["Westlands", "Lang'ata", "Embakasi", "Kasarani", "Starehe"],
+      Kiambu: ["Thika", "Ruiru", "Limuru", "Githunguri"],
+      Machakos: ["Machakos", "Mlolongo", "Athi River", "Kangundo"],
+      Mombasa: ["Mombasa", "Likoni", "Nyali"],
+      Kisumu: ["Kisumu", "Ahero", "Maseno"],
+      Nakuru: ["Nakuru", "Naivasha", "Molo"],
+      Kakamega: ["Kakamega", "Mumias", "Lugari"],
+      Bungoma: ["Bungoma", "Kimilili", "Webuye"],
+      Meru: ["Meru", "Maua", "Nkubu"],
+      Nyeri: ["Nyeri", "Karatina", "Othaya"],
+      Muranga: ["Murang'a", "Kangema", "Kandara"],
+      Embu: ["Embu", "Runyenjes", "Siakago"],
+      Kirinyaga: ["Kerugoya", "Kutus", "Wanguru"],
+      Nyandarua: ["Ol Kalou", "Engineer", "Njabini"],
+      Laikipia: ["Nanyuki", "Rumuruti", "Nyahururu"],
+      Uasin_Gishu: ["Eldoret", "Turbo", "Moiben"],
+      Trans_Nzoia: ["Kitale", "Endebess", "Kiminini"],
+      Nandi: ["Kapsabet", "Nandi Hills", "Mosoriot"],
+      Kericho: ["Kericho", "Litein", "Sosiot"],
+      Bomet: ["Bomet", "Sotik", "Mulot"],
+      Kisii: ["Kisii", "Nyamira", "Ogembo"],
+      Migori: ["Migori", "Awendo", "Rongo"],
+      Homa_Bay: ["Homa Bay", "Mbita", "Oyugis"],
+      Siaya: ["Siaya", "Bondo", "Ugunja"],
+      Busia: ["Busia", "Malaba", "Nambale"],
+      Vihiga: ["Vihiga", "Luanda", "Mbale"],
+      Taita_Taveta: ["Voi", "Wundanyi", "Taveta"],
+      Kwale: ["Kwale", "Ukunda", "Msambweni"],
+      Kilifi: ["Kilifi", "Malindi", "Kaloleni"],
+      Lamu: ["Lamu", "Mokowe", "Hindi"],
+      Tana_River: ["Hola", "Garsen", "Bura"],
+      Garissa: ["Garissa", "Dadaab", "Modogashe"],
+      Wajir: ["Wajir", "Habaswein", "Griftu"],
+      Mandera: ["Mandera", "Elwak", "Takaba"],
+      Marsabit: ["Marsabit", "Moyale", "Sololo"],
+      Turkana: ["Lodwar", "Kakuma", "Lokichogio"],
+      Samburu: ["Maralal", "Baragoi", "Wamba"],
+      Isiolo: ["Isiolo", "Kinna", "Garbatulla"],
+      Tharaka_Nithi: ["Chuka", "Tharaka", "Marimanti"],
+      Kitui: ["Kitui", "Mwingi", "Mutomo"],
+      Makueni: ["Wote", "Makindu", "Emali"],
+      Narok: ["Narok", "Kilgoris", "Suswa"],
+      Kajiado: ["Kajiado", "Ngong", "Kitengela"],
+      Nyamira: ["Nyamira", "Keroka", "Ekerenyo"],
+      Elgeyo_Marakwet: ["Iten", "Kapsowar", "Chepkorio"],
+      West_Pokot: ["Kapenguria", "Chepareria", "Sigor"]
+    };
+
+    const countySelect = document.getElementById('county');
+    const districtSelect = document.getElementById('district');
+
+    Object.keys(districtOptions).forEach(county => {
+      const option = document.createElement('option');
+      option.value = county;
+      option.textContent = county.replace(/_/g, " ");
+      countySelect.appendChild(option);
+    });
+
+    countySelect.addEventListener('change', () => {
+      const selectedCounty = countySelect.value;
+      districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+
+      if (districtOptions[selectedCounty]) {
+        districtOptions[selectedCounty].forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+        districtSelect.disabled = false;
+      } else {
+        districtSelect.disabled = true;
+      }
+    });
+
     function initMap() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition(
+        position => {
           const userLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude
           };
           loadMapAndScan(userLocation);
-        }, () => {
-          alert("Location access denied. Please enable location services.");
-        });
-      } else {
-        alert("Geolocation is not supported by your browser.");
-      }
+        },
+        error => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              alert("Permission denied. Please allow location access in your browser settings.");
+              break;
+            case error.POSITION_UNAVAILABLE:
+              alert("Location information is unavailable. Try again later.");
+              break;
+            case error.TIMEOUT:
+              alert("Location request timed out. Please refresh and try again.");
+              break;
+            default:
+              alert("An unknown error occurred while accessing location.");
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
     }
 
     function loadMapAndScan(userLocation) {
@@ -99,7 +189,7 @@
 
             marker.addListener("click", () => {
               document.getElementById("vendor-choice-input").value = place.name;
-              document.getElementById("vendor-lat").value = place.geometry.location.lat();
+                            document.getElementById("vendor-lat").value = place.geometry.location.lat();
               document.getElementById("vendor-lng").value = place.geometry.location.lng();
               document.getElementById("selected-vendor-display").textContent = `Selected: ${place.name}`;
               document.getElementById("proceed-button").disabled = false;
@@ -111,37 +201,8 @@
       });
     }
 
+    // Initialize map on page load
     window.onload = initMap;
-
-    const districtOptions = {
-      Nairobi: ["Westlands", "Lang'ata", "Embakasi", "Kasarani", "Starehe"],
-      Kiambu: ["Thika", "Ruiru", "Limuru", "Githunguri"],
-      Machakos: ["Mlolongo", "Athi River", "Kangundo"]
-    };
-
-    const countySelect = document.getElementById('county');
-    const districtSelect = document.getElementById('district');
-
-    countySelect.addEventListener('change', () => {
-      const selectedCounty = countySelect.value;
-      districtSelect.innerHTML = '<option value="">-- Select District --</option>';
-
-      if (districtOptions[selectedCounty]) {
-        districtOptions[selectedCounty].forEach(district => {
-          const option = document.createElement('option');
-          option.value = district;
-          option.textContent = district;
-          districtSelect.appendChild(option);
-        });
-        districtSelect.disabled = false;
-      } else {
-        districtSelect.disabled = true;
-      }
-    });
   </script>
 </main>
 {% endblock %}
-
-
-
-
