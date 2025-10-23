@@ -226,7 +226,6 @@ def confirm_order(request):
         # --- 4. Save to Database ---
         try:
             new_order = Order.objects.create(**final_order_data)
-            # Optionally clear session
             del request.session['pending_order_data']
             messages.success(request, "Order confirmed! Proceed to payment.")
             return redirect('payment', order_id=new_order.id)
