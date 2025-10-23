@@ -526,22 +526,18 @@ def history_view(request):
     }
     return render(request, 'history.html', context)
 
-@login_required
-def available_vendors(request):
-    user_lat = -1.2921
-    user_lng = 36.8219
-    google_api_key = settings.GOOGLE_MAPS_API_KEY  
 
-    return render(request, "available_vendors.html", {
-        "user_lat": user_lat,
-        "user_lng": user_lng,
-        "google_api_key": google_api_key
-    })
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+import requests
+from decouple import config
+
 
 def geocode_address_mapbox(address):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
     params = {
-        'access_token': config ('MAPBOX_TOKEN'),
+        'access_token': config('MAPBOX_TOKEN'),
         'limit': 1,
         'country': 'KE'
     }
@@ -549,26 +545,59 @@ def geocode_address_mapbox(address):
         response = requests.get(url, params=params)
         response.raise_for_status()
         data = response.json()
-
-        # Defensive check
-        if 'features' in data and data['features']:
+        if data.get('features'):
             coords = data['features'][0]['geometry']['coordinates']
-            return coords[0], coords[1]  # lng, lat
-        else:
-            print("No features found in Mapbox response:", data)
-            return None, None
+            return coords[1], coords[0]  # lat, lng
     except requests.RequestException as e:
-        print("Mapbox geocoding request failed:", e)
-        return None, None
+        print("Mapbox geocoding failed:", e)
+    return None, None
+
 
 def find_petrol_stations_mapbox(lng, lat):
-    url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
+    url = "https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
     params = {
-        'access_token': config ('MAPBOX_TOKEN'),
+        'access_token': config('MAPBOX_TOKEN'),
         'proximity': f"{lng},{lat}",
         'limit': 10,
         'country': 'KE'
     }
-    response = requests.get(url, params=params)
-    data = response.json()
-    return data['features']
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        return data.get('features', [])
+    except requests.RequestException as e:
+        print("Mapbox station lookup failed:", e)
+        return []
+
+
+@login_required
+def available_vendors(request):
+    # Default fallback: Nairobi CBD
+    user_lat, user_lng = -1.2921, 36.8219
+
+    # Optional: Use profile or address to geocode
+    # Example: address = request.user.profile.location or "Ruaka, Kiambu"
+    # lat, lng = geocode_address_mapbox(address)
+    # if lat and lng:
+    #     user_lat, user_lng = lat, lng
+
+    # Fetch nearby petrol stations
+    stations = find_petrol_stations_mapbox(user_lng, user_lat)
+
+    formatted_stations = [
+        {
+            "name": s.get("text", "Unnamed"),
+            "address": s.get("place_name", ""),
+            "lat": s["geometry"]["coordinates"][1],
+            "lng": s["geometry"]["coordinates"][0]
+        }
+        for s in stations
+    ]
+
+    return render(request, "available_vendors.html", {
+        "user_lat": user_lat,
+        "user_lng": user_lng,
+        "google_api_key": settings.GOOGLE_MAPS_API_KEY,
+        "stations": formatted_stations
+    })
