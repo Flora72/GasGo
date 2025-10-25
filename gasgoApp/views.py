@@ -17,7 +17,7 @@ from django.db.models import F
 from django.db.models import FloatField, ExpressionWrapper
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-
+from .models import USSDOrder
 # -------------------------------------
 # GENERAL VIEWS
 # --------------------------------------
@@ -669,63 +669,31 @@ def available_vendors(request):
 # USSD ACCESS VIEWS
 # --------------------------------------
 
+def ussd_access(request):
+    return render(request, 'ussd_access.html')
 
 @csrf_exempt
 def ussd_callback(request):
-    session_id = request.POST.get("sessionId")
-    phone_number = request.POST.get("phoneNumber")
-    text = request.POST.get("text", "")
+    if request.method == "POST":
+        text = request.POST.get("text", "")
+        session_id = request.POST.get("sessionId", "")
+        phone_number = request.POST.get("phoneNumber", "")
 
-    response = ""
-    inputs = text.split("*")
+        parts = text.split("*")
+        if len(parts) >= 4:
+            gas_size = parts[1]
+            quantity = parts[2]
+            location = parts[3]
+            confirmed = parts[4] == "1"
 
-    if text == "":
-        response = "CON Welcome to GasGo\n1. Order Gas\n2. Track Order\n3. Emergency Help"
-
-    elif inputs[0] == "1":
-        if len(inputs) == 1:
-            response = "CON Enter size (e.g. 6kg, 13kg):"
-        elif len(inputs) == 2:
-            response = "CON Enter quantity:"
-        elif len(inputs) == 3:
-            response = "CON Enter delivery location:"
-        elif len(inputs) == 4:
-            response = "CON Confirm order?\n1. Yes\n2. No"
-        elif len(inputs) == 5 and inputs[4] == "1":
-            size = inputs[1]
-            quantity = int(inputs[2])
-            address = inputs[3]
-
-            order_id = "GGO-" + get_random_string(10).upper()
-
-            Order.objects.create(
-                user=None,  # USSD user, no login
-                order_id=order_id,
-                status="Pending",
-                phone=phone_number,
-                size=size,
-                quantity=quantity,
-                address=address,
-                full_name="USSD User",
-                exchange="N/A",  # default for USSD
-                brand="N/A",
+            order = USSDOrder.objects.create(
+                session_id=session_id,
+                phone_number=phone_number,
+                gas_size=gas_size,
+                quantity=int(quantity),
+                location=location,
+                confirmed=confirmed
             )
-
-            response = f"END Order placed successfully!\nTracking ID: {order_id}"
-        else:
-            response = "END Order cancelled."
-
-    elif inputs[0] == "2":
-        response = "END Tracking via USSD coming soon."
-
-    elif inputs[0] == "3":
-        response = "END Emergency help dispatched. Stay safe."
-
-    else:
-        response = "END Invalid choice."
-
-    return HttpResponse(response, content_type="text/plain")
-
-
-def ussd_access(request):
-    return render(request, 'ussd_access.html')
+            return HttpResponse(f"#GAS{order.id:05d}")
+        return HttpResponse("Invalid USSD input")
+    return HttpResponse("Only POST allowed")

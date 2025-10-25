@@ -45,6 +45,18 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.order_id} - {self.phone}"
 
+class USSDOrder(models.Model):
+    session_id = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20)
+    gas_size = models.CharField(max_length=20)
+    quantity = models.PositiveIntegerField()
+    location = models.CharField(max_length=255)
+    confirmed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.phone_number} - {self.gas_size} x {self.quantity}"
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_image = models.ImageField(
