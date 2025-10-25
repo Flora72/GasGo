@@ -1,10 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}My Orders | GasGo{% endblock %}
+
+{% block head %}
+<style>
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    background-color: #fff;
+    box-shadow: 0 0 6px rgba(0,0,0,0.05);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .orders-table thead {
+    background-color: #f9f3ef;
+  }
+
+  .orders-table th {
+    padding: 0.75rem;
+    text-align: left;
+    color: #4B2E2E;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .orders-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f0eae6;
+    color: #3a2a2a;
+  }
+
+  .orders-table tr:hover {
+    background-color: #fef7f2;
+  }
+
+  .orders-table .actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.4rem 0.7rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-track {
+    background-color: #D97706;
+    color: white;
+  }
+
+  .btn-track:hover {
+    background-color: #b45309;
+  }
+
+  .btn-delete {
+    background-color: #e11d48;
+    color: white;
+  }
+
+  .btn-delete:hover {
+    background-color: #be123c;
+  }
+
+  .btn-disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+
+  @media screen and (max-width: 768px) {
+    .orders-table th, .orders-table td {
+      font-size: 0.85rem;
+      padding: 0.5rem;
+    }
+
+    .orders-table .actions {
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<main>
+  <section>
+    <h1>My Orders</h1>
+    {% if orders %}
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Delivery</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Gas</th>
+            <th>Placed</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>{{ order.order_id }}</td>
+            <td>{{ order.address }}</td>
+            <td>{{ order.preferred_time }}</td>
+            <td>{{ order.status }}</td>
+            <td>{{ order.size }} {% if order.brand %}({{ order.brand }}){% endif %}</td>
+            <td>{{ order.created_at|date:"M d, H:i" }}</td>
+            <td class="actions">
+              {% if order.rider_latitude and order.rider_longitude %}
+                <a href="{% url 'track_order' %}?order_id={{ order.order_id }}" class="btn btn-track">Track</a>
+              {% else %}
+                <span class="btn btn-disabled">—</span>
+              {% endif %}
+              <form method="post" action="{% url 'delete_order' order.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-delete" onclick="return confirm('Delete this order?')">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>You haven’t placed any orders yet.</p>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
