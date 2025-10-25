@@ -12,6 +12,7 @@ from .models import Order , Profile , Vendor
 from .mpesa_integration import initiate_stk_push
 from decouple import config
 from django.conf import settings
+from django.utils.crypto import get_random_string
 
 
 # -------------------------------------
@@ -161,9 +162,10 @@ def forgot_password(request):
 #  ORDER & VENDOR VIEWS
 # --------------------------------------
 @login_required(login_url='login')
+
+@login_required(login_url='login')
 def order(request):
     if request.method == 'POST':
-        # --- 1. Extract Order Data ---
         order_details = {
             'size': request.POST.get('size'),
             'brand': request.POST.get('brand'),
@@ -177,25 +179,27 @@ def order(request):
             'notes': request.POST.get('notes'),
         }
 
-        # --- 2. Basic Validation ---
         if not order_details['size'] or not order_details['address'] or not order_details['phone']:
             messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
-            # Re-render the form with existing data if possible
             return render(request, 'order.html', {'order_details': order_details})
 
-        # --- 3. Save/Store Initial Order (Simulation) ---
-        # In a real application, you would create an Order object here:
-        # new_order = Order.objects.create(user=request.user, **order_details, status='Draft')
-        
-        # Using session to pass data to the next step (vendors page)
-        request.session['pending_order_data'] = order_details
-        
-        messages.info(request, "Step 1 complete. Now choose your vendor and payment method.")
-        
-        # --- 4. Redirect to next step: Vendors ---
+        # --- Create Order ---
+        order_id = "GGO-" + get_random_string(10).upper()
+        new_order = Order.objects.create(
+            user=request.user,
+            order_id=order_id,
+            status='Pending',
+            **order_details
+        )
+
+        # Optional: Store in session if needed
+        request.session['pending_order_id'] = new_order.order_id
+
+        messages.success(request, f"Order placed! Your tracking ID is {new_order.order_id}")
         return redirect('available_vendors')
-        
+
     return render(request, 'order.html')
+
 
 @login_required(login_url='login')
 def confirm_order(request):
@@ -238,6 +242,8 @@ def confirm_order(request):
     return redirect('order')
 
 @login_required(login_url='login')
+
+@login_required(login_url='login')
 def track_order(request):
     user = request.user
     order_id = request.GET.get('order_id')
@@ -266,6 +272,7 @@ def track_order(request):
             'user_lat': None,
             'user_lng': None,
             'order': None,
+            'google_api_key': config('GOOGLE_MAPS_API_KEY')
         })
 
     context = {
@@ -276,6 +283,7 @@ def track_order(request):
         'rider_lng': float(order.rider_longitude or 0),
         'user_lat': float(order.delivery_latitude or 0),
         'user_lng': float(order.delivery_longitude or 0),
+        'google_api_key': config('GOOGLE_MAPS_API_KEY')
     }
     return render(request, 'track_order.html', context)
 
