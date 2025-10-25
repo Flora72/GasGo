@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout 
 from django.contrib.auth.decorators import login_required
@@ -13,6 +13,8 @@ from .mpesa_integration import initiate_stk_push
 from decouple import config
 from django.conf import settings
 from django.utils.crypto import get_random_string
+from django.db.models import F
+from django.db.models import FloatField, ExpressionWrapper
 
 
 # -------------------------------------
@@ -161,7 +163,21 @@ def forgot_password(request):
 # -------------------------------------
 #  ORDER & VENDOR VIEWS
 # --------------------------------------
-@login_required(login_url='login')
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'my_orders.html', {'orders': orders})
+
+
+
+def find_nearest_vendor(lat, lng):
+    distance_expr = ExpressionWrapper(
+        (F('location_lat') - lat) * (F('location_lat') - lat) +
+        (F('location_lng') - lng) * (F('location_lng') - lng),
+        output_field=FloatField()
+    )
+    return Vendor.objects.annotate(distance=distance_expr).order_by('distance').first()
 
 @login_required(login_url='login')
 def order(request):
@@ -179,11 +195,24 @@ def order(request):
             'notes': request.POST.get('notes'),
         }
 
+        # Capture and validate coordinates
+        try:
+            lat = float(request.POST.get('delivery_latitude'))
+            lng = float(request.POST.get('delivery_longitude'))
+            if -90 <= lat <= 90 and -180 <= lng <= 180:
+                order_details['delivery_latitude'] = lat
+                order_details['delivery_longitude'] = lng
+            else:
+                lat = lng = None
+        except (TypeError, ValueError):
+            lat = lng = None
+
+        # Required field check
         if not order_details['size'] or not order_details['address'] or not order_details['phone']:
             messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
             return render(request, 'order.html', {'order_details': order_details})
 
-        # --- Create Order ---
+        # Create order
         order_id = "GGO-" + get_random_string(10).upper()
         new_order = Order.objects.create(
             user=request.user,
@@ -192,14 +221,27 @@ def order(request):
             **order_details
         )
 
-        # Optional: Store in session if needed
-        request.session['pending_order_id'] = new_order.order_id
+        # Assign vendor based on coordinates
+        if lat is not None and lng is not None:
+            vendor = find_nearest_vendor(lat, lng)
+            if vendor:
+                new_order.vendor = vendor
+                new_order.rider_latitude = vendor.location_lat
+                new_order.rider_longitude = vendor.location_lng
+                new_order.save()
 
+        print(f"New order {order_id} placed with location: {lat}, {lng}")
+        request.session['pending_order_id'] = new_order.order_id
         messages.success(request, f"Order placed! Your tracking ID is {new_order.order_id}")
         return redirect('available_vendors')
 
     return render(request, 'order.html')
 
+@login_required
+def delete_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.delete()
+    return redirect('my_orders')
 
 @login_required(login_url='login')
 def confirm_order(request):
@@ -241,13 +283,17 @@ def confirm_order(request):
     # If GET request, redirect to order page
     return redirect('order')
 
-@login_required(login_url='login')
+
+def is_valid_coord(value):
+    try:
+        return value is not None and -90 <= float(value) <= 90
+    except:
+        return False
 
 @login_required(login_url='login')
 def track_order(request):
     user = request.user
     order_id = request.GET.get('order_id')
-
     order = None
     tracking_mode = 'demo'
 
@@ -275,14 +321,19 @@ def track_order(request):
             'google_api_key': config('GOOGLE_MAPS_API_KEY')
         })
 
+    rider_lat = float(order.rider_latitude) if is_valid_coord(order.rider_latitude) else None
+    rider_lng = float(order.rider_longitude) if is_valid_coord(order.rider_longitude) else None
+    user_lat = float(order.delivery_latitude) if is_valid_coord(order.delivery_latitude) else None
+    user_lng = float(order.delivery_longitude) if is_valid_coord(order.delivery_longitude) else None
+
     context = {
         'order': order,
         'demo_mode': False,
         'tracking_mode': tracking_mode,
-        'rider_lat': float(order.rider_latitude or 0),
-        'rider_lng': float(order.rider_longitude or 0),
-        'user_lat': float(order.delivery_latitude or 0),
-        'user_lng': float(order.delivery_longitude or 0),
+        'rider_lat': rider_lat,
+        'rider_lng': rider_lng,
+        'user_lat': user_lat,
+        'user_lng': user_lng,
         'google_api_key': config('GOOGLE_MAPS_API_KEY')
     }
     return render(request, 'track_order.html', context)
@@ -546,11 +597,10 @@ def geocode_address_mapbox(address):
         data = response.json()
         if data.get('features'):
             coords = data['features'][0]['geometry']['coordinates']
-            return coords[1], coords[0]
+            return coords[1], coords[0]  # lat, lng
     except requests.RequestException as e:
         print("Mapbox geocoding failed:", e)
     return None, None
-
 
 def find_petrol_stations_mapbox(lng, lat):
     url = "https://api.mapbox.com/geocoding/v5/mapbox.places/petrol station.json"
@@ -569,17 +619,20 @@ def find_petrol_stations_mapbox(lng, lat):
         print("Mapbox station lookup failed:", e)
         return []
 
-
 @login_required
 def available_vendors(request):
     # Default fallback: Nairobi CBD
     user_lat, user_lng = -1.2921, 36.8219
 
-    # Optional: Use profile or address to geocode
-    # Example: address = request.user.profile.location or "Ruaka, Kiambu"
-    # lat, lng = geocode_address_mapbox(address)
-    # if lat and lng:
-    #     user_lat, user_lng = lat, lng
+    # Try to get location from the most recent order
+    order_id = request.session.get('pending_order_id')
+    order = Order.objects.filter(order_id=order_id, user=request.user).first()
+
+    if order and order.delivery_latitude and order.delivery_longitude:
+        user_lat = order.delivery_latitude
+        user_lng = order.delivery_longitude
+    else:
+        print("No delivery coordinates found. Using fallback.")
 
     # Fetch nearby petrol stations
     stations = find_petrol_stations_mapbox(user_lng, user_lat)
@@ -593,6 +646,15 @@ def available_vendors(request):
         }
         for s in stations
     ]
+
+    # Optional: assign first station as vendor (for demo or auto-mode)
+    if order and formatted_stations:
+        first = formatted_stations[0]
+        vendor, _ = Vendor.objects.get_or_create(name=first["name"])
+        order.vendor = vendor
+        order.rider_latitude = first["lat"]
+        order.rider_longitude = first["lng"]
+        order.save()
 
     return render(request, "available_vendors.html", {
         "user_lat": user_lat,
