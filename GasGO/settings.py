@@ -13,13 +13,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from decouple import config
-
+import africastalking
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Load environment variables from the .env file located in the project root
-# BASE_DIR points to your project root (the folder with manage.py)
 load_dotenv(BASE_DIR / '.env')
 
 
@@ -33,8 +30,15 @@ SECRET_KEY = 'django-insecure-_tq8$u+xxvhe2h&7gwf&ty12zg^@(sn-8+vi!uw9$i4y8+-$=u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'alline-hirtellous-dario.ngrok-free.dev',
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.dev",
+]
 
 # Application definition
 
@@ -175,4 +179,5 @@ LOGIN_URL = '/login/'
 
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
 
-
+# Africa's talking
+africastalking.initialize(username="sandbox", api_key="your_api_key")
