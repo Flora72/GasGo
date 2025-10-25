@@ -19,24 +19,6 @@
 
     <form method="post" action="{% url 'vendors' %}">
     {% csrf_token %}
-    
-    <!-- Vendor Selection -->
-    <section>
-        <h2>Available vendors</h2>
-        <div role="group" aria-labelledby="vendors">
-            {% for vendor in vendors %}
-            <article>
-                <label>
-                    <input type="radio" name="vendor_choice" value="{{ vendor.name }}" required>
-                    <strong>{{ vendor.name }}</strong>
-                    <span>⭐ 4.7 · ETA: 30–50 min</span>
-                    <div>6kg from KSh 1,480 · 13kg from KSh 3,150 · Delivery KSh 150</div>
-                </label>
-            </article>
-            {% endfor %}
-        </div>
-    </section>
-
     <!-- Payment Method -->
     <section>
         <h2>Step 3 of 3: Payment</h2>
