@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  body {
+    background-color: #f8f8f8;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .ussd-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .ussd-container h1 {
+    color: #D97706;
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  .ussd-container h2 {
+    color: #D97706;
+    margin-top: 40px;
+  }
+  .ussd-container p {
+    font-size: 1.1em;
+    color: #333;
+    line-height: 1.6;
+  }
+  .flow-preview {
+    margin-top: 30px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-left: 4px solid #D97706;
+    font-family: monospace;
+    white-space: pre-wrap;
+  }
+  .phone-frame {
+    max-width: 360px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #000;
+    border-radius: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    position: relative;
+  }
+  .phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 10px;
+  }
+  .phone-screen {
+    background: linear-gradient(to bottom, #fefefe, #eaeaea);
+    border-radius: 28px;
+    padding: 20px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  .status-bar span {
+    padding: 0 5px;
+  }
+  .ussd-screen {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-left: 4px solid #D97706;
+    font-family: monospace;
+    white-space: pre-wrap;
+    min-height: 180px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+    color: #222;
+  }
+  .ussd-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  .ussd-btn {
+    background-color: #D97706;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.2s ease;
+  }
+  .ussd-btn:hover {
+    background-color: #c56a05;
+  }
+</style>
+
+<div class="ussd-container">
+  <h2>USSD Emulator</h2>
+  <p>
+    The emulator below mimics a real mobile phone experience. Type <strong>start</strong> to begin, then follow the prompts step-by-step. You can type <code>0</code> or <code>back</code> at any time to restart the flow.
+  </p>
+
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <div>
+        <div class="status-bar">
+          <span>19:40</span>
+          <span>📶 LTE</span>
+          <span>🔋 87%</span>
+        </div>
+        <div style="font-weight:bold; margin-bottom:10px;">Dialing <code>*384*14590#</code>...</div>
+        <div class="ussd-screen" id="ussdScreen">
+          Welcome to GasGo USSD Service<br>
+          Type <strong>start</strong> to begin
+        </div>
+      </div>
+      <div>
+        <input type="text" id="ussdInput" class="ussd-input" placeholder="Enter your choice">
+        <button class="ussd-btn" onclick="nextStep()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let step = -1;
+  let inputs = [];
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("ussdInput").focus();
+  });
+
+  function nextStep() {
+    const input = document.getElementById("ussdInput").value.trim().toLowerCase();
+    if (input === "") return;
+
+    document.getElementById("ussdInput").value = "";
+    let screen = document.getElementById("ussdScreen");
+
+    if (input === "0" || input === "back") {
+      step = -1;
+      inputs = [];
+      screen.innerText = "Welcome to GasGo USSD Service\nType start to begin";
+      return;
+    }
+
+    inputs.push(input);
+
+    if (step === -1) {
+      if (input === "start") {
+        screen.innerText = "Welcome to GasGo\n1. Order Gas\n2. Track Order\n3. Emergency Help";
+        step = 0;
+      } else {
+        screen.innerText = "Please type 'start' to begin.";
+      }
+    } else if (step === 0) {
+      if (input === "1") {
+        screen.innerText = "Enter gas size (e.g. 6kg, 13kg):";
+        step++;
+      } else if (input === "2") {
+        screen.innerText = "Tracking not available via USSD yet.\nType 0 to go back.";
+      } else if (input === "3") {
+        screen.innerText = "Emergency help dispatched. Stay safe.\nType 0 to go back.";
+      } else {
+        screen.innerText = "Invalid choice. Please enter 1, 2, or 3.";
+      }
+    } else if (step === 1) {
+      screen.innerText = "Enter quantity:";
+      step++;
+    } else if (step === 2) {
+      screen.innerText = "Enter delivery location:";
+      step++;
+    } else if (step === 3) {
+      screen.innerText = "Confirm order?\n1. Yes\n2. No";
+      step++;
+    } else if (step === 4) {
+      if (input === "1") {
+        fetch("/ussd/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": document.cookie
+              .split('; ')
+              .find(row => row.startsWith('csrftoken='))
+              ?.split('=')[1]
+          },
+          body: `sessionId=demo123&phoneNumber=0700000000&text=1*${inputs[1]}*${inputs[2]}*${inputs[3]}*1`
+        })
+        .then(response => response.text())
+        .then(data => {
+          screen.innerText = `Order confirmed!\nTracking ID: ${data}\n\nType 0 to go back to the welcome screen.`;
+        })
+        .catch(() => {
+          screen.innerText = "Something went wrong.\nPlease try again later.\nType 0 to go back.";
+        });
+      } else {
+        screen.innerText = "Order cancelled.\nType 0 to go back.";
+      }
+    }
+  }
+</script>
+{% endblock %}
