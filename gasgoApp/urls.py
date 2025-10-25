@@ -27,4 +27,7 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),  name='password_reset_complete'),
     path('payment/<str:order_id>/', views.initiate_payment, name='initiate_payment'),
     path('mpesa/callback/', views.mpesa_callback, name='mpesa_callback'),
+    path('ussd/', views.ussd_callback, name='ussd_callback'),
+    path('ussd-access/', views.ussd_access, name='ussd_access'),
+
 ]
