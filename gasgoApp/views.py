@@ -515,22 +515,14 @@ def history_view(request):
     try:
         user_orders = Order.objects.filter(
             user=request.user
-        ).order_by('-order_date') # Sort by newest first
+        ).order_by('-order_date')
     except NameError:
-        # Fallback if the Order model isn't imported or defined yet
         user_orders = [] 
     
     context = {
-        'orders': user_orders, # Pass the list of orders to the template
+        'orders': user_orders,
     }
     return render(request, 'history.html', context)
-
-
-from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-import requests
-from decouple import config
 
 
 def geocode_address_mapbox(address):
@@ -546,7 +538,7 @@ def geocode_address_mapbox(address):
         data = response.json()
         if data.get('features'):
             coords = data['features'][0]['geometry']['coordinates']
-            return coords[1], coords[0]  # lat, lng
+            return coords[1], coords[0]
     except requests.RequestException as e:
         print("Mapbox geocoding failed:", e)
     return None, None
