@@ -11,105 +11,105 @@
 
 {% block content %}
 <main>
-    <section>
-        <h1>Order LPG delivery</h1>
-        <p>Fill in your details below. We deliver sealed, certified cylinders and exchange your empty safely on arrival.</p>
+  <section>
+    <h1>Order LPG delivery</h1>
+    <p>Fill in your details below. We deliver sealed, certified cylinders and exchange your empty safely on arrival.</p>
+    <p>
+      Need it urgently? <a href="{% url 'emergency' %}">Use Emergency delivery</a> ·
+      Want to check status? <a href="{% url 'track_order' %}?order_id={{ request.session.pending_order_id }}">Track your order</a>
+    </p>
+  </section>
+
+  <section>
+    <form method="post" action="{% url 'orders' %}">
+      {% csrf_token %}
+
+      <fieldset>
+        <legend>Gas details</legend>
         <p>
-            Need it urgently? <a href="{% url 'emergency' %}">Use Emergency delivery</a> ·
-            Want to check status? <a href="{% url 'track_order' %}">Track your order</a>
+          <label for="id_size">Cylinder size</label><br>
+          <select id="id_size" name="size" required>
+            <option value="" selected disabled>Choose size</option>
+            <option>6kg</option>
+            <option>13kg</option>
+            <option>22.5kg</option>
+            <option>35kg</option>
+            <option>50kg</option>
+          </select>
         </p>
-    </section>
+        <p>
+          <label for="id_brand">Preferred brand (optional)</label><br>
+          <select id="id_brand" name="brand">
+            <option value="">Any certified</option>
+            <option>TotalEnergies</option>
+            <option>Afri-Gas</option>
+            <option>ProGas</option>
+            <option>K-Gas</option>
+            <option>RubisGas</option>
+          </select>
+        </p>
+        <p>
+          <span>Exchange empty cylinder?</span><br>
+          <label><input type="radio" name="exchange" value="yes" checked> Yes</label>
+          <label><input type="radio" name="exchange" value="no"> No (new cylinder)</label>
+        </p>
+        <p>
+          <label for="id_qty">Quantity</label><br>
+          <input id="id_qty" type="number" name="quantity" min="1" value="1" required>
+        </p>
+      </fieldset>
 
-    <section>
-        <form method="post" action="{% url 'orders' %}">
-            {% csrf_token %}
+      <fieldset>
+        <legend>Delivery details</legend>
+        <p>
+          <label for="id_full_name">Full name</label><br>
+          <input id="id_full_name" name="full_name" type="text" placeholder="Amina Ali" required>
+        </p>
+        <p>
+          <label for="id_phone">Phone number</label><br>
+          <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" required>
+        </p>
+        <p>
+          <label for="id_address">Estate/Address</label><br>
+          <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" required>
+        </p>
+        <p>
+          <label for="id_directions">Extra directions (optional)</label><br>
+          <input id="id_directions" name="directions" type="text" placeholder="Gate code, landmark, floor...">
+        </p>
+        <p>
+          <label for="id_when">Preferred delivery time</label><br>
+          <select id="id_when" name="preferred_time">
+            <option>ASAP (30–90 mins)</option>
+            <option>Today (in the next 2–4 hours)</option>
+            <option>Schedule (we'll call to confirm)</option>
+          </select>
+        </p>
+      </fieldset>
 
-            <fieldset>
-                <legend>Gas details</legend>
-                <p>
-                    <label for="id_size">Cylinder size</label><br>
-                    <select id="id_size" name="size" required>
-                        <option value="" selected disabled>Choose size</option>
-                        <option>6kg</option>
-                        <option>13kg</option>
-                        <option>22.5kg</option>
-                        <option>35kg</option>
-                        <option>50kg</option>
-                    </select>
-                </p>
-                <p>
-                    <label for="id_brand">Preferred brand (optional)</label><br>
-                    <select id="id_brand" name="brand">
-                        <option value="">Any certified</option>
-                        <option>TotalEnergies</option>
-                        <option>Afri-Gas</option>
-                        <option>ProGas</option>
-                        <option>K-Gas</option>
-                        <option>RubisGas</option>
-                    </select>
-                </p>
-                <p>
-                    <span>Exchange empty cylinder?</span><br>
-                    <label><input type="radio" name="exchange" value="yes" checked> Yes</label>
-                    <label><input type="radio" name="exchange" value="no"> No (new cylinder)</label>
-                </p>
-                <p>
-                    <label for="id_qty">Quantity</label><br>
-                    <input id="id_qty" type="number" name="quantity" min="1" value="1" required>
-                </p>
-            </fieldset>
+      <fieldset>
+        <legend>Next step</legend>
+        <p>After this step, you'll see available vendors near you. You'll choose a vendor and then select your payment method.</p>
+        <p>
+          <label for="id_notes">Notes (optional)</label><br>
+          <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
+        </p>
+      </fieldset>
 
-            <fieldset>
-                <legend>Delivery details</legend>
-                <p>
-                    <label for="id_full_name">Full name</label><br>
-                    <input id="id_full_name" name="full_name" type="text" placeholder="Amina Ali" required>
-                </p>
-                <p>
-                    <label for="id_phone">Phone number</label><br>
-                    <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" required>
-                </p>
-                <p>
-                    <label for="id_address">Estate/Address</label><br>
-                    <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" required>
-                </p>
-                <p>
-                    <label for="id_directions">Extra directions (optional)</label><br>
-                    <input id="id_directions" name="directions" type="text" placeholder="Gate code, landmark, floor...">
-                </p>
-                <p>
-                    <label for="id_when">Preferred delivery time</label><br>
-                    <select id="id_when" name="preferred_time">
-                        <option>ASAP (30–90 mins)</option>
-                        <option>Today (in the next 2–4 hours)</option>
-                        <option>Schedule (we'll call to confirm)</option>
-                    </select>
-                </p>
-            </fieldset>
+      <p>
+        <button type="submit" class="btn btn-primary">See available vendors</button>
+        <a class="btn btn-outline" href="{% url 'available_vendors' %}">Cancel</a>
+      </p>
+    </form>
+  </section>
 
-            <fieldset>
-                <legend>Next step</legend>
-                <p>After this step, you'll see available vendors near you. You'll choose a vendor and then select your payment method.</p>
-                <p>
-                    <label for="id_notes">Notes (optional)</label><br>
-                    <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
-                </p>
-            </fieldset>
-
-            <p>
-                <button type="submit" class="btn btn-primary">See available vendors</button>
-                <a class="btn btn-outline" href="{% url 'available_vendors' %}">Cancel</a>
-            </p>
-        </form>
-    </section>
-
-    <section>
-        <h2>What to expect</h2>
-        <ol>
-            <li>We confirm availability and assign the nearest rider.</li>
-            <li>On arrival, we exchange your empty for a sealed, certified cylinder.</li>
-            <li>Rider performs a quick leak-check. You pay securely on delivery.</li>
-        </ol>
-    </section>
+  <section>
+    <h2>What to expect</h2>
+    <ol>
+      <li>We confirm availability and assign the nearest rider.</li>
+      <li>On arrival, we exchange your empty for a sealed, certified cylinder.</li>
+      <li>Rider performs a quick leak-check. You pay securely on delivery.</li>
+    </ol>
+  </section>
 </main>
 {% endblock %}
