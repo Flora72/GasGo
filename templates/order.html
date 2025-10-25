@@ -96,6 +96,10 @@
         </p>
       </fieldset>
 
+      <!-- Hidden fields for location tracking -->
+      <input type="hidden" name="delivery_latitude" id="delivery-latitude">
+      <input type="hidden" name="delivery_longitude" id="delivery-longitude">
+
       <p>
         <button type="submit" class="btn btn-primary">See available vendors</button>
         <a class="btn btn-outline" href="{% url 'available_vendors' %}">Cancel</a>
@@ -111,5 +115,29 @@
       <li>Rider performs a quick leak-check. You pay securely on delivery.</li>
     </ol>
   </section>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            document.getElementById("delivery-latitude").value = position.coords.latitude;
+            document.getElementById("delivery-longitude").value = position.coords.longitude;
+          },
+          error => {
+            console.warn("Geolocation failed:", error);
+            alert("We couldn't detect your location. You can still proceed, but tracking may be less accurate.");
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      } else {
+        alert("Your browser doesn't support location access. You can still place your order manually.");
+      }
+    });
+  </script>
 </main>
 {% endblock %}
