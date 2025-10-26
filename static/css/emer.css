@@ -191,7 +191,7 @@ textarea {
   background-color: #D97706;
   color: white;
 }
-/* 🚨 Emergency Contact Section */
+/*Emergency Contact Section */
 .emergency-contact {
   max-width: 720px;
   margin: 2rem auto;
@@ -230,8 +230,35 @@ textarea {
 .emergency-contact a:hover {
   text-decoration: underline;
 }
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
 
-/* 💬 Emergency Chat Styling */
+.chat-input label {
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.chat-input button {
+  padding: 0.5rem 1rem;
+  background-color: #f97316;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Emergency Chat Styling */
 .emergency-chatbox {
   background: #fff;
   border-radius: 12px;
@@ -291,6 +318,18 @@ textarea {
   font-size: 0.85rem;
   color: #555;
   margin-top: 0.6rem;
+}
+.bot-msg a {
+  color: #D97706;
+  text-decoration: underline;
+}
+.bot-msg {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+.user-msg {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 /* Footer */
