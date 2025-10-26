@@ -40,11 +40,12 @@
                     GasGo Assistant: Hello! I can help with LPG emergencies and troubleshooting. Type your issue (e.g., “I smell gas”, “burner not lighting”, “installation failed”).
                 </div>
             </div>
-            <div class="chat-input">
-                <label for="chatinput" class="visually-hidden">Your message</label>
-                <input id="chatinput" type="text" placeholder="Describe the issue…" />
-                <button id="chatsend" type="button">Send</button>
-            </div>
+          <div class="chat-input" style="display: flex; align-items: center; gap: 0.5rem;">
+          <label for="chatinput" style="white-space: nowrap; font-weight: 500;">Your message:</label>
+           <input id="chatinput" type="text" placeholder="Describe the issue…" style="flex: 1; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;" />
+            <button id="chatsend" type="button" style="padding: 0.5rem 1rem; background-color: #f97316; color: white; border: none; border-radius: 4px;">Send</button>
+        </div>
+
             <p class="chat-note">Note: This is a demo helper. In life‑threatening situations, call 999/112 and our toll‑free line above.</p>
         </div>
     </section>
@@ -114,31 +115,51 @@
 {% block scripts %}
 <script>
 (function(){
-    var log = document.getElementById('chatlog');
-    var input = document.getElementById('chatinput');
-    var send = document.getElementById('chatsend');
-    function respond(text){
-        var t = text.trim().toLowerCase();
-        var reply = "I'm here to help. For life‑threatening situations call 999/112 and our toll‑free 0800 720 000.";
-        if (t.includes('smell') || t.includes('leak')){
-            reply = "If you smell gas: turn off the valve if safe, open windows, avoid switches/flames, evacuate, then call 999/112 and 0800 720 000.";
-        } else if (t.includes('fire')){
-            reply = "If there is fire: evacuate immediately, call 999/112. If trained and safe, use a Class B/C extinguisher. Do not take risks.";
-        } else if (t.includes('install')){
-            reply = "For installation issues: ensure regulator matches valve, check O‑ring, do a soapy water test. We can dispatch a technician — share your order ID and location.";
-        } else if (t.includes('burner')){
-            reply = "Burner not lighting: check gas is on, ensure regulator is locked, verify hose, try a different lighter/ignition, and perform a leak check.";
-        }
-        append('GasGo Assistant: ' + reply);
+  const log = document.getElementById('chatlog');
+  const input = document.getElementById('chatinput');
+  const send = document.getElementById('chatsend');
+
+  function append(line, sender = 'bot') {
+    const div = document.createElement('div');
+    div.className = sender === 'bot' ? 'bot-msg' : 'user-msg';
+    div[sender === 'bot' ? 'innerHTML' : 'textContent'] = line;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function respond(text){
+    const t = text.trim().toLowerCase();
+    let reply = "I'm here to help. For life‑threatening situations, call <strong>999</strong> or <strong>112</strong> and our toll‑free <a href='tel:+254800720000' style='color:#D97706;'>0800 720 000</a>.";
+
+    if (t.includes('fire')) {
+      reply = "🔥 <strong>Fire detected:</strong><br>Evacuate immediately.<br>Call <strong>999</strong> or <strong>112</strong>.<br>If trained and safe, use a Class B/C extinguisher.<br><em>Do not take risks.</em>";
+    } else if (t.includes('smell') || t.includes('leak')) {
+      reply = "🚨 <strong>Gas leak suspected:</strong><br>Turn off the valve if safe.<br>Open windows, avoid switches/flames.<br>Evacuate.<br>Call <strong>999/112</strong> and <a href='tel:+254800720000' style='color:#D97706;'>0800 720 000</a>.";
+    } else if (t.includes('install')) {
+      reply = "🛠️ <strong>Installation issue:</strong><br>Ensure regulator matches valve.<br>Check O‑ring and hose.<br>Do a soapy water leak test.<br>We can dispatch a technician — please share your order ID and location.";
+    } else if (t.includes('burner')) {
+      reply = "🔥 <strong>Burner not lighting:</strong><br>Confirm gas is on.<br>Ensure regulator is locked.<br>Verify hose connection.<br>Try a different ignition source.<br>Perform a leak check.";
+    } else if (t.includes('regulator') || t.includes('valve')) {
+      reply = "🔧 <strong>Regulator/Valve issue:</strong><br>Check for proper fit.<br>Inspect for wear or damage.<br>Replace if loose or leaking.<br>Use soapy water to test.";
+    } else {
+      reply = "I can help with:<br>• Gas leaks<br>• Fire response<br>• Burner or regulator issues<br>• Installation problems<br><br>Type your concern or call <a href='tel:+254800720000' style='color:#D97706;'>0800 720 000</a>.";
     }
-    function append(line){ log.textContent += "\n" + line; log.scrollTop = log.scrollHeight; }
-    function sendMsg(){
-        var msg = (input.value || '').trim();
-        if (!msg) return; append('You: ' + msg); input.value = '';
-        setTimeout(function(){ respond(msg); }, 300);
-    }
-    if (send) send.addEventListener('click', sendMsg);
-    if (input) input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); sendMsg(); } });
+
+    append(reply, 'bot');
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function sendMsg(){
+    const msg = input.value.trim();
+    if (!msg) return;
+    append(msg, 'user');
+    input.value = '';
+    setTimeout(() => respond(msg), 400);
+  }
+
+  if (send) send.addEventListener('click', sendMsg);
+  if (input) input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); sendMsg(); } });
 })();
 </script>
+
 {% endblock %}
