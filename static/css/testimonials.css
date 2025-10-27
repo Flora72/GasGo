@@ -1,4 +1,4 @@
-/* 🌿 Base Reset & Typography */
+/* Base Reset & Typography */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -25,7 +25,7 @@ p, label {
   line-height: 1.6;
 }
 
-/* 🔗 Header */
+/* Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -140,7 +140,6 @@ section h2 {
   font-size: 1.1rem;
   color: #4B2E2E;
 }
-
 /* Buttons */
 .btn-primary {
   background-color: #D97706;
