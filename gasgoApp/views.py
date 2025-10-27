@@ -172,7 +172,6 @@ def my_orders(request):
     return render(request, 'my_orders.html', {'orders': orders})
 
 
-
 def find_nearest_vendor(lat, lng):
     distance_expr = ExpressionWrapper(
         (F('location_lat') - lat) * (F('location_lat') - lat) +
