@@ -34,53 +34,81 @@
 
 
 <section>
-  <h2>Featured stories</h2>
+  <h2 class="text-center mb-4">Featured stories</h2>
   <div class="carousel-container">
     <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-             <div class="carousel-item active text-center">
-        <img src="{% static 'images/testimonial1.jpg' %}" class="d-block mx-auto rounded-circle" alt="Brian recommending GasGo" width="120">
-        <blockquote class="mt-3">“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</blockquote>
-        <p>- Brian, South C</p>
+      <div class="carousel-inner text-center">
+
+        <div class="carousel-item active">
+          <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
+            <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo"
+                 style="height:600px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
+            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
+              <blockquote class="blockquote mb-2" style="font-size:1rem;">“I love the convenience. No more carrying heavy cylinders. Highly recommend GasGo.”</blockquote>
+              <footer class="blockquote-footer">Brian, South C</footer>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
+            <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery"
+                 style="height:600px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
+            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
+              <blockquote class="blockquote mb-2" style="font-size:1rem;">“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</blockquote>
+              <footer class="blockquote-footer">Amina, Westlands</footer>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
+            <img src="{% static 'images/testimonial3.jpg' %}" alt="Mercy talking about customer support services"
+                 style="height:600px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
+            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
+              <blockquote class="blockquote mb-2" style="font-size:1rem;">“Customer service was helpful and the emergency top-up saved our dinner party.”</blockquote>
+              <footer class="blockquote-footer">Mercy, Parklands</footer>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
+            <img src="https://envirofit.org/wp-content/uploads/2018/03/kangemi12_edit_NewValve_BlogM.jpg" alt="Kevin comparing prices"
+                 style="height:600px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
+            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
+              <blockquote class="blockquote mb-2" style="font-size:1rem;">“Prices are fair and riders are professional. The safety checks gave me peace of mind.”</blockquote>
+              <footer class="blockquote-footer">Peninah, Kirigiti</footer>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
+            <img src="https://www.betteringhumanlives.org/wp-content/uploads/2025/05/Bettering-Human-Lives-Foundation-Woman-Cooking-with-Gas-Stove.jpg" alt="Joy happy with delivery"
+                 style="height:600px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
+            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
+              <blockquote class="blockquote mb-2" style="font-size:1rem;">“Ordering and tracking were simple. Got my 6kg cylinder within the hour.”</blockquote>
+              <footer class="blockquote-footer">Joy, Ngong Road</footer>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="carousel-item text-center">
-        <img src="{% static 'images/testimonial2.jpg' %}" class="d-block mx-auto rounded-circle" alt="Amina smiling after GasGo delivery" width="120">
-        <blockquote class="mt-3">“Delivery was quick and the cylinder was properly sealed. Cooking again in no time!”</blockquote>
-        <p>- Amina, Westlands</p>
-      </div>
-
-      <div class="carousel-item text-center">
-        <img src="{% static 'images/testimonial3.jpg' %}" class="d-block mx-auto rounded-circle" alt="Mercy talking about customer support services" width="120">
-        <blockquote class="mt-3">“Customer service was helpful and the emergency top-up saved our dinner party.”</blockquote>
-        <p>- Mercy, Parklands</p>
-      </div>
-
-      <div class="carousel-item text-center">
-        <img src="{% static 'images/testimonial4.jpg' %}" class="d-block mx-auto rounded-circle" alt="Kevin comparing prices" width="120">
-        <blockquote class="mt-3">“Prices are fair and riders are professional. The safety checks gave me peace of mind.”</blockquote>
-        <p>- Kevin, Kilimani</p>
-      </div>
-
-      <div class="carousel-item text-center">
-        <img src="{% static 'images/testimonial5.jpg' %}" class="d-block mx-auto rounded-circle" alt="Joy happy with delivery" width="120">
-        <blockquote class="mt-3">“Ordering and tracking were simple. Got my 13kg cylinder within the hour.”</blockquote>
-        <p>- Joy, Ngong Road</p>
-      </div>
-
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
     </div>
-
-
-      </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon"></span>
-    </button>
   </div>
 </section>
+
+
+
+
 
 </main>
 
