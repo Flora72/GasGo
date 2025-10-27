@@ -120,7 +120,6 @@ def login(request):
     form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
-
 def logout_view(request):
     auth_logout(request)
     messages.info(request, "You have been logged out.")
@@ -170,7 +169,6 @@ def forgot_password(request):
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
-
 
 def find_nearest_vendor(lat, lng):
     distance_expr = ExpressionWrapper(
