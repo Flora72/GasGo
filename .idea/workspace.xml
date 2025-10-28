@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="database configuration">
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="changes to the views">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gasgoApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/gasgoApp/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,6 +125,10 @@
       <workItem from="1761403282300" duration="8126000" />
       <workItem from="1761457042287" duration="4858000" />
       <workItem from="1761540193806" duration="1053000" />
+      <workItem from="1761541877936" duration="2213000" />
+      <workItem from="1761634054231" duration="1579000" />
+      <workItem from="1761645080041" duration="4335000" />
+      <workItem from="1761655948115" duration="1346000" />
     </task>
     <task id="LOCAL-00001" summary="favicon added">
       <option name="closed" value="true" />
@@ -159,7 +162,23 @@
       <option name="project" value="LOCAL" />
       <updated>1761126440269</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="changes to the views">
+      <option name="closed" value="true" />
+      <created>1761541914234</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1761541914234</updated>
+    </task>
+    <task id="LOCAL-00006" summary="changes to the views">
+      <option name="closed" value="true" />
+      <created>1761541939767</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1761541939767</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -179,17 +198,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="favicon added" />
     <MESSAGE value="database configuration" />
-    <option name="LAST_COMMIT_MESSAGE" value="database configuration" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gasgoApp/views.py</url>
-          <line>53</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="changes to the views" />
+    <option name="LAST_COMMIT_MESSAGE" value="changes to the views" />
   </component>
 </project>
