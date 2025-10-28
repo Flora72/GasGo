@@ -17,6 +17,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.CharField(max_length=20, unique=True, default=generate_order_id)
+    price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
+    total_cost = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=20, default='Pending')
 
     # Delivery details
