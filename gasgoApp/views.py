@@ -18,9 +18,7 @@ from django.db.models import FloatField, ExpressionWrapper
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from .models import USSDOrder
-# -------------------------------------
-# GENERAL VIEWS
-# --------------------------------------
+
 def index(request):
     return render(request, 'index.html')
 
@@ -55,10 +53,6 @@ def gasbot(request):
     return render(request, 'gasbot.html')
 def dashboard(request):
     return render(request, 'dashboard.html')
-
-# -------------------------------------
-# AUTH RELATED VIEWS
-# --------------------------------------
 
 def signup(request):
     if request.method == 'POST':
@@ -139,14 +133,12 @@ def logout_view(request):
 def forgot_password(request):
     if request.method == 'POST':
         try:
-            # 1. Get the email from the frontend request body
             data = json.loads(request.body)
             email = data.get('email')
 
             if not email:
                 return JsonResponse({"message": "Email is required"}, status=400)
 
-            # 2. Use Django's PasswordResetForm to handle the logic
             form = PasswordResetForm({'email': email})
 
             if form.is_valid():
@@ -156,8 +148,6 @@ def forgot_password(request):
                     from_email='GasGo Assistance <gasgoassistance@gmail.com>',
                     subject_template_name='emails/password_reset_subject.txt',
                 )
-
-            # 3. Security Best Practice: Always return a generic success message
             return JsonResponse({
                 "message": "If the email is registered, a password reset link has been sent."
             }, status=200)
@@ -165,15 +155,12 @@ def forgot_password(request):
         except json.JSONDecodeError:
             return JsonResponse({"message": "Invalid data format"}, status=400)
         except ValidationError:
-            # Catch errors like invalid email format, but still return success message
             pass
 
-    # If the method is GET (user is just browsing to the page), render the HTML form
+   
     return render(request, 'forgot_password.html')
 
-# -------------------------------------
-#  ORDER & VENDOR VIEWS
-# --------------------------------------
+
 
 @login_required
 def my_orders(request):
@@ -204,7 +191,7 @@ def order(request):
             'notes': request.POST.get('notes'),
         }
 
-        # Capture and validate coordinates
+        
         try:
             lat = float(request.POST.get('delivery_latitude'))
             lng = float(request.POST.get('delivery_longitude'))
@@ -216,12 +203,12 @@ def order(request):
         except (TypeError, ValueError):
             lat = lng = None
 
-        # Required field check
+        
         if not order_details['size'] or not order_details['address'] or not order_details['phone']:
             messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
             return render(request, 'order.html', {'order_details': order_details})
 
-        # Create order
+        
         order_id = "GGO-" + get_random_string(10).upper()
         new_order = Order.objects.create(
             user=request.user,
@@ -230,7 +217,7 @@ def order(request):
             **order_details
         )
 
-        # Assign vendor based on coordinates
+        
         if lat is not None and lng is not None:
             vendor = find_nearest_vendor(lat, lng)
             if vendor:
@@ -255,13 +242,13 @@ def delete_order(request, order_id):
 @login_required(login_url='login')
 def confirm_order(request):
     if request.method == 'POST':
-        # --- 1. Retrieve Pending Order Data from Session ---
+        
         pending_order_data = request.session.get('pending_order_data')
         if not pending_order_data:
             messages.error(request, "Session expired or missing order data. Please start again.")
             return redirect('order')
 
-        # --- 2. Extract Vendor and Notes from Form ---
+        
         vendor_name = request.POST.get('vendor_choice')
         notes = request.POST.get('notes', '')
 
@@ -269,7 +256,6 @@ def confirm_order(request):
             messages.error(request, "Please select a vendor to proceed.")
             return redirect('available_vendors')
 
-        # --- 3. Combine All Data ---
         final_order_data = {
             **pending_order_data,
             'vendor': vendor_name,
@@ -278,7 +264,7 @@ def confirm_order(request):
             'status': 'Pending'
         }
 
-        # --- 4. Save to Database ---
+    
         try:
             new_order = Order.objects.create(**final_order_data)
             del request.session['pending_order_data']
@@ -289,7 +275,7 @@ def confirm_order(request):
             messages.error(request, "Something went wrong while confirming your order.")
             return redirect('available_vendors')
 
-    # If GET request, redirect to order page
+   
     return redirect('order')
 
 
@@ -350,19 +336,22 @@ def track_order(request):
 @login_required
 def profile(request):
     user_profile, created = Profile.objects.get_or_create(user=request.user)
+
+   
+    if request.method == 'POST' and 'profile_image' in request.FILES:
+        user_profile.profile_image = request.FILES['profile_image']
+        user_profile.save()
+        return redirect('profile')
+
     
-    if request.method == 'POST':
-        # Check if a file was sent with the request
-        if 'profile_image' in request.FILES:
-            # Assign the uploaded file to the model field
-            user_profile.profile_image = request.FILES['profile_image']
-            user_profile.save()
-            # Redirect to the profile page to prevent form resubmission
-            return redirect('profile') 
+    latest_order = Order.objects.filter(
+        user=request.user,
+        status='Pending Payment'
+    ).order_by('-created_at').first()
 
     context = {
         'user_profile': user_profile,
-        # ... other context data
+        'order': latest_order 
     }
     return render(request, 'profile.html', context)
 
@@ -372,7 +361,7 @@ def history(request):
 @login_required 
 def vendors(request):
     if request.method == 'POST':
-        # Step 1: Vendor selection from available_vendors.html
+        
         if 'vendor_lat' in request.POST and 'vendor_lng' in request.POST:
             vendor_choice = request.POST.get('vendor_choice')
             vendor_lat = request.POST.get('vendor_lat')
@@ -383,7 +372,7 @@ def vendors(request):
                 messages.error(request, "Please select a vendor.")
                 return redirect('available_vendors')
 
-            # Store vendor info in session
+            
             request.session['selected_vendor'] = {
                 'name': vendor_choice,
                 'lat': vendor_lat,
@@ -393,7 +382,6 @@ def vendors(request):
 
             return redirect('vendors')
 
-        # Step 2: Payment method selection from vendors.html
         vendor_choice = request.POST.get('vendor_choice')
         payment_method = request.POST.get('payment_method')
         final_notes = request.POST.get('notes')
@@ -440,14 +428,14 @@ def vendors(request):
             new_order.save()
             return render(request, 'confirm_order.html', {'order': new_order})
 
-    # GET request: show vendor selection and payment method form
+  
     vendors = Vendor.objects.all()
     return render(request, 'vendors.html', {'vendors': vendors})
 
 
     if request.method == 'POST':
         vendor_choice = request.POST.get('vendor_choice')
-        vendor_lat = request.POST.get('vendor_lat')  # Optional if not from map
+        vendor_lat = request.POST.get('vendor_lat')  
         vendor_lng = request.POST.get('vendor_lng')
         payment_method = request.POST.get('payment_method')
         final_notes = request.POST.get('notes')
@@ -494,8 +482,7 @@ def vendors(request):
 
     vendors = Vendor.objects.all()
     return render(request, 'vendors.html', {'vendors': vendors})
-# PAYMENT VIEWS (m-pesa integration)
-# --------------------------------------
+
 def format_phone_number(number):
     number = str(number)
     if number.startswith('0'):
@@ -511,7 +498,7 @@ def initiate_payment(request, order_id):
     order = Order.objects.get(order_id=order_id, user=request.user)
     
     if request.method == 'POST':
-        raw_phone_number = request.POST.get('phone_number') # <--- Get phone from form
+        raw_phone_number = request.POST.get('phone_number') 
         
         if not raw_phone_number:
             messages.error(request, "Phone number is required.")
@@ -519,10 +506,10 @@ def initiate_payment(request, order_id):
             
         phone_number = format_phone_number(raw_phone_number)
         
-        # Ensure amount is a whole number (integer) as required by M-Pesa
+        
         amount = int(order.total_cost) 
         
-        # --- API Call ---
+        
         response_data = initiate_stk_push(phone_number, amount, order.order_id)
         
         # Check M-Pesa Response Code
@@ -553,27 +540,19 @@ def mpesa_callback(request):
             checkout_request_id = data['Body']['stkCallback']['CheckoutRequestID']
 
             if result_code == 0:
-                # PAYMENT SUCCESSFUL!
-                # Extract details (amount, MpesaReceiptNumber, TransactionDate, AccountReference)
+
                 items = data['Body']['stkCallback']['CallbackMetadata']['Item']
                 
-                # Logic to parse items and update order status in your database
-                # (You would use the AccountReference to find the Order model instance)
-                # Example: order_id = next(item['Value'] for item in items if item['Name'] == 'AccountReference').split('-')[1]
-                
-                # 1. Update the Order status to 'Paid'
-                # 2. Log the transaction details (receipt number, amount)
                 pass 
             else:
-                # PAYMENT FAILED or was CANCELLED by the user
-                # 1. Update the Order status to 'Payment Failed'
+                
                 pass
 
         except Exception as e:
-            # Handle JSON parsing errors or unexpected M-Pesa format
+            
             print(f"Error processing M-Pesa callback: {e}")
             
-        # M-Pesa requires a specific success response:
+       
         return JsonResponse({"ResultCode": 0, "ResultDesc": "Accepted"})
     
     return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid Method"}, status=405)
@@ -606,7 +585,7 @@ def geocode_address_mapbox(address):
         data = response.json()
         if data.get('features'):
             coords = data['features'][0]['geometry']['coordinates']
-            return coords[1], coords[0]  # lat, lng
+            return coords[1], coords[0]  
     except requests.RequestException as e:
         print("Mapbox geocoding failed:", e)
     return None, None
@@ -630,10 +609,10 @@ def find_petrol_stations_mapbox(lng, lat):
 
 @login_required
 def available_vendors(request):
-    # Default fallback: Nairobi CBD
+    
     user_lat, user_lng = -1.2921, 36.8219
 
-    # Try to get location from the most recent order
+    
     order_id = request.session.get('pending_order_id')
     order = Order.objects.filter(order_id=order_id, user=request.user).first()
 
@@ -643,7 +622,7 @@ def available_vendors(request):
     else:
         print("No delivery coordinates found. Using fallback.")
 
-    # Fetch nearby petrol stations
+    
     stations = find_petrol_stations_mapbox(user_lng, user_lat)
 
     formatted_stations = [
@@ -656,7 +635,7 @@ def available_vendors(request):
         for s in stations
     ]
 
-    # Optional: assign first station as vendor (for demo or auto-mode)
+   
     if order and formatted_stations:
         first = formatted_stations[0]
         vendor, _ = Vendor.objects.get_or_create(name=first["name"])
@@ -672,9 +651,7 @@ def available_vendors(request):
         "stations": formatted_stations
     })
 
-# -------------------------------------
-# USSD ACCESS VIEWS
-# --------------------------------------
+
 
 def ussd_access(request):
     return render(request, 'ussd_access.html')
