@@ -17,30 +17,31 @@
         <p style="font-size: 13px; color:#555;">Tip: Prices shown are indicative. Final price is confirmed on delivery after safety checks.</p>
     </section>
 
-    <form method="post" action="{% url 'vendors' %}">
-    {% csrf_token %}
-    <section>
-        <h2>Step 3 of 3: Payment</h2>
-        <p>
-            <label for="id_payment">Payment method</label><br>
-            <select id="id_payment" name="payment_method" required>
-                <option value="" disabled selected>Select payment method</option>
-                <option value="Cash">Cash on delivery</option>
-                <option value="M-Pesa">M-Pesa </option>
-            </select>
-        </p>
-        <p>
-            <label for="id_notes">Notes (optional)</label><br>
-            <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
-        </p>
-    </section>
+  <form method="post" action="{% url 'vendors' %}">
+  {% csrf_token %}
+  <input type="hidden" name="vendor_choice" value="{{ selected_vendor.name }}">
 
+  <section>
+    <h2>Step 3 of 3: Payment</h2>
     <p>
-        <button type="submit" class="btn btn-primary">Confirm and start delivery</button>
-        <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
+      <label for="id_payment">Payment method</label><br>
+      <select id="id_payment" name="payment_method" required>
+        <option value="" disabled selected>Select payment method</option>
+        <option value="Cash">Cash on delivery</option>
+        <option value="M-Pesa">M-Pesa</option>
+      </select>
     </p>
-</form>
+    <p>
+      <label for="id_notes">Notes (optional)</label><br>
+      <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
+    </p>
+  </section>
 
+  <p>
+    <button type="submit" class="btn btn-primary">Confirm Order</button>
+    <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
+  </p>
+</form>
 
     <section>
         <p style="font-size: 13px; color:#555;">By confirming, you'll proceed to tracking while our team assigns the nearest rider.</p>
