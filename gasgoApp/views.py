@@ -59,6 +59,7 @@ def dashboard(request):
 # -------------------------------------
 # AUTH RELATED VIEWS
 # --------------------------------------
+
 def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -71,16 +72,19 @@ def signup(request):
         password2 = request.POST.get('password2')
 
         if password != password2:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {
+                'alert_message': "Passwords do not match."
+            })
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, "That username is already taken.")
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {
+                'alert_message': "That username is already taken."
+            })
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "An account with that email already exists.")
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {
+                'alert_message': "An account with that email already exists."
+            })
 
         user = User.objects.create_user(
             username=username,
@@ -91,34 +95,40 @@ def signup(request):
         )
         user.save()
 
-        messages.success(request, "Account created successfully.")
+        request.session['confirm_message'] = "Account created successfully. Do you want to log in now?"
         return redirect('login')
 
     return render(request, 'signup.html')
 
+
 def login(request):
+    confirm_message = request.session.pop('confirm_message', None)
+    alert_message = None
+
     if request.method == 'POST':
-        # AuthenticationForm expects 'username' and 'password'
         form = AuthenticationForm(request, data=request.POST)
-        
+
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            
+
             user = authenticate(username=username, password=password)
-            
+
             if user is not None:
                 auth_login(request, user)
-                messages.success(request, f"Welcome back, {user.username}!")
-                return redirect('dashboard') 
+                request.session['alert_message'] = f"Welcome back, {user.username}!"
+                return redirect('dashboard')
             else:
-                messages.error(request, "Invalid username or password.")
+                alert_message = "Invalid username or password."
         else:
-            messages.error(request, "Invalid username or password.")
-            
-    # For GET requests or failed POST requests
+            alert_message = "Invalid username or password."
+
     form = AuthenticationForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {
+        'form': form,
+        'alert_message': alert_message,
+        'confirm_message': confirm_message
+    })
 
 def logout_view(request):
     auth_logout(request)
