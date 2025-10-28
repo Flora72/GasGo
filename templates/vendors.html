@@ -19,7 +19,6 @@
 
     <form method="post" action="{% url 'vendors' %}">
     {% csrf_token %}
-    <!-- Payment Method -->
     <section>
         <h2>Step 3 of 3: Payment</h2>
         <p>
@@ -36,7 +35,6 @@
         </p>
     </section>
 
-    <!-- Submit -->
     <p>
         <button type="submit" class="btn btn-primary">Confirm and start delivery</button>
         <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
