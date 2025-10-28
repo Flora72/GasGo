@@ -19,6 +19,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from .models import USSDOrder
 
+
+# -------------------------------------------
+# GENERAL VIEWS
+# -------------------------------------------
 def index(request):
     return render(request, 'index.html')
 
@@ -54,6 +58,26 @@ def gasbot(request):
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+def history(request):
+    return render(request, 'history.html')
+
+@login_required
+def history_view(request):
+    try:
+        user_orders = Order.objects.filter(
+            user=request.user
+        ).order_by('-order_date')
+    except NameError:
+        user_orders = []
+
+    context = {
+        'orders': user_orders,
+    }
+    return render(request, 'history.html', context)
+
+# -------------------------------------------
+# AUTH RELATED VIEWS
+# -------------------------------------------
 def signup(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -93,7 +117,6 @@ def signup(request):
         return redirect('login')
 
     return render(request, 'signup.html')
-
 
 def login(request):
     confirm_message = request.session.pop('confirm_message', None)
@@ -160,8 +183,30 @@ def forgot_password(request):
    
     return render(request, 'forgot_password.html')
 
+@login_required
+def profile(request):
+    user_profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST' and 'profile_image' in request.FILES:
+        user_profile.profile_image = request.FILES['profile_image']
+        user_profile.save()
+        return redirect('profile')
+
+    latest_order = Order.objects.filter(
+        user=request.user,
+        status='Pending Payment'
+    ).order_by('-created_at').first()
+
+    context = {
+        'user_profile': user_profile,
+        'order': latest_order
+    }
+    return render(request, 'profile.html', context)
 
 
+# -------------------------------------------
+# ORDERS AND VENDORS RELATED VIEWS
+# -------------------------------------------
 @login_required
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
@@ -208,7 +253,46 @@ def order(request):
             messages.error(request, "Please fill in all required fields (Size, Address, Phone).")
             return render(request, 'order.html', {'order_details': order_details})
 
-        
+        PRICE_MAP = {
+            # ProGas
+            ('ProGas', '6kg'): 1100,
+            ('ProGas', '13kg'): 2500,
+            ('ProGas', '22.5kg'): 4300,
+            ('ProGas', '35kg'): 6700,
+            ('ProGas', '50kg'): 9500,
+
+            # TotalEnergies
+            ('TotalEnergies', '6kg'): 1050,
+            ('TotalEnergies', '13kg'): 2450,
+            ('TotalEnergies', '22.5kg'): 4200,
+            ('TotalEnergies', '35kg'): 6600,
+            ('TotalEnergies', '50kg'): 9400,
+
+            # Afri-Gas
+            ('Afri-Gas', '6kg'): 1020,
+            ('Afri-Gas', '13kg'): 2400,
+            ('Afri-Gas', '22.5kg'): 4150,
+            ('Afri-Gas', '35kg'): 6550,
+            ('Afri-Gas', '50kg'): 9300,
+
+            # K-Gas
+            ('K-Gas', '6kg'): 1000,
+            ('K-Gas', '13kg'): 2350,
+            ('K-Gas', '22.5kg'): 4100,
+            ('K-Gas', '35kg'): 6500,
+            ('K-Gas', '50kg'): 9200,
+
+            # RubisGas
+            ('RubisGas', '6kg'): 1030,
+            ('RubisGas', '13kg'): 2420,
+            ('RubisGas', '22.5kg'): 4180,
+            ('RubisGas', '35kg'): 6580,
+            ('RubisGas', '50kg'): 9350,
+        }
+
+        price = PRICE_MAP.get((order_details['brand'], order_details['size']), 0)
+        order_details['price'] = price
+
         order_id = "GGO-" + get_random_string(10).upper()
         new_order = Order.objects.create(
             user=request.user,
@@ -217,7 +301,24 @@ def order(request):
             **order_details
         )
 
-        
+        new_order.total_cost = new_order.price * int(new_order.quantity)
+        new_order.save()
+        request.session['pending_order_data'] = {
+            'order_id': new_order.order_id,
+            'size': new_order.size,
+            'brand': new_order.brand,
+            'exchange': new_order.exchange,
+            'quantity': new_order.quantity,
+            'full_name': new_order.full_name,
+            'phone': new_order.phone,
+            'address': new_order.address,
+            'directions': new_order.directions,
+            'preferred_time': new_order.preferred_time,
+            'price': new_order.price,
+            'delivery_latitude': new_order.delivery_latitude,
+            'delivery_longitude': new_order.delivery_longitude,
+        }
+
         if lat is not None and lng is not None:
             vendor = find_nearest_vendor(lat, lng)
             if vendor:
@@ -231,6 +332,7 @@ def order(request):
         messages.success(request, f"Order placed! Your tracking ID is {new_order.order_id}")
         return redirect('available_vendors')
 
+
     return render(request, 'order.html')
 
 @login_required
@@ -241,43 +343,49 @@ def delete_order(request, order_id):
 
 @login_required(login_url='login')
 def confirm_order(request):
+    vendor_name = request.POST.get('vendor_choice')
+    pending_order_data = request.session.get('pending_order_data')
+    print("Session pending_order_data:", request.session.get('pending_order_data'))
+
     if request.method == 'POST':
-        
-        pending_order_data = request.session.get('pending_order_data')
         if not pending_order_data:
             messages.error(request, "Session expired or missing order data. Please start again.")
             return redirect('order')
 
-        
         vendor_name = request.POST.get('vendor_choice')
         notes = request.POST.get('notes', '')
 
         if not vendor_name:
             messages.error(request, "Please select a vendor to proceed.")
             return redirect('available_vendors')
+        try:
+            vendor_obj = Vendor.objects.get(name=vendor_name)
+        except Vendor.DoesNotExist:
+            messages.error(request, "Selected vendor not found. Please try again.")
+            return redirect('available_vendors')
 
         final_order_data = {
             **pending_order_data,
-            'vendor': vendor_name,
+            'vendor': vendor_obj,
             'notes': notes,
             'user': request.user,
             'status': 'Pending'
         }
 
-    
         try:
             new_order = Order.objects.create(**final_order_data)
             del request.session['pending_order_data']
             messages.success(request, "Order confirmed! Proceed to payment.")
-            return redirect('payment', order_id=new_order.id)
+            return redirect('initiate_payment', order_id=new_order.order_id)
         except Exception as e:
             print("Order creation failed:", e)
             messages.error(request, "Something went wrong while confirming your order.")
             return redirect('available_vendors')
 
-   
-    return redirect('order')
 
+    return render(request, 'confirm_order.html', {
+        'pending_order': pending_order_data
+    })
 
 def is_valid_coord(value):
     try:
@@ -334,57 +442,29 @@ def track_order(request):
     return render(request, 'track_order.html', context)
 
 @login_required
-def profile(request):
-    user_profile, created = Profile.objects.get_or_create(user=request.user)
-
-   
-    if request.method == 'POST' and 'profile_image' in request.FILES:
-        user_profile.profile_image = request.FILES['profile_image']
-        user_profile.save()
-        return redirect('profile')
-
-    
-    latest_order = Order.objects.filter(
-        user=request.user,
-        status='Pending Payment'
-    ).order_by('-created_at').first()
-
-    context = {
-        'user_profile': user_profile,
-        'order': latest_order 
-    }
-    return render(request, 'profile.html', context)
-
-def history(request):
-    return render(request, 'history.html')
-
-@login_required 
 def vendors(request):
     if request.method == 'POST':
-        
-        if 'vendor_lat' in request.POST and 'vendor_lng' in request.POST:
-            vendor_choice = request.POST.get('vendor_choice')
-            vendor_lat = request.POST.get('vendor_lat')
-            vendor_lng = request.POST.get('vendor_lng')
-            final_notes = request.POST.get('notes')
+        vendor_choice = request.POST.get('vendor_choice')
+        vendor_lat = request.POST.get('vendor_lat')
+        vendor_lng = request.POST.get('vendor_lng')
+        payment_method = request.POST.get('payment_method')
+        final_notes = request.POST.get('notes')
 
+        # Step 1: Save vendor selection to session if lat/lng are present
+        if vendor_lat and vendor_lng:
             if not vendor_choice:
                 messages.error(request, "Please select a vendor.")
                 return redirect('available_vendors')
 
-            
             request.session['selected_vendor'] = {
                 'name': vendor_choice,
                 'lat': vendor_lat,
                 'lng': vendor_lng,
                 'notes': final_notes
             }
+            return redirect('vendors')  
 
-            return redirect('vendors')
-
-        vendor_choice = request.POST.get('vendor_choice')
-        payment_method = request.POST.get('payment_method')
-        final_notes = request.POST.get('notes')
+        # Step 2: Final confirmation and order creation
         pending_order_data = request.session.get('pending_order_data', {})
         vendor_data = request.session.get('selected_vendor', {})
 
@@ -401,10 +481,17 @@ def vendors(request):
         )
 
         total_cost = 3200.00
+        required_fields = ['full_name', 'phone', 'address', 'size', 'brand', 'quantity']
+        missing_fields = [field for field in required_fields if not pending_order_data.get(field)]
+
+        if missing_fields:
+            messages.error(request, f"Missing required fields: {', '.join(missing_fields)}. Please restart your order.")
+            return redirect('orders')
+
         new_order = Order.objects.create(
             user=request.user,
             vendor=selected_vendor,
-            status='Pending Payment',
+            status='Pending Payment' if payment_method == 'M-Pesa' else 'Confirmed',
             total_cost=total_cost,
             notes=final_notes or vendor_data.get('notes'),
             size=pending_order_data.get('size'),
@@ -424,65 +511,62 @@ def vendors(request):
         if payment_method == 'M-Pesa':
             return render(request, 'payment.html', {'order': new_order})
         else:
-            new_order.status = 'Confirmed'
-            new_order.save()
             return render(request, 'confirm_order.html', {'order': new_order})
 
-  
-    vendors = Vendor.objects.all()
-    return render(request, 'vendors.html', {'vendors': vendors})
-
-
-    if request.method == 'POST':
-        vendor_choice = request.POST.get('vendor_choice')
-        vendor_lat = request.POST.get('vendor_lat')  
-        vendor_lng = request.POST.get('vendor_lng')
-        payment_method = request.POST.get('payment_method')
-        final_notes = request.POST.get('notes')
-        pending_order_data = request.session.get('pending_order_data', {})
-
-        if not vendor_choice or not payment_method or not pending_order_data:
-            messages.error(request, "Vendor or payment method missing. Please try again.")
-            return redirect('available_vendors')
-
-        selected_vendor, _ = Vendor.objects.get_or_create(
-            name=vendor_choice,
-            defaults={
-                'location_lat': vendor_lat,
-                'location_lng': vendor_lng
-            }
-        )
-
-        total_cost = 3200.00
-        new_order = Order.objects.create(
-            user=request.user,
-            vendor=selected_vendor,
-            status='Pending Payment', 
-            total_cost=total_cost,
-            notes=final_notes,
-            size=pending_order_data.get('size'),
-            brand=pending_order_data.get('brand'),
-            exchange=pending_order_data.get('exchange'),
-            quantity=pending_order_data.get('quantity', 1),
-            full_name=pending_order_data.get('full_name'),
-            phone=pending_order_data.get('phone'),
-            address=pending_order_data.get('address'),
-            directions=pending_order_data.get('directions'),
-            preferred_time=pending_order_data.get('preferred_time'),
-        )
-
-        request.session.pop('pending_order_data', None)
-
-        if payment_method == 'M-Pesa':
-            return render(request, 'payment.html', {'order': new_order})
-        else:
-            new_order.status = 'Confirmed'
-            new_order.save()
-            return render(request, 'confirm_order.html', {'order': new_order})
+    # GET request: show vendor selection page
+    vendor_data = request.session.get('selected_vendor', {})
+    selected_vendor_name = vendor_data.get('name')
 
     vendors = Vendor.objects.all()
-    return render(request, 'vendors.html', {'vendors': vendors})
+    return render(request, 'vendors.html', {
+        'vendors': vendors,
+        'selected_vendor': {'name': selected_vendor_name}
+    })
 
+@login_required
+def available_vendors(request):
+    user_lat, user_lng = -1.2921, 36.8219
+
+    order_id = request.session.get('pending_order_id')
+    order = Order.objects.filter(order_id=order_id, user=request.user).first()
+
+    if order and order.delivery_latitude and order.delivery_longitude:
+        user_lat = order.delivery_latitude
+        user_lng = order.delivery_longitude
+    else:
+        print("No delivery coordinates found. Using fallback.")
+
+    stations = find_petrol_stations_mapbox(user_lng, user_lat)
+
+    formatted_stations = [
+        {
+            "name": s.get("text", "Unnamed"),
+            "address": s.get("place_name", ""),
+            "lat": s["geometry"]["coordinates"][1],
+            "lng": s["geometry"]["coordinates"][0]
+        }
+        for s in stations
+    ]
+
+    if order and formatted_stations:
+        first = formatted_stations[0]
+        vendor, _ = Vendor.objects.get_or_create(name=first["name"])
+        order.vendor = vendor
+        order.rider_latitude = first["lat"]
+        order.rider_longitude = first["lng"]
+        order.save()
+
+    return render(request, "available_vendors.html", {
+        "user_lat": user_lat,
+        "user_lng": user_lng,
+        "google_api_key": settings.GOOGLE_MAPS_API_KEY,
+        "stations": formatted_stations,
+        "order": order
+    })
+
+# -------------------------------------------
+# PAYMENT RELATED VIEWS
+# -------------------------------------------
 def format_phone_number(number):
     number = str(number)
     if number.startswith('0'):
@@ -557,21 +641,10 @@ def mpesa_callback(request):
     
     return JsonResponse({"ResultCode": 1, "ResultDesc": "Invalid Method"}, status=405)
 
+# -------------------------------------------
+# MAP RELATED VIEWS
+# -------------------------------------------
 @login_required
-def history_view(request):
-    try:
-        user_orders = Order.objects.filter(
-            user=request.user
-        ).order_by('-order_date')
-    except NameError:
-        user_orders = [] 
-    
-    context = {
-        'orders': user_orders,
-    }
-    return render(request, 'history.html', context)
-
-
 def geocode_address_mapbox(address):
     url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{address}.json"
     params = {
@@ -607,55 +680,11 @@ def find_petrol_stations_mapbox(lng, lat):
         print("Mapbox station lookup failed:", e)
         return []
 
-@login_required
-def available_vendors(request):
-    
-    user_lat, user_lng = -1.2921, 36.8219
-
-    
-    order_id = request.session.get('pending_order_id')
-    order = Order.objects.filter(order_id=order_id, user=request.user).first()
-
-    if order and order.delivery_latitude and order.delivery_longitude:
-        user_lat = order.delivery_latitude
-        user_lng = order.delivery_longitude
-    else:
-        print("No delivery coordinates found. Using fallback.")
-
-    
-    stations = find_petrol_stations_mapbox(user_lng, user_lat)
-
-    formatted_stations = [
-        {
-            "name": s.get("text", "Unnamed"),
-            "address": s.get("place_name", ""),
-            "lat": s["geometry"]["coordinates"][1],
-            "lng": s["geometry"]["coordinates"][0]
-        }
-        for s in stations
-    ]
-
-   
-    if order and formatted_stations:
-        first = formatted_stations[0]
-        vendor, _ = Vendor.objects.get_or_create(name=first["name"])
-        order.vendor = vendor
-        order.rider_latitude = first["lat"]
-        order.rider_longitude = first["lng"]
-        order.save()
-
-    return render(request, "available_vendors.html", {
-        "user_lat": user_lat,
-        "user_lng": user_lng,
-        "google_api_key": settings.GOOGLE_MAPS_API_KEY,
-        "stations": formatted_stations
-    })
-
-
-
+# -------------------------------------------
+# AFRSTKNG VIEWS
+# -------------------------------------------
 def ussd_access(request):
     return render(request, 'ussd_access.html')
-
 @csrf_exempt
 def ussd_callback(request):
     if request.method == "POST":
