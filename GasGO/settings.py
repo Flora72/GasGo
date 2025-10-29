@@ -80,15 +80,12 @@ WSGI_APPLICATION = 'GasGO.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 
+
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config(
-            'DATABASE_URL',
-            default=f"postgres://{config('DB_USER')}:{config('DB_PASSWORD')}@{config('DB_HOST')}:{config('DB_PORT')}/{config('DB_NAME')}"
-        ),
-        conn_max_age=600
-    )
+    'default': dj_database_url.config(default=config('DATABASE_URL', default=''), conn_max_age=600)
 }
+
 
 
 # Password validation
