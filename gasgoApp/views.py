@@ -123,26 +123,19 @@ def login(request):
     alert_message = None
 
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+        user = authenticate(request, username=username, password=password)
 
-            user = authenticate(username=username, password=password)
-
-            if user is not None:
-                auth_login(request, user)
-                request.session['alert_message'] = f"Welcome back, {user.username}!"
-                return redirect('dashboard')
-            else:
-                alert_message = "Invalid username or password."
+        if user is not None:
+            auth_login(request, user)
+            request.session['alert_message'] = f"Welcome back, {user.username}!"
+            return redirect('dashboard')
         else:
             alert_message = "Invalid username or password."
 
-    form = AuthenticationForm()
     return render(request, 'login.html', {
-        'form': form,
         'alert_message': alert_message,
         'confirm_message': confirm_message
     })
