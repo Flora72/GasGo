@@ -418,65 +418,90 @@ img {
     background-color: #B45309;
 }
 
-/* Responsive */
+/* 📱 Mobile responsiveness for dashboard */
+/* 📱 Mobile responsiveness for dashboard */
 @media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
+  /* Sidebar hidden */
+  .sidebar {
+    display: none;
+  }
 
-    .main {
-        padding: 0.5rem; /* Less padding on small screens */
-    }
+  /* Main content padding */
+  .main {
+    padding: 0.5rem;
+  }
 
-    .topbar {
-        justify-content: space-between; 
-        padding: 0.5rem 1rem;
-    }
+  /* Topbar layout */
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
 
-    /* Stack the new three info cards */
-    .three-column-grid {
-        grid-template-columns: 1fr;
-    }
+  .topbar-profile-link {
+    margin-top: 0.5rem;
+  }
 
-    /* Stack status card elements */
-    .status-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-        padding: 15px;
-    }
+  .topbar-profile-pic img {
+    max-width: 60px;
+    height: auto;
+  }
 
-    .status-actions {
-        /* Force buttons to stack or spread horizontally */
-        width: 100%; 
-        justify-content: space-between;
-    }
-    
-    .status-actions a.btn {
-        flex-grow: 1; /* Make buttons expand */
-        text-align: center;
-        justify-content: center;
-    }
+  /* Grid stacking */
+  .three-column-grid,
+  .grid-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0;
+    max-width: 100%;
+  }
 
-    /* Stack the general utility cards */
-    .grid-cards {
-        grid-template-columns: repeat(2, 1fr); /* Two columns for smaller devices */
-        padding: 0;
-        max-width: 100%;
-    }
+  /* Card layout */
+  .card {
+    padding: 1rem;
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
 
-    .card {
-        padding: 1rem;
-        max-width: 100%;
-    }
+  /* Status cards */
+  .status-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+  }
 
-    #gasbot-float {
-        bottom: 16px;
-        right: 16px;
-    }
+  .status-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 
-    #gasbot-float button {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
-    }
+  .status-actions a.btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+
+  /* GasBot floating button */
+  #gasbot-float {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  #gasbot-float button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  /* Welcome text scaling */
+  .welcome,
+  .tagline,
+  .profile {
+    font-size: 1rem;
+    text-align: left;
+  }
 }

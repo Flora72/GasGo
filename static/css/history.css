@@ -110,51 +110,101 @@ h1, h2 {
     min-width: 180px;
 }
 
-/* Responsive adjustments */
+/* 📱 Mobile responsiveness for history page */
 @media (max-width: 768px) {
-    .history-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .filter-controls {
-        flex-direction: column;
-        width: 100%;
-    }
-    .filter-controls input, .filter-controls select {
-        width: 100%;
-    }
-    /* Make table rows stack vertically for small screens */
-    .history-table, .history-table thead, .history-table tbody, .history-table th, .history-table td, .history-table tr { 
-        display: block; 
-    }
-    .history-table thead tr { 
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-    }
-    .history-table tr { 
-        border: 1px solid #ccc;
-        margin-bottom: 0.8rem;
-        border-radius: 8px;
-    }
-    .history-table td { 
-        border: none;
-        position: relative;
-        padding-left: 50%;
-        text-align: right;
-    }
-    .history-table td:before { 
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        text-align: left;
-        font-weight: 600;
-        color: #7B3F00;
-    }
+  /* Header and filters */
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .filter-controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .filter-controls input,
+  .filter-controls select {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+  }
+
+  /* Table stacking */
+  .history-table,
+  .history-table thead,
+  .history-table tbody,
+  .history-table th,
+  .history-table td,
+  .history-table tr {
+    display: block;
+  }
+
+  .history-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  .history-table tr {
+    border: 1px solid #ccc;
+    margin-bottom: 0.8rem;
+    border-radius: 8px;
+    padding: 0.8rem;
+    background-color: #fff;
+  }
+
+  .history-table td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+    text-align: right;
+    font-size: 0.95rem;
+  }
+
+  .history-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 600;
+    color: #7B3F00;
+  }
+
+  /* Buttons */
+  .btn,
+  .btn-outline {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  /* Footer */
+  footer nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  footer a {
+    font-size: 1rem;
+  }
+
+  footer p,
+  footer small {
+    text-align: center;
+  }
 }
+
 
 /* Add these styles to the bottom of your existing history.css */
 
