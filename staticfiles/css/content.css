@@ -163,15 +163,75 @@ footer a:hover i {
   color: #D97706;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* 📱 Mobile responsiveness for public pages */
+@media (max-width: 480px) {
+  /* Navigation */
   nav ul {
     flex-direction: column;
     gap: 1rem;
+    padding-left: 0;
   }
 
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  /* Container and Sections */
+  .container {
+    padding: 1rem;
+  }
+
+  .hero,
+  .section p,
+  .section ol {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+
+  h1, h2, h3 {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  /* Cards and Values */
   .cards,
   .values {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* CTA Button */
+  .btn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  /* Footer */
+  footer nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  footer a {
+    font-size: 1rem;
+  }
+
+  footer p,
+  footer small {
+    text-align: center;
   }
 }
+
