@@ -26,6 +26,8 @@ GasGo supports both smartphones and laptops, making it accessible to a wide rang
 | APIs        | Africa’s Talking (SMS, USSD), Google Maps (routing), M-Pesa (payments)       |
 | Deployment  | Render                                                                       |
 
+## Live Demo
+You can access the live GasGo platform here: [https://gasgo-uby8.onrender.com/](https://gasgo-uby8.onrender.com/)
 
 ## Getting Started
 
@@ -56,8 +58,10 @@ Run migrations and start the server
 python manage.py migrate
 python manage.py runserver
 ```
+
 ## Future Advancements
 - Integration with licensed cylinder verification systems to detect illegal refills
+- Transform the GasGo web app into a dedicated mobile app for Android and iOS.
 - Loyalty and rewards system for repeat customers and trusted vendors
 - Expanded USSD support for multilingual access across Kenya
 - Rider performance analytics and delivery heatmaps
