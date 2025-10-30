@@ -144,7 +144,7 @@ p, label, input, select, textarea {
 }
 
 /* 📱 Mobile responsiveness for profile page */
-@media (max-width: 480px) {
+@media (max-width: 320px) {
   /* Header layout */
   .profile-header {
     flex-direction: column;

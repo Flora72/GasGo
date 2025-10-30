@@ -418,9 +418,9 @@ img {
     background-color: #B45309;
 }
 
+
 /* 📱 Mobile responsiveness for dashboard */
-/* 📱 Mobile responsiveness for dashboard */
-@media (max-width: 480px) {
+@media (max-width: 320px) {
   /* Sidebar hidden */
   .sidebar {
     display: none;

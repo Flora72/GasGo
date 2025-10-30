@@ -164,7 +164,7 @@ footer a:hover i {
 }
 
 /* 📱 Mobile responsiveness for order tracking page */
-@media (max-width: 480px) {
+@media (max-width: 320px) {
   /* Navigation */
   nav ul {
     flex-direction: column;

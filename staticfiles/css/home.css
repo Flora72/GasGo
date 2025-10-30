@@ -173,7 +173,7 @@ footer nav a:hover {
 }
 
 /* 📱 Mobile responsiveness for homepage */
-@media (max-width: 480px) {
+@media (max-width: 320px) {
   /* Header layout */
   .header {
     flex-direction: column;
