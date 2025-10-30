@@ -9,11 +9,11 @@ GasGo is a response to that broken system. It’s about restoring safety, transp
 
 ## Features
 
-GasGo supports both smartphones and feature phones via USSD, making it accessible to a wide range of users. The platform enables:
+GasGo supports both smartphones and laptops, making it accessible to a wide range of users. The platform enables:
 
-- Customers to place gas orders and receive real-time delivery updates
-- Vendors to verify their listings, manage inventory, and fulfill orders
-- Riders to optimize delivery routes and trigger emergency alerts
+- Customers to place gas orders
+- Customers can track their gas orders 
+- Customers can pay through mpesa
 - Admins to monitor platform activity and send SMS notifications
 
 ## Technology Stack
@@ -56,6 +56,13 @@ Run migrations and start the server
 python manage.py migrate
 python manage.py runserver
 ```
+## Future Advancements
+- Integration with licensed cylinder verification systems to detect illegal refills
+- Loyalty and rewards system for repeat customers and trusted vendors
+- Expanded USSD support for multilingual access across Kenya
+- Rider performance analytics and delivery heatmaps
+- Vendor onboarding dashboard with KYC verification
+- Emergency response integration with local authorities
 
 ## Contributing
 GasGo is built with a mission to improve safety and access to clean energy.All contributions are welcome, especially from developers, designers, and community advocates passionate about social impact.
