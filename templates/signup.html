@@ -2,155 +2,177 @@
 {% load static %}
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sign Up | GasGo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-  <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-  <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=6">
-  <style>
-    .password-container {
-      position: relative;
-    }
-    .password-toggle {
-      position: absolute;
-      top: 50%;
-      right: 0.5px;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #777;
-      font-size: 1rem;
-      z-index: 10;
-      padding: 5px;
-    }
-    .password-toggle:hover {
-      color: #444;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Sign Up | GasGo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#D97706">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
+    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}?v=6">
+    <style>
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 0.5px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+            font-size: 1rem;
+            z-index: 10;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: #444;
+        }
+    </style>
 </head>
 <body>
 <header class="header">
-  <a href="{% url 'index' %}" class="logo">
-    <img src="{% static 'images/logo.png' %}" alt="GasGo"> GasGo
-  </a>
-  <nav>
-    <ul>
-      <li><a href="{% url 'index' %}">Home</a></li>
-      <li><a href="{% url 'about' %}">About Us</a></li>
-      <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-      <li><a href="{% url 'contact' %}">Contact Us</a></li>
-      <li><a href="{% url 'signup' %}">Sign Up</a></li>
-      <li><a href="{% url 'login' %}">Login</a></li>
-    </ul>
-  </nav>
+    <a href="{% url 'index' %}" class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="GasGo"> GasGo
+    </a>
+    <nav>
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About Us</a></li>
+            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
+            <li><a href="{% url 'contact' %}">Contact Us</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+    </nav>
 </header>
 
 <main>
-  <section class="auth" aria-label="Sign up form">
-    <div class="head">
-      <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
-      <h1>Create your account</h1>
-      <p>Join GasGo and get LPG delivered fast and safely</p>
-    </div>
-
-    <form method="post" action="">
-      {% csrf_token %}
-      <div class="grid">
-        <div class="field">
-          <label for="id_first_name">First name</label>
-          <input id="id_first_name" name="first_name" type="text" placeholder="Amina" autocomplete="given-name" required>
+    <section class="auth" aria-label="Sign up form">
+        <div class="head">
+            <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
+            <h1>Create your account</h1>
+            <p>Join GasGo and get LPG delivered fast and safely</p>
         </div>
-        <div class="field">
-          <label for="id_last_name">Last name</label>
-          <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name" required>
+
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="grid">
+                <div class="field">
+                    <label for="id_first_name">First name</label>
+                    <input id="id_first_name" name="first_name" type="text" placeholder="Amina"
+                           autocomplete="given-name" required>
+                </div>
+                <div class="field">
+                    <label for="id_last_name">Last name</label>
+                    <input id="id_last_name" name="last_name" type="text" placeholder="Ali" autocomplete="family-name"
+                           required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="id_username">Username</label>
+                <input id="id_username" name="username" type="text" placeholder="amina123" autocomplete="username"
+                       required>
+            </div>
+
+            <div class="field">
+                <label for="id_email">Email</label>
+                <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email"
+                       required>
+            </div>
+
+            <div class="grid">
+                <div class="field">
+                    <label for="id_phone">Phone</label>
+                    <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" autocomplete="tel" required>
+                </div>
+                <div class="field">
+                    <label for="id_address">Estate/Address (optional)</label>
+                    <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi"
+                           autocomplete="street-address">
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="field">
+                    <label for="id_password">Password</label>
+                    <div class="password-container">
+                        <input id="id_password" name="password" type="password" placeholder="Create a password"
+                               autocomplete="new-password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword1"></i>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="id_password2">Confirm password</label>
+                    <div class="password-container">
+                        <input id="id_password2" name="password2" type="password" placeholder="Re-enter password"
+                               autocomplete="new-password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <p class="hint">By creating an account, you agree to our terms and privacy policy.</p>
+            <div class="field" style="margin-top:12px;">
+                <button class="btn" type="submit">Create account</button>
+            </div>
+        </form>
+
+        <div class="alt">
+            Already have an account? <a href="{% url 'login' %}">Sign in</a>
         </div>
-      </div>
-
-      <div class="field">
-        <label for="id_username">Username</label>
-        <input id="id_username" name="username" type="text" placeholder="amina123" autocomplete="username" required>
-      </div>
-
-      <div class="field">
-        <label for="id_email">Email</label>
-        <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email" required>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label for="id_phone">Phone</label>
-          <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" autocomplete="tel" required>
-        </div>
-        <div class="field">
-          <label for="id_address">Estate/Address (optional)</label>
-          <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" autocomplete="street-address">
-        </div>
-      </div>
-
-      <div class="grid">
-        <div class="field">
-          <label for="id_password">Password</label>
-          <div class="password-container">
-            <input id="id_password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" required>
-            <i class="fas fa-eye password-toggle" id="togglePassword1"></i>
-          </div>
-        </div>
-        <div class="field">
-          <label for="id_password2">Confirm password</label>
-          <div class="password-container">
-            <input id="id_password2" name="password2" type="password" placeholder="Re-enter password" autocomplete="new-password" required>
-            <i class="fas fa-eye password-toggle" id="togglePassword2"></i>
-          </div>
-        </div>
-      </div>
-
-      <p class="hint">By creating an account, you agree to our terms and privacy policy.</p>
-      <div class="field" style="margin-top:12px;">
-        <button class="btn" type="submit">Create account</button>
-      </div>
-    </form>
-
-    <div class="alt">
-      Already have an account? <a href="{% url 'login' %}">Sign in</a>
-    </div>
-  </section>
+    </section>
 </main>
 
 <footer>
-  <p>Follow Us:</p>
-  <nav aria-label="Support and social">
-    <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-    <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-  </nav>
-  <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
+    <p>Follow Us:</p>
+    <nav aria-label="Support and social">
+        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
+    </nav>
+    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
 
 <script>
-  function setupPasswordToggle(toggleId, inputId) {
-    const toggle = document.getElementById(toggleId);
-    const input = document.getElementById(inputId);
+    function setupPasswordToggle(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
 
-    if (toggle && input) {
-      toggle.addEventListener('click', function () {
-        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        input.setAttribute('type', type);
-        this.classList.toggle('fa-eye-slash');
-        this.classList.toggle('fa-eye');
-      });
+        if (toggle && input) {
+            toggle.addEventListener('click', function () {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        }
     }
-  }
 
-  setupPasswordToggle('togglePassword1', 'id_password');
-  setupPasswordToggle('togglePassword2', 'id_password2');
+    setupPasswordToggle('togglePassword1', 'id_password');
+    setupPasswordToggle('togglePassword2', 'id_password2');
 
-  {% if alert_message %}
-    window.onload = function() {
-      alert("{{ alert_message|escapejs }}");
-    };
-  {% endif %}
+    {% if alert_message %}
+        window.onload = function () {
+            alert("{{ alert_message|escapejs }}");
+        };
+    {% endif %}
 </script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
+            .then(reg => console.log("GasGo PWA active"))
+            .catch(err => console.error("Service Worker error:", err));
+    }
+</script>
+
 </body>
 </html>

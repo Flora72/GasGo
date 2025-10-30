@@ -5,6 +5,10 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>GasGo | Dashboard</title>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#D97706">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
@@ -39,14 +43,14 @@
 
     <div class="main">
         <header class="topbar">
-                <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
-            
-                <a href="{% url 'profile' %}" class="topbar-profile-link">
+            <div class="profile">Hi, {{ user.first_name|default:"Guest" }} 👋</div>
+
+            <a href="{% url 'profile' %}" class="topbar-profile-link">
                 <div class="topbar-profile-pic">
                     {% if user.profile.profile_image %}
                         <img src="{{ user.profile.profile_image.url }}" alt="{{ user.username }} Profile Picture">
                     {% else %}
-                        <i class="fas fa-user-circle"></i> 
+                        <i class="fas fa-user-circle"></i>
                     {% endif %}
                 </div>
             </a>
@@ -65,8 +69,6 @@
                 <a href="{% url 'vendors' %}" class="card"><i class="fas fa-store"></i> Vendors</a>
                 <a href="{% url 'track_order' %}" class="card"><i class="fas fa-map-marker-alt"></i> Map</a>
                 <a href="{% url 'history' %}" class="card"><i class="fas fa-history"></i> Payment History</a>
-                <a href="{% url 'orders' %}" class="card"><i class="fas fa-credit-card"></i>
-                    Payment</a>{#since we don't have a payment page the routing will point to orders but we'll work on it#}
             </div>
         </section>
     </div>
@@ -77,6 +79,13 @@
         <i class="fas fa-robot"></i> Ask for help
     </button>
 </div>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
+            .then(reg => console.log("GasGo PWA active"))
+            .catch(err => console.error("Service Worker error:", err));
+    }
+</script>
 
 </body>
 </html>

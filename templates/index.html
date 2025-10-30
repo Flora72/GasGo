@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <title>Home | GasGo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#D97706">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -38,7 +43,7 @@
         <h1>Welcome to GasGo!</h1>
         <p>This is the homepage of our application.</p>
     </section>
-   
+
     <section>
         <h1>Clean cooking gas, delivered fast</h1>
         <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without
@@ -50,7 +55,7 @@
         </p>
     </section>
 
-  
+
     <section>
         <h2>Why choose GasGo</h2>
         <ul>
@@ -72,9 +77,9 @@
     </section>
 
     <div class="cta-banner">
-  <h2>Ready to refill?</h2>
-  <a class="btn btn-primary" href="{% url 'orders' %}">Start your order</a>
-</div>
+        <h2>Ready to refill?</h2>
+        <a class="btn btn-primary" href="{% url 'orders' %}">Start your order</a>
+    </div>
 </main>
 
 <footer>
@@ -87,10 +92,17 @@
     <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
 </footer>
 <div id="gasbot-float">
-  <button onclick="window.location.href='{% url 'gasbot' %}'" title="Chat with GasBot">
-    <i class="fas fa-robot"></i> Ask for help
-  </button>
+    <button onclick="window.location.href='{% url 'gasbot' %}'" title="Chat with GasBot">
+        <i class="fas fa-robot"></i> Ask for help
+    </button>
 </div>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
+            .then(reg => console.log("GasGo PWA active"))
+            .catch(err => console.error("Service Worker error:", err));
+    }
+</script>
 
 </body>
 </html>
