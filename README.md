@@ -53,9 +53,12 @@ DEBUG=True
 SECRET_KEY=your-secret-key
 ALLOWED_HOSTS=127.0.0.1,localhost
 ```
-Run migrations and start the server
+### **5.Run migrations **
 ```bash
 python manage.py migrate
+```
+### **6.Start the server**
+```bash
 python manage.py runserver
 ```
 
