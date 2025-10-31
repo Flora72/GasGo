@@ -53,7 +53,7 @@ DEBUG=True
 SECRET_KEY=your-secret-key
 ALLOWED_HOSTS=127.0.0.1,localhost
 ```
-### **5.Run migrations **
+### **5.Run migrations**
 ```bash
 python manage.py migrate
 ```
