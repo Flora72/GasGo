@@ -3,7 +3,7 @@ LPG Delivery made easy
 
 GasGo is a smart LPG access and delivery platform that connects households, vendors, and riders through a centralized system. It was born out of a personal frustration shared by many households in Kenya: the struggle to find safe, reliable cooking gas.
 
-Many families have experienced the stress of chasing down vendors, only to receive half-filled cylinders or ones with defects. Beyond being a waste of money, this is a serious safety hazard. There have been heartbreaking cases of gas explosions caused by illegally refilled cylinders—lives lost, homes destroyed, trust broken.
+Many families have experienced the stress of chasing down vendors, only to receive half-filled cylinders or cylinders with defects. Beyond being a waste of money, this is a serious safety hazard. There have been heartbreaking cases of gas explosions caused by illegally refilled cylinders—lives lost, homes destroyed, trust broken.
 
 GasGo is a response to that broken system. It’s about restoring safety, transparency, and dignity to something as essential as cooking fuel.
 
