@@ -9,7 +9,7 @@ GasGo is a response to that broken system. It’s about restoring safety, transp
 
 ## Features
 
-GasGo supports both smartphones and laptops, making it accessible to a wide range of users. The platform enables:
+GasGo supports both mobilephones and laptops, making it accessible to a wide range of users. The platform enables:
 
 - Customers to place gas orders
 - Customers can track their gas orders 
