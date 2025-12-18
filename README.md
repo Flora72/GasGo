@@ -5,7 +5,7 @@ GasGo is a smart LPG access and delivery platform that connects households, vend
 
 Many families have experienced the stress of chasing down vendors, only to receive half-filled cylinders or cylinders with defects. Beyond being a waste of money, this is a serious safety hazard. There have been heartbreaking cases of gas explosions caused by illegally refilled cylinders—lives lost, homes destroyed, trust broken.
 
-GasGo is a response to that broken system. It’s about restoring safety, transparency, and dignity to something as essential as cooking fuel.
+GasGo is a response to that broken system. It is about restoring safety, transparency, and dignity to something as essential as cooking fuel.
 
 ## Features
 
