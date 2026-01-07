@@ -3,13 +3,13 @@ LPG Delivery made easy
 
 GasGo is a smart LPG access and delivery platform that connects households, vendors, and riders through a centralized system. It was born out of a personal frustration shared by many households in Kenya: the struggle to find safe, reliable cooking gas.
 
-Many families have experienced the stress of chasing down vendors, only to receive half-filled cylinders or ones with defects. Beyond being a waste of money, this is a serious safety hazard. There have been heartbreaking cases of gas explosions caused by illegally refilled cylinders—lives lost, homes destroyed, trust broken.
+Many families have experienced the stress of chasing down vendors, only to receive half-filled cylinders or cylinders with defects. Beyond being a waste of money, this is a serious safety hazard. There have been heartbreaking cases of gas explosions caused by illegally refilled cylinders—lives lost, homes destroyed, trust broken.
 
-GasGo is a response to that broken system. It’s about restoring safety, transparency, and dignity to something as essential as cooking fuel.
+GasGo is a response to that broken system. It is about restoring safety, transparency, and dignity to something as essential as cooking fuel.
 
 ## Features
 
-GasGo supports both smartphones and laptops, making it accessible to a wide range of users. The platform enables:
+GasGo supports both mobilephones and laptops, making it accessible to a wide range of users. The platform enables:
 
 - Customers to place gas orders
 - Customers can track their gas orders 
@@ -26,6 +26,8 @@ GasGo supports both smartphones and laptops, making it accessible to a wide rang
 | APIs        | Africa’s Talking (SMS, USSD), Google Maps (routing), M-Pesa (payments)       |
 | Deployment  | Render                                                                       |
 
+## Live Demo
+You can access the live GasGo platform here: [https://gasgo-uby8.onrender.com/](https://gasgo-uby8.onrender.com/)
 
 ## Getting Started
 
@@ -51,13 +53,18 @@ DEBUG=True
 SECRET_KEY=your-secret-key
 ALLOWED_HOSTS=127.0.0.1,localhost
 ```
-Run migrations and start the server
+### **5.Run migrations**
 ```bash
 python manage.py migrate
+```
+### **6.Start the server**
+```bash
 python manage.py runserver
 ```
+
 ## Future Advancements
 - Integration with licensed cylinder verification systems to detect illegal refills
+- Transform the GasGo web app into a dedicated mobile app for Android and iOS.
 - Loyalty and rewards system for repeat customers and trusted vendors
 - Expanded USSD support for multilingual access across Kenya
 - Rider performance analytics and delivery heatmaps
