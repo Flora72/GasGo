@@ -299,4 +299,16 @@ footer a:hover i {
     right: 10px;
   }
 }
+/* Forgot password link */
+.row .forgot-link {
+  color: red !important;       /* force red */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.row .forgot-link:hover {
+  text-decoration: underline;
+  color: darkred !important;   /* optional hover effect */
+}
+
 

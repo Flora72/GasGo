@@ -8,110 +8,140 @@
     <meta name="theme-color" content="#D97706">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    
+    <!-- LOAD PROFILE CSS FIRST -->
     <link rel="stylesheet" href="{% static 'css/profile.css' %}"/>
+    
+    <!-- THEN LOAD OTHER CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <style>
-        .profile-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header {
-            text-align: left;
-            margin-bottom: 2rem;
-        }
-
-        .profile-pic-large {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3em;
-            color: #ccc;
-            margin-bottom: 10px;
-            overflow: hidden;
-            border: 3px solid #D97706;
-        }
-
-        .profile-pic-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .file-input-wrapper {
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        .file-input-wrapper label {
-            background-color: #3f51b5;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s;
-        }
-
-        .file-input-wrapper label:hover {
-            background-color: #2c3e8e;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            display: none;
-        }
-    </style>
 </head>
 <body>
 <div class="dashboard">
     <aside class="sidebar">...</aside>
 
     <div class="main">
-        <header class="topbar">
-            ...
-        </header>
+        <header class="topbar">...</header>
 
-        <section class="profile-container">
-            <div class="profile-header">
-                <h3>Manage Your Profile & Settings</h3>
+        <section class="profile-section">
+            <!-- Title -->
+            <h1 class="profile-title">Manage Your Profile & Settings</h1>
 
-                <div class="profile-pic-large">
+            <!-- Welcome Message -->
+            <div class="welcome-section">
+                <p class="welcome-text">Welcome back, <span class="user-name">{{ user.get_full_name|default:user.username }}</span>!</p>
+            </div>
+
+            <!-- Profile Info Section -->
+            <div class="profile-info-section">
+                <h2 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h2>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-user"></i> Username:</span>
+                        <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-envelope"></i> Email:</span>
+                        <span class="info-value">{{ user.email|default:"Not provided" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-phone"></i> Phone:</span>
+                        <span class="info-value">
+                            {% if user_profile.phone_number %}
+                                {{ user_profile.phone_number }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label"><i class="fas fa-calendar-alt"></i> Member Since:</span>
+                        <span class="info-value">{{ user.date_joined|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <h2 class="section-title"><i class="fas fa-camera"></i> Profile Picture</h2>
+                
+                <div class="profile-pic-large" style="width: 180px; height: 180px; overflow: hidden; border-radius: 50%; background: #f5f5f5; border: 4px solid #D97706; margin: 20px auto; position: relative;">
                     {% if user_profile.profile_image %}
-                        <img src="{{ user_profile.profile_image.url }}" alt="Profile Picture">
+                        <img src="{{ user_profile.profile_image.url }}" alt="Profile Picture" 
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;">
                     {% else %}
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-user" style="font-size: 80px; color: #D97706;"></i>
                     {% endif %}
                 </div>
 
-                <p style="margin-top: 2rem;">Welcome, **{{ user.get_full_name|default:user.username }}**</p>
-
-                <div class="payment-container">
-                    <form method="POST" action="{% url 'initiate_payment' order.order_id %}">
+                <!-- Upload new image -->
+                <div class="file-input-wrapper">
+                    <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <label for="phone_number">Phone Number (e.g. 0712345678):</label>
-                        <input type="text" name="phone_number" required>
-                        <button type="submit">Pay with M-Pesa</button>
+                        <label for="profile_image" class="upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload New Profile Picture
+                        </label>
+                        <input type="file" name="profile_image" id="profile_image" accept="image/*">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i> Save Picture
+                        </button>
                     </form>
                 </div>
-
             </div>
 
-            <p>Use this page to update your account details, addresses, and payment information.</p>
+            <!-- Orders Section -->
+            <div class="orders-section">
+                <h2 class="section-title"><i class="fas fa-shopping-cart"></i> My Orders</h2>
+                
+                {% if orders %}
+                    <div class="orders-list">
+                        {% for order in orders %}
+                        <div class="order-item">
+                            <div class="order-header">
+                                <span class="order-id">Order #{{ order.order_id }}</span>
+                                <span class="order-status {{ order.status|lower }}">{{ order.status }}</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-date">{{ order.created_at|date:"M d, Y H:i" }}</span>
+                                <span class="order-amount">KSh {{ order.total_amount }}</span>
+                            </div>
+                            {% if order.status == 'PENDING' %}
+                            <form method="POST" action="{% url 'initiate_payment' order.order_id %}" class="payment-form">
+                                {% csrf_token %}
+                                <div class="payment-input">
+                                    <label for="phone_{{ order.order_id }}">Phone Number for Payment:</label>
+                                    <input type="text" name="phone_number" id="phone_{{ order.order_id }}" 
+                                           placeholder="0712345678" required>
+                                </div>
+                                <button type="submit" class="btn-pay">
+                                    <i class="fas fa-money-bill-wave"></i> Pay with M-Pesa
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-orders">
+                        <i class="fas fa-shopping-cart fa-3x"></i>
+                        <p>No orders have been placed yet.</p>
+                        <a href="{% url 'dashboard' %}" class="btn-browse">
+                            <i class="fas fa-gas-pump"></i> Browse Products
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
 
-            <p style="text-align: center; margin-top: 2rem;"><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
+            <!-- Back to Dashboard Button -->
+            <div class="back-btn">
+                <a href="{% url 'dashboard' %}" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
         </section>
     </div>
 </div>
+
 <script>
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register("{% static 'service-worker.js' %}")
@@ -119,6 +149,6 @@
             .catch(err => console.error("Service Worker error:", err));
     }
 </script>
-
 </body>
 </html>
+

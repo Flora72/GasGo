@@ -180,11 +180,13 @@ def forgot_password(request):
 def profile(request):
     user_profile, created = Profile.objects.get_or_create(user=request.user)
 
+    # Handle profile image upload
     if request.method == 'POST' and 'profile_image' in request.FILES:
         user_profile.profile_image = request.FILES['profile_image']
         user_profile.save()
         return redirect('profile')
 
+    # Get latest pending order
     latest_order = Order.objects.filter(
         user=request.user,
         status='Pending Payment'
@@ -192,10 +194,9 @@ def profile(request):
 
     context = {
         'user_profile': user_profile,
-        'order': latest_order
+        'order': latest_order if latest_order else None
     }
     return render(request, 'profile.html', context)
-
 
 # -------------------------------------------
 # ORDERS AND VENDORS RELATED VIEWS

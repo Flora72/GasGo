@@ -14,27 +14,17 @@ from pathlib import Path
 from dotenv import load_dotenv
 from decouple import config
 import africastalking
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
-
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-
-# Required when DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'gasgoApp.apps.GasgoappConfig',
-    ]
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,8 +51,7 @@ ROOT_URLCONF = 'GasGO.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,102 +65,59 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'GasGO.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-
-
-
+# ✅ Database configuration using individual .env variables
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL', default=''), conn_max_age=600)
+    'default': {
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_NAME', default='gasgo'),
+        'USER': config('DB_USER', default='postgres'),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+    }
 }
 
-
-
 # Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
+# Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 LOGOUT_REDIRECT_URL = '/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#                         EMAIL CONFIGURATION (Brevo SMTP)
-# ----------------------------------------------------------------------
-
-# Use Django's built-in SMTP backend
+# Email configuration (Brevo SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-# Brevo (formerly Sendinblue) SMTP settings
-EMAIL_HOST = 'smtp-relay.brevo.com' 
+EMAIL_HOST = 'smtp-relay.brevo.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# Authentication: Reading the credentials from the environment (loaded from .env)
-# The login is usually your Brevo account email, and the password is the Master Password or API Key
 EMAIL_HOST_USER = os.environ.get('BREVO_SMTP_LOGIN')
 EMAIL_HOST_PASSWORD = os.environ.get('BREVO_API_KEY')
-
-# The verified sender email address
-DEFAULT_FROM_EMAIL = 'GasGo Assistance <gasgoassistance@gmail.com>' 
+DEFAULT_FROM_EMAIL = 'GasGo Assistance <gasgoassistance@gmail.com>'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-# Optional: Configuration for Django's built-in password reset
-# This ensures Django uses the correct sender address when sending password reset emails
-if EMAIL_HOST_USER:
-    # Login and Logout redirects are here for reference, typically further down in settings.py
-    # LOGIN_REDIRECT_URL = '/'
-    # LOGOUT_REDIRECT_URL = '/'
-    pass
-
-# Media files (User-uploaded content)
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Tells Django where to redirect users when @login_required is used
+# Login redirect
 LOGIN_URL = '/login/'
 
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY')
 
-# Africa's talking
+# Africa's Talking initialization
 africastalking.initialize(username="sandbox", api_key="your_api_key")
