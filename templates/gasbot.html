@@ -1,120 +1,117 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GasBot | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bot.css' %}">
-    <style>
-        .typing .dots::after {
-            content: '';
-            display: inline-block;
-            animation: dots 1s steps(3, end) infinite;
-        }
+{% block title %}GasBot Assistant | GasGo{% endblock %}
+{% block page_title %}AI Assistant{% endblock %}
 
-        @keyframes dots {
-            0% {
-                content: '';
-            }
-            33% {
-                content: '.';
-            }
-            66% {
-                content: '..';
-            }
-            100% {
-                content: '...';
-            }
-        }
+{% block head %}
+<style>
+    /* Chat Container Styles */
+    .chat-container {
+        height: calc(100vh - 250px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-log {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
 
-        .bot-msg a {
-            color: #D97706;
-            text-decoration: underline;
-        }
+    /* Message Bubbles */
+    .bot-msg, .user-msg {
+        max-width: 80%;
+        padding: 16px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+    }
 
-    </style>
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
+    .bot-msg {
+        align-self: flex-start;
+        background: white;
+        color: #0b2e4d; /* wells-navy */
+        border: 1px solid #f1f5f9;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    }
 
-<main>
-    <section>
-        <h1>Meet GasBot</h1>
-        <p>GasBot is a simple AI-style chatbot that can answer common questions about GasGo — ordering LPG, delivery,
-            vendors, tracking, safety and more. Type a question below to get started.</p>
-        <p>Need human help? Email <a href="mailto:gasgosupport@gmail.com">gasgosupport@gmail.com</a> or see <a
-                href="{% url 'emergency' %}">Emergency</a>.</p>
-    </section>
+    .user-msg {
+        align-self: flex-end;
+        background: #0b2e4d; /* wells-navy */
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
 
-    <section>
-        <h2>Chat</h2>
-        <div class="chat-container">
-            <div id="log" class="chat-log">
-                <div class="bot-msg">Hi! I can help with:<br>
-                    – Ordering and delivery<br>
-                    – Vendors and payment options<br>
-                    – Tracking your order<br>
-                    – Safety and emergencies<br>
-                </div>
-            </div>
-            <div class="chat-input">
-                <input id="msg" type="text" placeholder="Type your question…"/>
-                <button id="send" type="button">Send</button>
-            </div>
-            <p class="chat-note">Note: Demo only — no personal data is stored. For urgent safety issues, call 999/112
-                and our toll‑free 0800 720 000.</p>
-            <div class="chat-prompts">
-                <button type="button" data-q="how do i order?">How do I order?</button>
-                <button type="button" data-q="price 13kg">Price 13kg</button>
-                <button type="button" data-q="track order">Track order</button>
-                <button type="button" data-q="vendors near me">Vendors near me</button>
-                <button type="button" data-q="i smell gas" data-emergency="1">I smell gas</button>
+    /* Typing Animation */
+    .dots::after {
+        content: '';
+        display: inline-block;
+        animation: dots 1.5s steps(3, end) infinite;
+    }
+
+    @keyframes dots {
+        0%, 20% { content: ''; }
+        40% { content: '.'; }
+        60% { content: '..'; }
+        80%, 100% { content: '...'; }
+    }
+
+    /* Hide scrollbar for clean look */
+    .chat-log::-webkit-scrollbar { width: 4px; }
+    .chat-log::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-slate-50 rounded-[3rem] border border-slate-100 shadow-inner overflow-hidden flex flex-col h-[70vh]">
+        
+        <div id="log" class="chat-log p-8">
+            <div class="bot-msg">
+                <p class="font-black mb-2 text-wells-green text-[10px] uppercase tracking-widest">GasBot Assistant</p>
+                Hi! I'm your GasGo AI. I can help with:<br>
+                • <strong>Ordering</strong> & <strong>Pricing</strong><br>
+                • <strong>Live Tracking</strong> support<br>
+                • <strong>Safety</strong> & <strong>Emergencies</strong>
             </div>
         </div>
 
-        <section class="gasbot-actions">
-            <h2>Do more</h2>
-            <ul>
-                <li><a href="{% url 'orders' %}"><i class="fas fa-box"></i> Start an order</a></li>
-                <li><a href="{% url 'vendors' %}"><i class="fas fa-store"></i> See vendors</a></li>
-                <li><a href="{% url 'track_order' %}"><i class="fas fa-map-marker-alt"></i> Track an order</a></li>
-                <li><a href="{% url 'emergency' %}"><i class="fas fa-exclamation-triangle"></i> Emergency help</a></li>
-            </ul>
-        </section>
-    </section>
-</main>
+        <div class="p-6 bg-white border-t border-slate-100">
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button type="button" data-q="how do i order?" class="px-4 py-2 bg-slate-50 hover:bg-wells-green/10 hover:text-wells-green border border-slate-100 rounded-xl text-xs font-bold text-slate-500 transition-all">How to order?</button>
+                <button type="button" data-q="price list" class="px-4 py-2 bg-slate-50 hover:bg-wells-green/10 hover:text-wells-green border border-slate-100 rounded-xl text-xs font-bold text-slate-500 transition-all">Price list</button>
+                <button type="button" data-q="track my order" class="px-4 py-2 bg-slate-50 hover:bg-wells-green/10 hover:text-wells-green border border-slate-100 rounded-xl text-xs font-bold text-slate-500 transition-all">Track Order</button>
+                <button type="button" data-q="safety tips" class="px-4 py-2 bg-slate-50 hover:bg-wells-green/10 hover:text-wells-green border border-slate-100 rounded-xl text-xs font-bold text-slate-500 transition-all">Safety Tips</button>
+            </div>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
+            <div class="flex gap-4 items-center">
+                <input id="msg" type="text" placeholder="Ask me anything about GasGo..." 
+                       class="flex-1 bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-wells-navy transition outline-none">
+                <button id="send" class="w-14 h-14 bg-wells-navy text-white rounded-2xl flex items-center justify-center hover:bg-wells-green hover:shadow-xl transition-all">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <div class="mt-8 flex justify-between items-center px-8">
+        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            <i class="fas fa-info-circle mr-2 text-wells-blue"></i> Demo AI Assistant
+        </p>
+        <a href="{% url 'emergency' %}" class="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline">
+            <i class="fas fa-exclamation-triangle mr-2"></i> Report Emergency
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script>
     (function () {
         const log = document.getElementById('log');
@@ -123,117 +120,79 @@
 
         function append(line, sender = 'bot') {
             const div = document.createElement('div');
-            div.className = sender === 'bot' ? 'bot-msg' : 'user-msg';
+            div.className = sender === 'bot' ? 'bot-msg shadow-sm' : 'user-msg shadow-lg';
+            
             if (sender === 'bot') {
-                div.innerHTML = line;
+                div.innerHTML = `<p class="font-black mb-1 text-wells-green text-[10px] uppercase tracking-widest">GasBot Assistant</p>${line}`;
             } else {
                 div.textContent = line;
             }
+            
             log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
+            log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
         }
-
 
         function answer(text) {
             const t = (text || '').trim().toLowerCase();
+            const has = (...args) => args.some(arg => t.includes(arg));
 
-            function has() {
-                for (let i = 0; i < arguments.length; i++) {
-                    if (t.includes(arguments[i])) return true;
-                }
-                return false;
-            }
+            let reply = "I didn't quite catch that. Try asking about:<br>• How to order<br>• Gas prices<br>• Live tracking<br>• Safety tips";
 
-            let reply = "Hmm, I didn’t catch that. Try asking about:<br>• How to order<br>• LPG prices<br>• Tracking your order<br>• Safety tips<br>Or click a quick prompt below!";
-
+            // Greeting Logic
             if (has('hi', 'hello', 'hey', 'gasbot')) {
-                const hour = new Date().getHours();
-                reply = hour < 12 ? "Good morning! ☀️ What can I help you with?" :
-                    hour < 18 ? "Good afternoon! 😊 Need help with an order?" :
-                        "Good evening! 🌙 I’m here if you need anything.";
-            } else if (has('track', 'tracking', 'where', 'rider')) {
-                reply = 'You can track your rider live on the map here: <a href="/track_order/" target="_blank" style="color:#D97706; text-decoration:underline;">Track Order</a>. Allow location for best accuracy.';
-            } else if (has('how', 'order')) {
-                reply = 'To order: go to <a href="/orders/" target="_blank" style="color:#D97706; text-decoration:underline;">Orders</a>, choose size (6kg/13kg/22.5kg/50kg), enter your address and contact, then pick a vendor and payment.';
-            } else if (has('price', 'cost', 'how much', 'rates', 'charges', 'fees')) {
-                reply = "Here’s our current LPG price list:<br>• 6kg Refill – KSh 1,390<br>• 13kg Refill – KSh 3,190<br>• 22.5kg Refill – KSh 5,670<br>• 50kg Refill – KSh 11,800<br><br>New cylinder + gas:<br>• 6kg – KSh 3,190<br>• 13kg – KSh 6,590<br>• 22.5kg – KSh 13,170<br>• 50kg – KSh 23,300<br><br>Prices include delivery and VAT. Final cost may vary slightly by vendor.";
-            } else if (has('13kg', '13 kg')) {
-                reply = "13kg refill is KSh 3,190. A new 13kg cylinder with gas is KSh 6,590. Prices include delivery and VAT.";
-            } else if (has('vendor', 'near me', 'partners')) {
-                reply = 'After you fill your order, we show available vendors near you with ETA, ratings and prices. See <a href="/vendors/" target="_blank" style="color:#D97706; text-decoration:underline;">Vendors</a> for examples.';
-            } else if (has('pay', 'payment', 'mpesa', 'cash', 'card')) {
-                reply = "Payment options include Cash, M‑Pesa, or Card on delivery (depending on vendor). Choose on the Vendors confirmation step.";
-            } else if (has('deliver', 'area', 'coverage', 'location')) {
-                reply = "We serve major Nairobi neighborhoods via partner vendors. Enter your address on the order form to see nearby options and ETA.";
-            } else if (has('time', 'eta', 'how long', 'minutes', 'hours')) {
-                reply = "Typical ETA is 30–90 minutes depending on distance and traffic. You’ll see a live estimate after choosing a vendor.";
-            } else if (has('safety', 'install', 'regulator', 'leak', 'smell', 'fire', 'burner')) {
-                if (has('fire')) {
-                    reply = "If there is fire: evacuate immediately, call 999/112. If safe and trained, use a suitable extinguisher. Do not take risks.";
-                } else if (has('smell', 'leak')) {
-                    reply = "If you smell gas: close the valve if safe, open windows, avoid switches/flames, evacuate, call 999/112 and 0800 720 000.";
-                } else if (has('install', 'regulator')) {
-                    reply = "Installation tips: ensure regulator matches valve, check the O‑ring, secure the hose, and perform a soapy water leak test.";
-                } else if (has('burner')) {
-                    reply = "Burner not lighting: confirm gas is on, regulator locked, hose ok, try another ignition, and perform a leak check.";
-                } else {
-                    reply = "Safety first: keep cylinders upright/ventilated, check seals/regulator fit, and use soapy water for leak checks.";
-                }
-            } else if (has('contact', 'help', 'support', 'agent', 'human')) {
-                reply = 'You can reach our team at <a href="mailto:gasgosupport@gmail.com" style="color:#D97706;">gasgosupport@gmail.com</a> or via the <a href="/emergency/" style="color:#D97706;">Emergency</a> page for urgent issues.';
+                reply = "Hi there! 👋 How can I assist you with your LPG needs today?";
+            }
+            // Ordering Logic
+            else if (has('how', 'order', 'buy')) {
+                reply = 'To place an order: <br>1. Go to <a href="/orders/" style="color:#48bb3a; font-weight:bold;">Order Gas</a>.<br>2. Choose your brand and size (6kg, 13kg, etc).<br>3. Enter your delivery address.<br>4. Pick a nearby vendor and confirm payment.';
+            }
+            // Live Tracking Logic
+            else if (has('track', 'where', 'rider', 'status')) {
+                reply = 'You can track your delivery in real-time on our <a href="/track_order/" style="color:#48bb3a; font-weight:bold;">Live Tracking Map</a>. Ensure you have your Order ID ready.';
+            }
+            // Pricing Logic (Matching your PRICE_MAP)
+            else if (has('price', 'cost', 'how much', 'rates')) {
+                reply = "Current Refill Prices:<br>• <strong>6kg:</strong> KES 1,000 - 1,100<br>• <strong>13kg:</strong> KES 2,350 - 2,500<br>• <strong>22.5kg:</strong> KES 4,100 - 4,300<br>• <strong>50kg:</strong> KES 9,200 - 9,500<br><small>*Prices vary slightly by brand (Total, ProGas, Rubis).</small>";
+            }
+            // Safety & Emergency Logic
+            else if (has('safety', 'smell', 'leak', 'danger')) {
+                reply = '<span style="color:#ef4444; font-weight:bold;">⚠️ SAFETY FIRST:</span> If you smell gas, open windows immediately, do not flip any electrical switches, and evacuate. Visit our <a href="/emergency/" style="color:#ef4444; font-weight:bold;">Emergency Page</a> for immediate help.';
+            }
+            // Vendor Logic
+            else if (has('vendor', 'station', 'shop')) {
+                reply = 'We partner with certified vendors like TotalEnergies, Rubis, and local partners. After entering your location, we automatically find the <a href="/vendors/" style="color:#48bb3a; font-weight:bold;">nearest station</a> for you.';
             }
 
             append(reply, 'bot');
-            msg.scrollIntoView({behavior: 'smooth', block: 'center'});
         }
-
 
         function sendMsg() {
             const q = msg.value.trim();
             if (!q) return;
-            append('You: ' + q, 'user');
+            append(q, 'user');
 
             msg.value = '';
             const typingDiv = document.createElement('div');
-            typingDiv.className = 'bot-msg typing';
-            typingDiv.innerHTML = 'GasBot is typing<span class="dots">...</span>';
+            typingDiv.className = 'bot-msg typing shadow-sm';
+            typingDiv.innerHTML = 'GasBot is thinking<span class="dots"></span>';
             log.appendChild(typingDiv);
-            log.scrollTop = log.scrollHeight;
+            log.scrollTo({ top: log.scrollHeight, behavior: 'smooth' });
 
             setTimeout(() => {
-                const last = log.lastChild;
-                if (last && last.classList.contains('typing')) log.removeChild(last);
+                if (typingDiv) log.removeChild(typingDiv);
                 answer(q);
             }, 1000);
         }
 
-        if (send) send.addEventListener('click', sendMsg);
-        if (msg) msg.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMsg();
-            }
-        });
+        send.addEventListener('click', sendMsg);
+        msg.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMsg(); });
 
-        Array.prototype.forEach.call(document.querySelectorAll('button[data-q]'), function (btn) {
-            btn.addEventListener('click', function () {
-                if (btn.getAttribute('data-emergency') === '1') {
-                    window.location.href = "{% url 'emergency' %}";
-                    return;
-                }
+        document.querySelectorAll('button[data-q]').forEach(btn => {
+            btn.addEventListener('click', () => {
                 msg.value = btn.getAttribute('data-q');
                 sendMsg();
             });
         });
     })();
 </script>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
-
-</body>
-</html>
+{% endblock %}

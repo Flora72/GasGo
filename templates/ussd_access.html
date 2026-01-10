@@ -1,223 +1,103 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
-<style>
-  body {
-    background-color: #f8f8f8;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  .ussd-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  .ussd-container h1 {
-    color: #D97706;
-    font-size: 2em;
-    margin-bottom: 10px;
-  }
-  .ussd-container h2 {
-    color: #D97706;
-    margin-top: 40px;
-  }
-  .ussd-container p {
-    font-size: 1.1em;
-    color: #333;
-    line-height: 1.6;
-  }
-  .flow-preview {
-    margin-top: 30px;
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-left: 4px solid #D97706;
-    font-family: monospace;
-    white-space: pre-wrap;
-  }
-  .phone-frame {
-    max-width: 360px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #000;
-    border-radius: 40px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.2);
-    position: relative;
-  }
-  .phone-notch {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 20px;
-    background-color: #333;
-    border-radius: 10px;
-  }
-  .phone-screen {
-    background: linear-gradient(to bottom, #fefefe, #eaeaea);
-    border-radius: 28px;
-    padding: 20px;
-    min-height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-    position: relative;
-  }
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8em;
-    color: #666;
-    margin-bottom: 10px;
-  }
-  .status-bar span {
-    padding: 0 5px;
-  }
-  .ussd-screen {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-left: 4px solid #D97706;
-    font-family: monospace;
-    white-space: pre-wrap;
-    min-height: 180px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-    color: #222;
-  }
-  .ussd-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-bottom: 10px;
-  }
-  .ussd-btn {
-    background-color: #D97706;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1em;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: background-color 0.2s ease;
-  }
-  .ussd-btn:hover {
-    background-color: #c56a05;
-  }
-</style>
+{% block title %}USSD Offline Access | GasGo{% endblock %}
+{% block page_title %}Offline Ordering{% endblock %}
 
-<div class="ussd-container">
-  <h2>USSD Emulator</h2>
-  <p>
-    The emulator below mimics a real mobile phone experience. Type <strong>start</strong> to begin, then follow the prompts step-by-step. You can type <code>0</code> or <code>back</code> at any time to restart the flow.
-  </p>
+{% block landing_content %}
+<div class="max-w-md mx-auto py-8 space-y-8 animate-fade-in">
 
-  <div class="phone-frame">
-    <div class="phone-notch"></div>
-    <div class="phone-screen">
-      <div>
-        <div class="status-bar">
-          <span>19:40</span>
-          <span>📶 LTE</span>
-          <span>🔋 87%</span>
+    <div class="text-center space-y-4">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-wells-green/10 text-wells-green rounded-3xl mb-2">
+            <i class="fas fa-signal-alt-3 text-3xl"></i>
         </div>
-        <div style="font-weight:bold; margin-bottom:10px;">Dialing <code>*384*14590#</code>...</div>
-        <div class="ussd-screen" id="ussdScreen">
-          Welcome to GasGo USSD Service<br>
-          Type <strong>start</strong> to begin
-        </div>
-      </div>
-      <div>
-        <input type="text" id="ussdInput" class="ussd-input" placeholder="Enter your choice">
-        <button class="ussd-btn" onclick="nextStep()">Send</button>
-      </div>
+        <h1 class="text-4xl font-black text-wells-navy tracking-tighter">No <span class="text-wells-green">Data?</span></h1>
+        <p class="text-slate-500 font-medium px-4">Order GasGo deliveries even without an internet connection using our dedicated USSD channel.</p>
     </div>
-  </div>
+
+    <div class="bg-white rounded-[3rem] p-8 border border-slate-100 shadow-xl text-center space-y-6">
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Quick Dial</h3>
+
+        <a href="tel:*789*1%23" class="w-full bg-wells-navy text-white py-6 rounded-2xl font-black text-2xl hover:bg-wells-green transition-all flex items-center justify-center group shadow-lg">
+            <i class="fas fa-phone-arrow-up-right mr-4 group-hover:scale-110 transition-transform"></i>
+            *789*1#
+        </a>
+
+        <p class="text-xs font-bold text-slate-400 italic">One-tap to launch the official dialer.</p>
+    </div>
+
+    <div class="bg-slate-100/50 rounded-[3rem] p-8 border-2 border-dashed border-slate-200 text-center">
+        <h4 class="text-sm font-black text-wells-navy mb-2">New to USSD?</h4>
+        <p class="text-xs text-slate-500 mb-6">Test the offline ordering flow using our interactive simulator.</p>
+
+        <button onclick="openUSSD()" class="px-8 py-3 bg-white text-wells-navy border border-slate-200 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-wells-navy hover:text-white transition-all shadow-sm">
+            Launch Simulator
+        </button>
+    </div>
 </div>
 
+<div id="ussdModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-wells-navy/80 backdrop-blur-sm hidden px-6">
+    <div class="bg-[#f2f2f2] w-full max-w-[320px] rounded-[2rem] shadow-2xl border-[6px] border-[#333] overflow-hidden">
+        <div class="p-6 space-y-4">
+            <div id="ussdContent" class="bg-white p-4 rounded-xl border border-slate-200 min-h-[120px] text-sm font-mono text-slate-700 leading-relaxed">
+                </div>
+
+            <input type="text" id="ussdInput" class="w-full bg-white border border-slate-300 rounded-lg p-3 text-center font-bold focus:ring-2 focus:ring-wells-blue outline-none" placeholder="Enter option...">
+
+            <div class="flex gap-2">
+                <button onclick="closeUSSD()" class="flex-1 py-3 text-slate-500 font-bold text-sm hover:bg-slate-200 rounded-lg transition">Cancel</button>
+                <button onclick="handleUSSDRouting()" class="flex-1 py-3 text-wells-blue font-black text-sm hover:bg-wells-blue/10 rounded-lg transition">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+</style>
+{% endblock %}
+
+{% block scripts %}
 <script>
-  let step = -1;
-  let inputs = [];
+    let currentStep = 0;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("ussdInput").focus();
-  });
+    const ussdSteps = [
+        "Welcome to GasGo.\n1. Order Gas\n2. Track Order\n3. My Profile",
+        "Select Brand:\n1. TotalEnergies\n2. Rubis\n3. Shell/Vivo",
+        "Select Size:\n1. 6kg\n2. 13kg\n3. 22kg",
+        "Order Confirmed! A rider will call you shortly to verify your location. Thank you!"
+    ];
 
-  function nextStep() {
-    const input = document.getElementById("ussdInput").value.trim().toLowerCase();
-    if (input === "") return;
-
-    document.getElementById("ussdInput").value = "";
-    let screen = document.getElementById("ussdScreen");
-
-    if (input === "0" || input === "back") {
-      step = -1;
-      inputs = [];
-      screen.innerText = "Welcome to GasGo USSD Service\nType start to begin";
-      return;
+    function openUSSD() {
+        currentStep = 0;
+        document.getElementById('ussdModal').classList.remove('hidden');
+        document.getElementById('ussdContent').innerText = ussdSteps[0];
+        document.getElementById('ussdInput').value = "";
+        document.getElementById('ussdInput').focus();
     }
 
-    inputs.push(input);
-
-    if (step === -1) {
-      if (input === "start") {
-        screen.innerText = "Welcome to GasGo\n1. Order Gas\n2. Track Order\n3. Emergency Help";
-        step = 0;
-      } else {
-        screen.innerText = "Please type 'start' to begin.";
-      }
-    } else if (step === 0) {
-      if (input === "1") {
-        screen.innerText = "Enter gas size (e.g. 6kg, 13kg):";
-        step++;
-      } else if (input === "2") {
-        screen.innerText = "Tracking not available via USSD yet.\nType 0 to go back.";
-      } else if (input === "3") {
-        screen.innerText = "Emergency help dispatched. Stay safe.\nType 0 to go back.";
-      } else {
-        screen.innerText = "Invalid choice. Please enter 1, 2, or 3.";
-      }
-    } else if (step === 1) {
-      screen.innerText = "Enter quantity:";
-      step++;
-    } else if (step === 2) {
-      screen.innerText = "Enter delivery location:";
-      step++;
-    } else if (step === 3) {
-      screen.innerText = "Confirm order?\n1. Yes\n2. No";
-      step++;
-    } else if (step === 4) {
-      if (input === "1") {
-        fetch("/ussd/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": document.cookie
-              .split('; ')
-              .find(row => row.startsWith('csrftoken='))
-              ?.split('=')[1]
-          },
-          body: `sessionId=demo123&phoneNumber=0700000000&text=1*${inputs[1]}*${inputs[2]}*${inputs[3]}*1`
-        })
-        .then(response => response.text())
-        .then(data => {
-          screen.innerText = `Order confirmed!\nTracking ID: ${data}\n\nType 0 to go back to the welcome screen.`;
-        })
-        .catch(() => {
-          screen.innerText = "Something went wrong.\nPlease try again later.\nType 0 to go back.";
-        });
-      } else {
-        screen.innerText = "Order cancelled.\nType 0 to go back.";
-      }
+    function closeUSSD() {
+        document.getElementById('ussdModal').classList.add('hidden');
     }
-  }
+
+    function handleUSSDRouting() {
+        const input = document.getElementById('ussdInput').value;
+        if (!input && currentStep < 3) return;
+
+        currentStep++;
+        if (currentStep < ussdSteps.length) {
+            document.getElementById('ussdContent').innerText = ussdSteps[currentStep];
+            document.getElementById('ussdInput').value = "";
+
+            // If it's the final confirmation, hide the input
+            if (currentStep === 3) {
+                document.getElementById('ussdInput').style.display = 'none';
+            }
+        } else {
+            closeUSSD();
+            document.getElementById('ussdInput').style.display = 'block';
+        }
+    }
 </script>
 {% endblock %}

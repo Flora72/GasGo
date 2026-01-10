@@ -1,108 +1,109 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Home | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-</head>
-<body>
+{% block title %} Home | GasGo{% endblock %}
 
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">
-        <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
-        <span>GasGo</span>
-    </a>
-    <nav class="nav-links">
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}" class="btn-nav">Sign Up</a></li>
-            <li><a href="{% url 'login' %}" class="btn-nav">Login</a></li>
-        </ul>
-    </nav>
-</header>
+{% block landing_content %}
+<div class="space-y-24 pb-20">
 
+    <section class="max-w-7xl mx-auto px-6 pt-12 md:pt-20">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
 
-<main>
-    <section>
-        <h1>Welcome to GasGo!</h1>
-        <p>This is the homepage of our application.</p>
+            <div class="space-y-10">
+                <div class="space-y-4">
+                    <h1 class="text-7xl md:text-9xl font-black text-wells-navy tracking-tighter leading-none">
+                        Gas<span class="text-wells-green">Go.</span>
+                    </h1>
+                    <h2 class="text-4xl md:text-5xl font-bold text-slate-800 leading-tight">
+                        Energy that <br>
+                        <span class="text-wells-blue">moves with you.</span>
+                    </h2>
+                </div>
+
+                <p class="text-xl text-slate-500 max-w-md leading-relaxed border-l-4 border-wells-green pl-6">
+                    Professional LPG delivery powered by **Green Wells Energies**. Safe, certified, and at your door in record time.
+                </p>
+
+                <div class="flex flex-wrap gap-5 pt-4">
+                    <a href="{% url 'orders' %}" class="bg-wells-green text-white px-10 py-5 rounded-2xl font-black text-xl hover:shadow-[0_20px_50px_rgba(72,187,58,0.3)] hover:-translate-y-1 transition-all flex items-center group">
+                        Order Now <i class="fas fa-gas-pump ml-3 group-hover:rotate-12 transition-transform"></i>
+                    </a>
+                    <a href="{% url 'login' %}" class="bg-wells-slate text-wells-navy px-10 py-5 rounded-2xl font-black text-xl hover:bg-wells-blue hover:text-white transition-all">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+
+            <div class="hidden md:block relative">
+                <div class="absolute -top-10 -right-10 w-64 h-64 bg-wells-green/20 rounded-full blur-[80px]"></div>
+                <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-wells-blue/20 rounded-full blur-[80px]"></div>
+
+                <div class="relative z-10 bg-white p-2 rounded-[50px] shadow-2xl border border-slate-100">
+                    <div class="bg-wells-navy rounded-[48px] p-12 aspect-square flex flex-col justify-center items-center text-center overflow-hidden relative">
+                        <i class="fas fa-fire-alt text-8xl text-wells-green mb-6 drop-shadow-[0_0_15px_rgba(72,187,58,0.5)]"></i>
+                        <h3 class="text-3xl font-black text-white uppercase tracking-tighter">Pure Blue Flame</h3>
+                        <p class="text-wells-blue font-bold mt-2">Guaranteed Quality</p>
+
+                        <div class="absolute top-8 right-8 bg-wells-green text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+                            15 Min Delivery
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <section>
-        <h1>Clean cooking gas, delivered fast</h1>
-        <p>GasGo gets safe, certified LPG to your door. Order in minutes, track easily, and cook without
-            interruptions.</p>
-        <p>
-            <a class="btn btn-primary" href="{% url 'orders' %}">Order LPG now</a>
-            <a class="btn btn-outline" href="{% url 'emergency' %}">Emergency delivery</a>
-            <a class="btn btn-light" href="{% url 'track_order' %}">Track your order</a>
-        </p>
+    <section class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-wells-green p-10 rounded-[40px] text-white shadow-xl shadow-wells-green/20 hover:scale-105 transition-transform">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-8">
+                    <i class="fas fa-shield-heart text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-4 uppercase">Family Safe</h3>
+                <p class="text-white/80 leading-relaxed">Sealed, weight-verified, and ISO certified. We never compromise on your safety.</p>
+            </div>
+
+            <div class="bg-wells-blue p-10 rounded-[40px] text-white shadow-xl shadow-wells-blue/20 hover:scale-105 transition-transform">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-8">
+                    <i class="fas fa-mobile-alt text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-4 uppercase">Always On</h3>
+                <p class="text-white/80 leading-relaxed">No smartphone? No problem. Dial our USSD code to order from any basic phone.</p>
+            </div>
+
+            <div class="bg-wells-navy p-10 rounded-[40px] text-white shadow-xl shadow-wells-navy/20 hover:scale-105 transition-transform">
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-8">
+                    <i class="fas fa-leaf text-2xl text-wells-green"></i>
+                </div>
+                <h3 class="text-2xl font-black mb-4 uppercase">Go Green</h3>
+                <p class="text-white/80 leading-relaxed">Switching to GasGo LPG helps protect Kenya's forests and reduce carbon emissions.</p>
+            </div>
+        </div>
     </section>
 
+    <section class="max-w-7xl mx-auto px-6 py-12">
+        <div class="bg-wells-slate rounded-[60px] p-12 md:p-20 grid md:grid-cols-3 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <h2 class="text-5xl font-black text-wells-navy leading-none mb-4">Simple.</h2>
+                <p class="text-slate-500 font-bold uppercase tracking-widest text-sm">Our 3-Step Process</p>
+            </div>
 
-    <section>
-        <h2>Why choose GasGo</h2>
-        <ul>
-            <li>On-demand delivery of sealed, certified LPG cylinders</li>
-            <li>Safe cylinder exchange handled by trained riders</li>
-            <li>Transparent pricing and friendly customer care</li>
-            <li>Emergency top-ups during extended hours</li>
-        </ul>
+            <div class="col-span-2 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-2">
+                    <p class="text-wells-green font-black text-xl">01. Order</p>
+                    <p class="text-slate-600 text-sm">App, Web, or USSD.</p>
+                </div>
+                <div class="space-y-2 border-l border-slate-200 md:pl-8">
+                    <p class="text-wells-blue font-black text-xl">02. Relax</p>
+                    <p class="text-slate-600 text-sm">Track your rider live.</p>
+                </div>
+                <div class="space-y-2 border-l border-slate-200 md:pl-8">
+                    <p class="text-wells-navy font-black text-xl">03. Cook</p>
+                    <p class="text-slate-600 text-sm">Pay and start cooking.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
-
-    <section>
-        <h2>How it works</h2>
-        <ol>
-            <li>Place an order and share your location plus cylinder size.</li>
-            <li>We dispatch the nearest vetted rider with a sealed cylinder.</li>
-            <li>Exchange your empty, confirm safety, and pay on delivery.</li>
-        </ol>
-    </section>
-
-    <div class="cta-banner">
-        <h2>Ready to refill?</h2>
-        <a class="btn btn-primary" href="{% url 'orders' %}">Start your order</a>
-    </div>
-</main>
-
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
-<div id="gasbot-float">
-    <button onclick="window.location.href='{% url 'gasbot' %}'" title="Chat with GasBot">
-        <i class="fas fa-robot"></i> Ask for help
-    </button>
 </div>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
-
-</body>
-</html>
+{% endblock %}

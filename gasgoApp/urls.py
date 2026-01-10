@@ -23,7 +23,6 @@ urlpatterns = [
     path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),
     path('vendors/available/', views.available_vendors, name='available_vendors'),
     path('gasbot/', views.gasbot, name='gasbot'),
-    path('history/', views.history_view, name='history'), 
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='reset_password.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),  name='password_reset_complete'),
     path('payment/<str:order_id>/', views.initiate_payment, name='initiate_payment'),

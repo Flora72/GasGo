@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
+
 class Vendor(models.Model):
     name = models.CharField(max_length=100)
     location_lat = models.FloatField(null=True, blank=True)
@@ -10,31 +11,34 @@ class Vendor(models.Model):
     def __str__(self):
         return self.name
 
+
 def generate_order_id():
     return f"GGO-{uuid.uuid4().hex[:8].upper()}"
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     order_id = models.CharField(max_length=20, unique=True, default=generate_order_id)
-    price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    total_cost = models.DecimalField(max_digits=8, decimal_places=2)
+
+    # Financial details - merged and cleaned
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length=20, default='Pending')
 
-    # Delivery details
-    full_name = models.CharField(max_length=100, blank=True)
+    # Delivery details - added null=True to match view logic
+    full_name = models.CharField(max_length=100, blank=True, null=True)
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=255)
-    directions = models.TextField(blank=True)
-    preferred_time = models.CharField(max_length=50, blank=True)
-    notes = models.TextField(blank=True)
+    directions = models.TextField(blank=True, null=True)
+    preferred_time = models.CharField(max_length=50, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
 
     # Gas details
     size = models.CharField(max_length=10)
-    brand = models.CharField(max_length=50, blank=True)
-    exchange = models.CharField(max_length=10, blank=True)
+    brand = models.CharField(max_length=50, blank=True, null=True)
+    exchange = models.CharField(max_length=10, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # Location tracking
     delivery_latitude = models.FloatField(null=True, blank=True)

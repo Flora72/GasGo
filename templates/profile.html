@@ -1,154 +1,98 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile | GasGo</title>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+{% block title %}Manage Profile | GasGo{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto pb-20 space-y-8">
     
-    <!-- LOAD PROFILE CSS FIRST -->
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}"/>
-    
-    <!-- THEN LOAD OTHER CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-</head>
-<body>
-<div class="dashboard">
-    <aside class="sidebar">...</aside>
-
-    <div class="main">
-        <header class="topbar">...</header>
-
-        <section class="profile-section">
-            <!-- Title -->
-            <h1 class="profile-title">Manage Your Profile & Settings</h1>
-
-            <!-- Welcome Message -->
-            <div class="welcome-section">
-                <p class="welcome-text">Welcome back, <span class="user-name">{{ user.get_full_name|default:user.username }}</span>!</p>
-            </div>
-
-            <!-- Profile Info Section -->
-            <div class="profile-info-section">
-                <h2 class="section-title"><i class="fas fa-user-circle"></i> Personal Information</h2>
-                
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-user"></i> Username:</span>
-                        <span class="info-value">{{ user.username }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-envelope"></i> Email:</span>
-                        <span class="info-value">{{ user.email|default:"Not provided" }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-phone"></i> Phone:</span>
-                        <span class="info-value">
-                            {% if user_profile.phone_number %}
-                                {{ user_profile.phone_number }}
-                            {% else %}
-                                Not provided
-                            {% endif %}
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label"><i class="fas fa-calendar-alt"></i> Member Since:</span>
-                        <span class="info-value">{{ user.date_joined|date:"F d, Y" }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Avatar Section -->
-            <div class="avatar-section">
-                <h2 class="section-title"><i class="fas fa-camera"></i> Profile Picture</h2>
-                
-                <div class="profile-pic-large" style="width: 180px; height: 180px; overflow: hidden; border-radius: 50%; background: #f5f5f5; border: 4px solid #D97706; margin: 20px auto; position: relative;">
-                    {% if user_profile.profile_image %}
-                        <img src="{{ user_profile.profile_image.url }}" alt="Profile Picture" 
-                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; position: absolute; top: 0; left: 0;">
-                    {% else %}
-                        <i class="fas fa-user" style="font-size: 80px; color: #D97706;"></i>
-                    {% endif %}
-                </div>
-
-                <!-- Upload new image -->
-                <div class="file-input-wrapper">
-                    <form method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <label for="profile_image" class="upload-label">
-                            <i class="fas fa-cloud-upload-alt"></i> Upload New Profile Picture
-                        </label>
-                        <input type="file" name="profile_image" id="profile_image" accept="image/*">
-                        <button type="submit" class="btn-save">
-                            <i class="fas fa-save"></i> Save Picture
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Orders Section -->
-            <div class="orders-section">
-                <h2 class="section-title"><i class="fas fa-shopping-cart"></i> My Orders</h2>
-                
-                {% if orders %}
-                    <div class="orders-list">
-                        {% for order in orders %}
-                        <div class="order-item">
-                            <div class="order-header">
-                                <span class="order-id">Order #{{ order.order_id }}</span>
-                                <span class="order-status {{ order.status|lower }}">{{ order.status }}</span>
-                            </div>
-                            <div class="order-details">
-                                <span class="order-date">{{ order.created_at|date:"M d, Y H:i" }}</span>
-                                <span class="order-amount">KSh {{ order.total_amount }}</span>
-                            </div>
-                            {% if order.status == 'PENDING' %}
-                            <form method="POST" action="{% url 'initiate_payment' order.order_id %}" class="payment-form">
-                                {% csrf_token %}
-                                <div class="payment-input">
-                                    <label for="phone_{{ order.order_id }}">Phone Number for Payment:</label>
-                                    <input type="text" name="phone_number" id="phone_{{ order.order_id }}" 
-                                           placeholder="0712345678" required>
-                                </div>
-                                <button type="submit" class="btn-pay">
-                                    <i class="fas fa-money-bill-wave"></i> Pay with M-Pesa
-                                </button>
-                            </form>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
+    <section class="flex flex-col md:flex-row items-center gap-8 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
+        <div class="relative group">
+            <div class="w-32 h-32 rounded-3xl bg-wells-navy flex items-center justify-center text-white text-4xl font-black overflow-hidden border-4 border-wells-green/20">
+                {% if user.profile.profile_image %}
+                    <img src="{{ user.profile.profile_image.url }}" class="w-full h-full object-cover">
                 {% else %}
-                    <div class="no-orders">
-                        <i class="fas fa-shopping-cart fa-3x"></i>
-                        <p>No orders have been placed yet.</p>
-                        <a href="{% url 'dashboard' %}" class="btn-browse">
-                            <i class="fas fa-gas-pump"></i> Browse Products
-                        </a>
-                    </div>
+                    {{ user.first_name|slice:":1"|default:"U" }}
                 {% endif %}
             </div>
+            <label for="profile_image" class="absolute -bottom-2 -right-2 w-10 h-10 bg-wells-green text-white rounded-xl flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform">
+                <i class="fas fa-camera text-sm"></i>
+            </label>
+        </div>
 
-            <!-- Back to Dashboard Button -->
-            <div class="back-btn">
-                <a href="{% url 'dashboard' %}" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
+        <div class="text-center md:text-left flex-1">
+            <h1 class="text-3xl font-black text-wells-navy tracking-tighter">
+                {{ user.get_full_name|default:user.username }}
+            </h1>
+            <p class="text-slate-500 font-medium">Member since {{ user.date_joined|date:"F Y" }}</p>
+            <div class="mt-4 flex flex-wrap justify-center md:justify-start gap-3">
+                <span class="px-4 py-1.5 bg-wells-green/10 text-wells-green rounded-full text-[10px] font-black uppercase tracking-widest">
+                    <i class="fas fa-shield-check mr-1"></i> Verified Account
+                </span>
+                <span class="px-4 py-1.5 bg-wells-blue/10 text-wells-blue rounded-full text-[10px] font-black uppercase tracking-widest">
+                    <i class="fas fa-gas-pump mr-1"></i> {{ orders.count }} Orders placed
+                </span>
             </div>
-        </section>
+        </div>
+    </section>
+
+    <div class="grid md:grid-cols-3 gap-8">
+        
+        <div class="md:col-span-2 space-y-6">
+            <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
+                <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em] mb-8">Personal Details</h3>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <input type="file" name="profile_image" id="profile_image" class="hidden" accept="image/*">
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Username</label>
+                            <input type="text" value="{{ user.username }}" disabled class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm text-slate-400 cursor-not-allowed outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Email Address</label>
+                            <input type="email" value="{{ user.email }}" name="email" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-wells-navy transition outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Phone Number</label>
+                            <input type="text" name="phone_number" value="{{ user_profile.phone_number }}" placeholder="07XXXXXXXX" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-wells-navy transition outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Full Name</label>
+                            <input type="text" name="full_name" value="{{ user.get_full_name }}" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-wells-navy transition outline-none">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full md:w-auto bg-wells-navy text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-wells-green hover:shadow-xl transition-all">
+                        Update Account Information
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+            <div class="bg-wells-blue p-8 rounded-[3rem] text-white relative overflow-hidden">
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] mb-4 opacity-60">Latest Order</h3>
+                {% if orders %}
+                    {% with latest=orders.first %}
+                        <p class="text-2xl font-black mb-1">#{{ latest.order_id }}</p>
+                        <p class="text-xs font-bold opacity-80 uppercase">{{ latest.status }}</p>
+                        <a href="{% url 'track_order' %}?order_id={{ latest.order_id }}" class="inline-block mt-6 text-[10px] font-black uppercase tracking-widest bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition">
+                            Track Now
+                        </a>
+                    {% endwith %}
+                {% else %}
+                    <p class="text-sm font-bold opacity-80">No active orders found.</p>
+                    <a href="{% url 'orders' %}" class="inline-block mt-6 text-[10px] font-black uppercase tracking-widest bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition">
+                        Order Gas
+                    </a>
+                {% endif %}
+                <i class="fas fa-history absolute -right-6 -bottom-6 text-8xl opacity-10"></i>
+            </div>
+        </div>
     </div>
 </div>
-
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
-</body>
-</html>
-
+{% endblock %}

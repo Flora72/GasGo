@@ -1,139 +1,104 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-    <style>
-        .password-container {
-            position: relative;
-        }
+{% block title %}Login | GasGo{% endblock %}
 
-        .password-toggle {
-            position: absolute;
-            top: 50%;
-            right: 0.5px;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #777;
-            z-index: 10;
-        }
-    </style>
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">
-        <img src="{% static 'images/logo.png' %}" alt="GasGo"> GasGo
-    </a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
+{% block landing_content %}
+<style>
+    nav, footer { display: none !important; }
 
-<main>
-    <section class="auth" aria-label="Login form">
-        <div class="head">
-            <img src="{% static 'images/logo.png' %}" alt="GasGo logo">
-            <h1>Welcome back</h1>
-            <p>Sign in to continue ordering LPG with ease</p>
+    /* Animated Energy Background */
+    .energy-bg {
+        background: linear-gradient(rgba(11, 46, 77, 0.8), rgba(11, 46, 77, 0.6)),
+                    url('https://images.unsplash.com/photo-1581094288338-2314dddb7bc3?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    /* Floating Glass Effect */
+    .glass-login {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Energy Input Glow */
+    .energy-input:focus {
+        box-shadow: 0 0 15px rgba(72, 187, 58, 0.3);
+    }
+</style>
+
+<div class="min-h-screen flex items-center justify-center energy-bg px-6 py-12">
+
+    <div class="w-full max-w-[1000px] flex flex-col md:flex-row items-center gap-12 relative z-10">
+
+        <div class="hidden md:block w-1/2 text-white space-y-6">
+            <a href="{% url 'index' %}" class="inline-flex items-center text-wells-green font-black tracking-widest text-sm mb-4">
+                <i class="fas fa-arrow-left mr-2"></i> BACK TO HOME
+            </a>
+            <h1 class="text-6xl font-black leading-none tracking-tighter">
+                Powering <br><span class="text-wells-green underline decoration-wells-blue decoration-8">Kenya's</span> Kitchens.
+            </h1>
+            <p class="text-slate-300 text-lg max-w-sm font-medium">
+                Log in to access safe, certified energy from Green Wells stations delivered to your doorstep.
+            </p>
+            <div class="flex gap-4 items-center pt-6 opacity-60">
+                <div class="h-[1px] w-12 bg-white"></div>
+                <span class="text-xs font-bold uppercase tracking-widest">ISO 9001-2015 CERTIFIED</span>
+            </div>
         </div>
 
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            <div class="field">
-                <label for="id_username">Email or Username</label>
-                <input id="id_username" name="username" type="text" placeholder="e.g. amina or amina@example.com"
-                       autocomplete="username" required>
-            </div>
+        <div class="w-full md:w-[460px] glass-login rounded-[4rem] p-10 md:p-14 relative overflow-hidden">
 
-            <div class="field">
-                <label for="id_password">Password</label>
-                <div class="password-container">
-                    <input id="id_password" name="password" type="password" placeholder="Your password"
-                           autocomplete="current-password" required>
-                    <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+            <div class="text-center mb-10">
+                <div class="w-16 h-16 bg-wells-navy rounded-3xl shadow-lg flex items-center justify-center mx-auto mb-6 transform -rotate-3">
+                    <img src="{% static 'images/logo.png' %}" alt="GasGo" class="h-10 w-auto brightness-0 invert">
                 </div>
+                <h3 class="text-3xl font-black text-wells-navy tracking-tighter">Gas<span class="text-wells-green">Go</span> Login</h3>
+                <p class="text-slate-400 text-xs font-bold uppercase mt-2 tracking-widest">Secure User Access</p>
             </div>
 
-            <div class="row">
-                <label class="inline">
-                    <input type="checkbox" name="remember" value="1"> Remember me
-                </label>
-                <a href="{% url 'forgot_password' %}" class="forgot-link">Forgot password?</a>
-            </div>
+            <form method="post" action="{% url 'login' %}" class="space-y-5">
+                {% csrf_token %}
 
-            <div class="field">
-                <button class="btn" type="submit">Sign in</button>
-            </div>
-        </form>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em] ml-2">Username / Email</label>
+                    <div class="relative">
+                        <i class="fas fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input id="id_username" name="username" type="text" placeholder="amina@example.com"
+                               class="w-full bg-slate-50 border border-slate-100 focus:border-wells-green rounded-2xl px-12 py-4 transition-all outline-none text-sm energy-input" required>
+                    </div>
+                </div>
 
-        <div class="alt">
-            New to GasGo? <a href="{% url 'signup' %}">Create an account</a>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center px-2">
+                        <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em]">Password</label>
+                        <a href="{% url 'forgot_password' %}" class="text-[10px] font-bold text-wells-blue">Forgot?</a>
+                    </div>
+                    <div class="relative">
+                        <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                        <input id="id_password" name="password" type="password" placeholder="••••••••"
+                               class="w-full bg-slate-50 border border-slate-100 focus:border-wells-blue rounded-2xl px-12 py-4 transition-all outline-none text-sm energy-input" required>
+                        <button type="button" id="togglePassword" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-wells-navy text-white py-5 rounded-2xl font-black text-lg hover:bg-wells-green hover:shadow-2xl hover:shadow-wells-green/40 transition-all flex items-center justify-center group">
+                    Sign In <i class="fas fa-chevron-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </form>
+
+            <div class="mt-10 text-center">
+                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest">
+                    New to GasGo? <a href="{% url 'signup' %}" class="text-wells-green hover:text-wells-blue transition-colors ml-1 underline decoration-2 underline-offset-4">Create Account</a>
+                </p>
+            </div>
         </div>
-    </section>
-</main>
+    </div>
+</div>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
-
-<script>
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordInput = document.getElementById('id_password');
-
-    if (togglePassword && passwordInput) {
-        togglePassword.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            this.classList.toggle('fa-eye-slash');
-            this.classList.toggle('fa-eye');
-        });
-    }
-
-    {% if alert_message %}
-        window.onload = function () {
-            alert("{{ alert_message|escapejs }}");
-        };
-    {% endif %}
-
-    {% if confirm_message %}
-        window.onload = function () {
-            if (confirm("{{ confirm_message|escapejs }}")) {
-                document.getElementById("id_username").focus();
-            }
-        };
-    {% endif %}
-</script>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
-
-</body>
-</html>
+{% endblock %}

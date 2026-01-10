@@ -1,214 +1,215 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Available Vendors | GasGo{% endblock %}
+{% block title %}Nearby Vendors | GasGo{% endblock %}
+{% block page_title %}Select Station{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-<link rel="stylesheet" href="{% static 'css/orders.css' %}">
-<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
 <style>
-  #map { height: 400px; margin-bottom: 20px; }
-  .selected-vendor { margin-top: 10px; font-weight: bold; color: #007bff; }
-  .location-filter { margin-bottom: 20px; }
-  .location-filter label { margin-right: 10px; }
+    /* Custom Scrollbar for Vendor List */
+    .vendor-list::-webkit-scrollbar { width: 5px; }
+    .vendor-list::-webkit-scrollbar-track { background: transparent; }
+    .vendor-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+    #map { height: 100%; width: 100%; border-radius: 2.5rem; }
+
+    .vendor-card.active {
+        border-color: #48bb3a;
+        background-color: #f0fdf4;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<main>
-  <section>
-    <h1>Choose a nearby vendor</h1>
-    <p>We’ve scanned petrol stations near your current location. Select one to proceed.</p>
-  </section>
+<div class="flex flex-col lg:flex-row gap-8 h-[calc(100vh-160px)]">
 
-  <section class="location-filter">
-    <form id="location-filter-form">
-      <label for="county">County:</label>
-      <select id="county" name="county" required>
-        <option value="">-- Select County --</option>
-      </select>
+    <div class="w-full lg:w-2/5 flex flex-col space-y-6 h-full">
 
-      <label for="district">District:</label>
-      <select id="district" name="district" required disabled>
-        <option value="">-- Select District --</option>
-      </select>
-    </form>
-  </section>
+        <div class="space-y-2">
+            <h1 class="text-3xl font-black text-wells-navy tracking-tighter">Available <span class="text-wells-green">Stations.</span></h1>
+            <p class="text-slate-500 text-sm font-medium">Select a certified partner to fulfill your order.</p>
+        </div>
 
-  <section>
-    <div id="map"></div>
+        <div class="flex gap-3 overflow-x-auto pb-2">
+            <div class="bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm flex items-center gap-2 whitespace-nowrap">
+                <i class="fas fa-map-marker-alt text-wells-green text-xs"></i>
+                <span id="current-county-display" class="text-[10px] font-black uppercase tracking-widest text-wells-navy">Detecting...</span>
+            </div>
+            <button id="refresh-scan" class="bg-wells-navy text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-wells-blue transition">
+                <i class="fas fa-sync-alt"></i> Rescan
+            </button>
+        </div>
 
-    <form method="post" action="{% url 'vendors' %}">
-      {% csrf_token %}
-      <input type="hidden" name="vendor_choice" id="vendor-choice-input">
-      <input type="hidden" name="vendor_lat" id="vendor-lat">
-      <input type="hidden" name="vendor_lng" id="vendor-lng">
-      <div id="selected-vendor-display" class="selected-vendor"></div>
+        <div id="vendor-container" class="vendor-list flex-1 overflow-y-auto space-y-4 pr-2">
+            <div id="loading-vendors" class="text-center py-20 space-y-4">
+                <div class="animate-spin text-wells-green text-3xl">
+                    <i class="fas fa-circle-notch"></i>
+                </div>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Scanning petrol stations...</p>
+            </div>
+        </div>
 
-      <p>
-        <label for="notes">Final notes (optional)</label><br>
-        <textarea name="notes" rows="3" placeholder="Any extra instructions?"></textarea>
-      </p>
-      <button type="submit" class="btn btn-primary" id="proceed-button" disabled>Confirm Order</button>
-    </form>
-  </section>
+        <form method="post" action="{% url 'vendors' %}" class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl">
+            {% csrf_token %}
+            <input type="hidden" name="vendor_choice" id="vendor-choice-input">
+            <input type="hidden" name="vendor_lat" id="vendor-lat">
+            <input type="hidden" name="vendor_lng" id="vendor-lng">
+
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selected Station</p>
+                    <p id="selected-vendor-display" class="font-bold text-wells-navy italic">None Selected</p>
+                </div>
+                <i class="fas fa-check-circle text-slate-200 text-2xl" id="selection-check"></i>
+            </div>
+
+            <button type="submit" class="w-full bg-wells-green text-white py-4 rounded-2xl font-black text-lg hover:shadow-lg hover:shadow-wells-green/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all" id="proceed-button" disabled>
+                Confirm & Pay
+            </button>
+        </form>
+    </div>
+
+    <div class="w-full lg:w-3/5 h-[400px] lg:h-full relative">
+        <div id="map" class="shadow-2xl border border-white"></div>
+
+        <div class="absolute bottom-6 left-6 right-6 bg-wells-navy/90 backdrop-blur-md p-4 rounded-3xl text-white flex items-center justify-between border border-white/10 hidden md:flex">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-wells-green rounded-xl flex items-center justify-center">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold">Safe-Check Active</p>
+                    <p class="text-[10px] opacity-60">All stations are GreenWells certified.</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-60">Search Radius</p>
+                <p class="text-xs font-bold">8.0 Kilometers</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-  const districtOptions = {
-    Nairobi: ["Westlands", "Lang'ata", "Embakasi", "Kasarani", "Starehe"],
-    Kiambu: ["Thika", "Ruiru", "Limuru","Kiambaa"],
-    Machakos: ["Machakos", "Mlolongo", "Athi River", "Kangundo"],
-    Mombasa: ["Mombasa", "Likoni", "Nyali"],
-    Kisumu: ["Kisumu", "Ahero", "Maseno"],
-    Nakuru: ["Nakuru", "Naivasha", "Molo"],
-    Kakamega: ["Kakamega", "Mumias", "Lugari"],
-    Bungoma: ["Bungoma", "Kimilili", "Webuye"],
-    Meru: ["Meru", "Maua", "Nkubu"],
-    Nyeri: ["Nyeri", "Karatina", "Othaya"],
-    Muranga: ["Murang'a", "Kangema", "Kandara"],
-    Embu: ["Embu", "Runyenjes", "Siakago"],
-    Kirinyaga: ["Kerugoya", "Kutus", "Wanguru"],
-    Nyandarua: ["Ol Kalou", "Engineer", "Njabini"],
-    Laikipia: ["Nanyuki", "Rumuruti", "Nyahururu"],
-    Uasin_Gishu: ["Eldoret", "Turbo", "Moiben"],
-    Trans_Nzoia: ["Kitale", "Endebess", "Kiminini"],
-    Nandi: ["Kapsabet", "Nandi Hills", "Mosoriot"],
-    Kericho: ["Kericho", "Litein", "Sosiot"],
-    Bomet: ["Bomet", "Sotik", "Mulot"],
-    Kisii: ["Kisii", "Nyamira", "Ogembo"],
-    Migori: ["Migori", "Awendo", "Rongo"],
-    Homa_Bay: ["Homa Bay", "Mbita", "Oyugis"],
-    Siaya: ["Siaya", "Bondo", "Ugunja"],
-    Busia: ["Busia", "Malaba", "Nambale"],
-    Vihiga: ["Vihiga", "Luanda", "Mbale"],
-    Taita_Taveta: ["Voi", "Wundanyi", "Taveta"],
-    Kwale: ["Kwale", "Ukunda", "Msambweni"],
-    Kilifi: ["Kilifi", "Malindi", "Kaloleni"],
-    Lamu: ["Lamu", "Mokowe", "Hindi"],
-    Tana_River: ["Hola", "Garsen", "Bura"],
-    Garissa: ["Garissa", "Dadaab", "Modogashe"],
-    Wajir: ["Wajir", "Habaswein", "Griftu"],
-    Mandera: ["Mandera", "Elwak", "Takaba"],
-    Marsabit: ["Marsabit", "Moyale", "Sololo"],
-    Turkana: ["Lodwar", "Kakuma", "Lokichogio"],
-    Samburu: ["Maralal", "Baragoi", "Wamba"],
-    Isiolo: ["Isiolo", "Kinna", "Garbatulla"],
-    Tharaka_Nithi: ["Chuka", "Tharaka", "Marimanti"],
-    Kitui: ["Kitui", "Mwingi", "Mutomo"],
-    Makueni: ["Wote", "Makindu", "Emali"],
-    Narok: ["Narok", "Kilgoris", "Suswa"],
-    Kajiado: ["Kajiado", "Ngong", "Kitengela"],
-    Nyamira: ["Nyamira", "Keroka", "Ekerenyo"],
-    Elgeyo_Marakwet: ["Iten", "Kapsowar", "Chepkorio"],
-    West_Pokot: ["Kapenguria", "Chepareria", "Sigor"]
-  };
+    let map, service, markers = [];
 
-  const countySelect = document.getElementById('county');
-  const districtSelect = document.getElementById('district');
-
-  Object.keys(districtOptions).forEach(county => {
-    const option = document.createElement('option');
-    option.value = county;
-    option.textContent = county.replace(/_/g, " ");
-    countySelect.appendChild(option);
-  });
-
-  countySelect.addEventListener('change', () => {
-    const selectedCounty = countySelect.value;
-    districtSelect.innerHTML = '<option value="">-- Select District --</option>';
-
-    if (districtOptions[selectedCounty]) {
-      districtOptions[selectedCounty].forEach(district => {
-        const option = document.createElement('option');
-        option.value = district;
-        option.textContent = district;
-        districtSelect.appendChild(option);
-      });
-      districtSelect.disabled = false;
-    } else {
-      districtSelect.disabled = true;
+    function initMap() {
+        navigator.geolocation.getCurrentPosition(
+            position => {
+                const userLoc = { lat: position.coords.latitude, lng: position.coords.longitude };
+                renderMap(userLoc);
+                performScan(userLoc);
+            },
+            () => {
+                const fallback = { lat: {{ user_lat|default:-1.286389 }}, lng: {{ user_lng|default:36.817223 }} };
+                renderMap(fallback);
+                performScan(fallback);
+            }
+        );
     }
-  });
 
-  function loadMapAndScan(userLocation) {
-    const map = new google.maps.Map(document.getElementById("map"), {
-      center: userLocation,
-      zoom: 14,
-    });
+    function renderMap(location) {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: location,
+            zoom: 14,
+            styles: [/* Custom Map Styling could go here */],
+            disableDefaultUI: true,
+            zoomControl: true
+        });
 
-    const service = new google.maps.places.PlacesService(map);
-    const request = {
-      location: userLocation,
-      radius: 8000,
-      type: "gas_station"
-    };
+        // User Marker
+        new google.maps.Marker({
+            position: location,
+            map,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: "#3498db",
+                fillOpacity: 1,
+                strokeWeight: 5,
+                strokeColor: "white",
+            },
+            title: "Your Location"
+        });
+    }
 
-    service.nearbySearch(request, (results, status) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        results.forEach(place => {
-          const marker = new google.maps.Marker({
+    function performScan(location) {
+        const request = { location, radius: 8000, type: "gas_station" };
+        service = new google.maps.places.PlacesService(map);
+
+        service.nearbySearch(request, (results, status) => {
+            const container = document.getElementById('vendor-container');
+            container.innerHTML = ''; // Clear loading
+
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                results.forEach((place, index) => {
+                    createVendorCard(place);
+                    createMarker(place);
+                });
+            } else {
+                container.innerHTML = '<p class="text-center text-slate-400 py-10">No stations found nearby.</p>';
+            }
+        });
+    }
+
+    function createVendorCard(place) {
+        const container = document.getElementById('vendor-container');
+        const card = document.createElement('div');
+        card.className = 'vendor-card bg-white p-5 rounded-3xl border border-slate-100 shadow-sm cursor-pointer hover:shadow-md transition group relative overflow-hidden';
+        card.onclick = () => selectVendor(place, card);
+
+        card.innerHTML = `
+            <div class="flex justify-between items-start">
+                <div class="flex gap-4">
+                    <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-wells-navy group-hover:bg-wells-green group-hover:text-white transition">
+                        <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-wells-navy tracking-tight">${place.name}</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">${place.vicinity}</p>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-yellow-500 text-[10px]"><i class="fas fa-star"></i> ${place.rating || '4.5'}</span>
+                            <span class="text-slate-300 text-[10px]">|</span>
+                            <span class="text-wells-blue text-[10px] font-bold italic">Open Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    }
+
+    function createMarker(place) {
+        const marker = new google.maps.Marker({
             map,
             position: place.geometry.location,
-            title: place.name
-          });
-
-          marker.addListener("click", () => {
-            document.getElementById("vendor-choice-input").value = place.name;
-            document.getElementById("vendor-lat").value = place.geometry.location.lat();
-            document.getElementById("vendor-lng").value = place.geometry.location.lng();
-            document.getElementById("selected-vendor-display").textContent = `Selected: ${place.name}`;
-            document.getElementById("proceed-button").disabled = false;
-          });
+            title: place.name,
+            icon: {
+                url: "{% static 'images/map-pin.png' %}", // Use a custom pin if you have one
+                scaledSize: new google.maps.Size(40, 40)
+            }
         });
-      } else {
-        alert("No petrol stations found nearby.");
-      }
-    });
-  }
+        markers.push(marker);
+        marker.addListener("click", () => selectVendor(place));
+    }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        console.log("User location:", userLocation);
-        loadMapAndScan(userLocation);
-      },
-      error => {
-        console.error("Geolocation error:", error);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            alert("Permission denied. Please allow location access in your browser settings.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            alert("Location information is unavailable. Try again later.");
-            break;
-          case error.TIMEOUT:
-            alert("Location request timed out. Please refresh and try again.");
-            break;
-          default:
-            alert("An unknown error occurred while accessing location.");
-            break;
-        }
-        const fallbackLocation = {
-          lat: {{ user_lat }},
-          lng: {{ user_lng }}
-        };
-        loadMapAndScan(fallbackLocation);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-  });
+    function selectVendor(place, cardElement = null) {
+        document.getElementById("vendor-choice-input").value = place.name;
+        document.getElementById("vendor-lat").value = place.geometry.location.lat();
+        document.getElementById("vendor-lng").value = place.geometry.location.lng();
+        document.getElementById("selected-vendor-display").textContent = place.name;
+        document.getElementById("proceed-button").disabled = false;
+        document.getElementById("selection-check").classList.replace('text-slate-200', 'text-wells-green');
+
+        // Visual feedback on card
+        document.querySelectorAll('.vendor-card').forEach(c => c.classList.remove('active'));
+        if(cardElement) cardElement.classList.add('active');
+
+        map.panTo(place.geometry.location);
+        map.setZoom(16);
+    }
+
+    document.addEventListener("DOMContentLoaded", initMap);
 </script>
-
-</main>
 {% endblock %}

@@ -1,65 +1,86 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Order History | GasGo{% endblock %}
-
-{% block head %}
-    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-    <link rel="stylesheet" href="{% static 'css/history.css' %}"/>
-{% endblock %}
+{% block page_title %}My Orders{% endblock %}
 
 {% block content %}
-<section class="history-container">
-    <div class="history-header">
-        <h2>Full Order History</h2>
-        </div>
-    
-    {% if orders %}
-        <p class="history-summary">You have **{{ orders|length }}** past orders in your record.</p>
+<div class="max-w-6xl mx-auto pb-20 space-y-8">
 
-        <table class="history-table">
-            <thead>
-                <tr>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                    <th>Vendor</th>
-                    <th>Size (kg)</th>
-                    <th>Total Price</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr>
-                    <td data-label="Order ID">#{{ order.id }}</td>
-                    <td data-label="Date">{{ order.order_date|date:"M d, Y" }}</td>
-                    <td data-label="Vendor">{{ order.vendor.name|default:"N/A" }}</td>
-                    <td data-label="Size (kg)">{{ order.cylinder_size }}</td>
-                    <td data-label="Total Price">Ksh {{ order.total_price|floatformat:2 }}</td>
-                    
-                    <td data-label="Status">
-                        {% if order.status == 'Paid' or order.status == 'Completed' %}
-                            <span class="status-paid">{{ order.status }}</span>
-                        {% elif order.status == 'Pending' or order.status == 'In Progress' %}
-                            <span class="status-pending">{{ order.status }}</span>
-                        {% else %}
-                            <span class="status-failed">{{ order.status|default:"Failed/Cancelled" }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <section class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+            <h1 class="text-3xl font-black text-wells-navy tracking-tighter">Full Order <span class="text-wells-blue">History.</span></h1>
+            <p class="text-slate-500 font-medium">Tracking and managing your energy consumption records.</p>
+        </div>
+        <div class="bg-wells-slate px-6 py-4 rounded-2xl border border-slate-50">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lifetime Orders</p>
+            <p class="text-2xl font-black text-wells-navy">{{ orders.count }} Total</p>
+        </div>
+    </section>
+
+    {% if orders %}
+    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Vendor</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Cylinder Details</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for order in orders %}
+                    <tr class="hover:bg-slate-50/30 transition-colors group">
+                        <td class="px-8 py-6 font-black text-wells-navy text-sm">#{{ order.order_id }}</td>
+                        <td class="px-8 py-6 text-sm text-slate-500 font-medium">{{ order.created_at|date:"M d, Y" }}</td>
+                        <td class="px-8 py-6">
+                            <span class="text-sm font-bold text-wells-navy">{{ order.vendor.name|default:"Nearby Partner" }}</span>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-black text-wells-navy">{{ order.brand }}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase">Size: {{ order.size }} x {{ order.quantity }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6 font-black text-wells-navy text-sm">KES {{ order.total_cost|floatformat:2 }}</td>
+                        <td class="px-8 py-6 text-center">
+                            {% if order.status == 'Confirmed' or order.status == 'Paid' %}
+                                <span class="px-4 py-1.5 bg-wells-green/10 text-wells-green rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status }}
+                                </span>
+                            {% elif order.status == 'Pending' or order.status == 'Pending Payment' %}
+                                <span class="px-4 py-1.5 bg-amber-500/10 text-amber-500 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status }}
+                                </span>
+                            {% else %}
+                                <span class="px-4 py-1.5 bg-red-500/10 text-red-500 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status|default:"Cancelled" }}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     {% else %}
-        <p class="no-orders">
-            <i class="fas fa-file-invoice-dollar"></i> 
-            You haven't placed any orders yet.
-        </p>
-        <p class="history-cta" style="text-align: center;">
-            <a href="{% url 'orders' %}" class="btn-primary">Place Your First Order</a>
-        </p>
+    <div class="bg-white p-20 rounded-[3rem] border border-slate-100 shadow-sm text-center">
+        <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-200 text-3xl">
+            <i class="fas fa-file-invoice-dollar"></i>
+        </div>
+        <h3 class="text-xl font-black text-wells-navy mb-2">No orders found</h3>
+        <p class="text-slate-500 text-sm mb-8">It looks like you haven't placed any orders yet.</p>
+        <a href="{% url 'orders' %}" class="bg-wells-navy text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-wells-green hover:shadow-xl transition-all">
+            Place Your First Order
+        </a>
+    </div>
     {% endif %}
 
-    <p style="text-align: center; margin-top: 2rem;"><a href="{% url 'dashboard' %}">Back to Dashboard</a></p>
-</section>
+</div>
 {% endblock %}

@@ -1,138 +1,240 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Track Order | GasGo{% endblock %}
+{% block title %}Track Live Delivery | GasGo{% endblock %}
+{% block page_title %}Live Tracking{% endblock %}
 
 {% block head %}
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-  <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
-  <link rel="stylesheet" href="{% static 'css/track.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script async defer
     src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places,geometry">
   </script>
   <style>
-    #map {
-      width: 100%;
-      height: 420px;
-      background: #eee;
+    #map { height: 100%; width: 100%; border-radius: 2.5rem; }
+
+    /* Animation for the tracking pulse */
+    .status-pulse {
+        animation: pulse-green 2s infinite;
     }
-    #status {
-      margin-top: 10px;
+    @keyframes pulse-green {
+        0% { box-shadow: 0 0 0 0 rgba(72, 187, 58, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(72, 187, 58, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(72, 187, 58, 0); }
+    }
+
+    .timeline-line {
+        width: 2px;
+        background: #e2e8f0;
+        position: absolute;
+        top: 0; bottom: 0; left: 15px;
+        z-index: 0;
     }
   </style>
 {% endblock %}
 
 {% block content %}
-<main>
-  <section>
-    <h1>Track your order</h1>
-    <p>See your rider on the map and how far they are from you — just like tracking a cab.</p>
-    <p>
-      <label for="id_order">Order ID (optional)</label>
-      <input id="id_order" type="text" placeholder="e.g. GGO-2025-00123" value="{{ order.order_id|default:'' }}">
-      <button id="btnTrack" type="button">Track</button>
-      <small id="orderHint">No ID? We'll show your latest order or a demo.</small>
-    </p>
+<div class="flex flex-col lg:flex-row gap-8 h-[calc(100vh-160px)]">
 
-    {% if order %}
-      <p><strong>Order ID:</strong> {{ order.order_id }}</p>
-      <p><strong>Status:</strong> {{ order.status }}</p>
-      <p><strong>Vendor:</strong> {{ order.vendor.name|default:"—" }}</p>
-    {% else %}
-      <p><em>No active order found. Showing demo tracking.</em></p>
-    {% endif %}
-  </section>
+    <div class="w-full lg:w-1/3 flex flex-col space-y-6 overflow-y-auto pr-2">
 
-  <section>
-    <div id="map"></div>
-    <div id="status">
-      <p><strong>Status:</strong> <span id="statusText">Initializing map…</span></p>
-      <p><strong>Distance to you:</strong> <span id="distance">—</span> · <strong>ETA:</strong> <span id="eta">—</span></p>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Lookup Delivery</p>
+            <div class="flex gap-2">
+                <input id="id_order" type="text" placeholder="GGO-XXXXX" value="{{ order.order_id|default:'' }}"
+                       class="flex-1 bg-slate-50 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-wells-green outline-none">
+                <button id="btnTrack" class="bg-wells-navy text-white px-4 py-2 rounded-xl hover:bg-wells-blue transition">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        {% if order %}
+        <div class="bg-wells-navy text-white p-6 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+            <div class="relative z-10 flex items-center gap-4">
+                <div class="w-14 h-14 bg-wells-green rounded-2xl flex items-center justify-center text-2xl">
+                    <i class="fas fa-motorcycle"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-wells-green uppercase tracking-widest">Your Rider</p>
+                    <h4 class="text-lg font-bold">John M.</h4>
+                    <p class="text-xs opacity-60">Verified GasGo Partner</p>
+                </div>
+            </div>
+            <div class="mt-6 flex gap-2 relative z-10">
+                <a href="tel:{{ order.phone }}" class="flex-1 bg-white/10 hover:bg-white/20 text-center py-3 rounded-xl text-xs font-bold transition">
+                    <i class="fas fa-phone-alt mr-2"></i> Call Rider
+                </a>
+                <button class="flex-1 bg-white/10 hover:bg-white/20 text-center py-3 rounded-xl text-xs font-bold transition">
+                    <i class="fas fa-comment-alt mr-2"></i> Chat
+                </button>
+            </div>
+            <i class="fas fa-shield-alt absolute -right-4 -bottom-4 text-8xl opacity-10 rotate-12"></i>
+        </div>
+
+        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex-1">
+            <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em] mb-8">Delivery Progress</h3>
+
+            <div class="relative space-y-8">
+                <div class="timeline-line"></div>
+
+                <div class="relative flex items-center gap-6 z-10">
+                    <div class="w-8 h-8 rounded-full bg-wells-green flex items-center justify-center text-white text-xs">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-wells-navy uppercase">Order Received</p>
+                        <p class="text-[10px] text-slate-400">Station is preparing your tank</p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center gap-6 z-10">
+                    <div class="w-8 h-8 rounded-full bg-wells-green flex items-center justify-center text-white text-xs status-pulse">
+                        <i class="fas fa-truck-ramp-box"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-wells-navy uppercase">Rider En-Route</p>
+                        <p class="text-[10px] text-slate-400">Estimated Arrival: <span id="eta-side">--</span></p>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center gap-6 z-10 opacity-30">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-xs">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-wells-navy uppercase tracking-tighter">Delivery</p>
+                        <p class="text-[10px] text-slate-400 font-bold">Arriving at {{ order.address|truncatechars:20 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white p-10 rounded-[2.5rem] border border-slate-100 text-center">
+            <i class="fas fa-box-open text-4xl text-slate-200 mb-4"></i>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">No Active Orders</p>
+        </div>
+        {% endif %}
     </div>
-    <p style="font-size: 13px; color:#555;">
-      Tracking mode: <strong>{{ tracking_mode|capfirst }}</strong> · Tip: Allow location access for better accuracy.
-    </p>
-  </section>
-</main>
+
+    <div class="w-full lg:w-2/3 h-[400px] lg:h-full relative">
+        <div id="map" class="shadow-2xl border border-white"></div>
+
+        <div class="absolute top-6 left-6 right-6 flex flex-col md:flex-row gap-4 pointer-events-none">
+            <div class="bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-xl border border-white flex items-center gap-4 flex-1 pointer-events-auto">
+                <div class="w-10 h-10 bg-wells-green/20 text-wells-green rounded-xl flex items-center justify-center">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Distance</p>
+                    <p id="distance" class="text-sm font-black text-wells-navy">-- km</p>
+                </div>
+            </div>
+            <div class="bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-xl border border-white flex items-center gap-4 flex-1 pointer-events-auto">
+                <div class="w-10 h-10 bg-wells-blue/20 text-wells-blue rounded-xl flex items-center justify-center">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Time left</p>
+                    <p id="eta" class="text-sm font-black text-wells-navy">-- mins</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-  const demoMode = {{ demo_mode|yesno:"true,false" }};
-  const trackingMode = "{{ tracking_mode }}";
-  const riderLat = {{ rider_lat|default:"null"|safe }};
-  const riderLng = {{ rider_lng|default:"null"|safe }};
+  // Pulling coordinates directly from the Django context
   const userLat = {{ user_lat|default:"null"|safe }};
   const userLng = {{ user_lng|default:"null"|safe }};
+  const riderLat = {{ rider_lat|default:"null"|safe }};
+  const riderLng = {{ rider_lng|default:"null"|safe }};
 
   function initMap() {
-    const fallback = { lat: -1.286389, lng: 36.817223 };
-    const userLocation = (typeof userLat === "number" && typeof userLng === "number")
-      ? { lat: userLat, lng: userLng }
-      : fallback;
+    // DEBUG: Check if data is arriving from the database
+    if (userLat === null || userLng === null) {
+        console.error("DATA ERROR: Kirung'e Drive coordinates are missing from the database.");
+        // We only use this now to prevent the map from crashing
+        var startLocation = { lat: -1.286389, lng: 36.817223 };
+    } else {
+        console.log("SUCCESS: Centering on Kirung'e Drive:", userLat, userLng);
+        var startLocation = { lat: userLat, lng: userLng };
+    }
 
-    const riderLocation = (typeof riderLat === "number" && typeof riderLng === "number")
+    // Set Rider Location: Use actual rider lat/lng or a small offset from user
+    const riderLocation = (riderLat && riderLng)
       ? { lat: riderLat, lng: riderLng }
-      : { lat: userLocation.lat + 0.03, lng: userLocation.lng + 0.03 };
+      : { lat: startLocation.lat + 0.005, lng: startLocation.lng + 0.005 };
 
     const map = new google.maps.Map(document.getElementById("map"), {
-      center: userLocation,
-      zoom: 14
+      center: startLocation,
+      zoom: 15,
+      disableDefaultUI: true,
+      zoomControl: true,
+      styles: [
+        { "featureType": "poi", "stylers": [{ "visibility": "off" }] },
+        { "featureType": "transit", "stylers": [{ "visibility": "off" }] }
+      ]
     });
 
-    const userMarker = new google.maps.Marker({
-      position: userLocation,
+    // --- USER MARKER (Kirung'e Drive) ---
+    new google.maps.Marker({
+      position: startLocation,
       map: map,
-      title: "You",
-      icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+      optimized: false,
+      icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: "#3498db",
+          fillOpacity: 1,
+          strokeWeight: 5,
+          strokeColor: "rgba(52, 152, 219, 0.3)"
+      }
     });
 
+    // --- MOTORBIKE MARKER ---
     const riderMarker = new google.maps.Marker({
       position: riderLocation,
       map: map,
-      title: "Your Rider",
-      icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+      optimized: false,
+      icon: {
+        url: "https://cdn-icons-png.flaticon.com/512/171/171238.png",
+        scaledSize: new google.maps.Size(45, 45),
+        anchor: new google.maps.Point(22, 22)
+      }
     });
 
-    const routeLine = new google.maps.Polyline({
-      path: [riderLocation, userLocation],
-      geodesic: true,
-      strokeColor: "#0a7b34",
-      strokeOpacity: 1.0,
-      strokeWeight: 2,
-      map: map
+    // Directions & ETA Logic
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({
+        map: map,
+        suppressMarkers: true,
+        polylineOptions: { strokeColor: "#48bb3a", strokeWeight: 6, strokeOpacity: 0.6 }
     });
 
-    const distanceKm = google.maps.geometry.spherical.computeDistanceBetween(
-      new google.maps.LatLng(riderLocation),
-      new google.maps.LatLng(userLocation)
-    ) / 1000;
-
-    document.getElementById("statusText").textContent = "Tracking rider...";
-    document.getElementById("distance").textContent = distanceKm.toFixed(2) + " km";
-    document.getElementById("eta").textContent = Math.round((distanceKm / 20) * 60) + " mins";
+    directionsService.route({
+        origin: riderLocation,
+        destination: startLocation,
+        travelMode: google.maps.TravelMode.DRIVING
+    }, (response, status) => {
+        if (status === "OK") {
+            directionsRenderer.setDirections(response);
+            const leg = response.routes[0].legs[0];
+            document.getElementById("distance").textContent = leg.distance.text;
+            document.getElementById("eta").textContent = leg.duration.text;
+            if(document.getElementById("eta-side")) {
+                document.getElementById("eta-side").textContent = leg.duration.text;
+            }
+        }
+    });
   }
 
   window.onload = initMap;
 
-
-  document.getElementById('btnTrack').addEventListener('click', function() {
-    const orderId = document.getElementById('id_order').value.trim();
-    if (orderId) {
-      window.location.href = `/track_order?order_id=${encodeURIComponent(orderId)}`;
-    } else {
-      alert("Please enter a valid Order ID.");
-    }
-  });
-
-  document.getElementById('id_order').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById('btnTrack').click();
-    }
+  // Search functionality
+  document.getElementById('btnTrack').addEventListener('click', () => {
+    const id = document.getElementById('id_order').value.trim();
+    if(id) window.location.href = `/track_order?order_id=${encodeURIComponent(id)}`;
   });
 </script>
 {% endblock %}

@@ -1,148 +1,106 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Testimonials | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="{% static 'css/testimonials.css' %}">
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
 
-<main>
-    <section class="testimonial-intro card shadow-lg border-0 rounded-4 p-4 mb-4"
-             style="background: rgba(255,255,255,0.6); backdrop-filter: blur(10px);">
-        <h1>What our customers say</h1>
-        <p>Real stories from GasGo customers across the city.</p>
-    </section>
+{% block title %}Testimonials | GasGo Wall of Love{% endblock %}
 
+{% block landing_content %}
+<div class="max-w-7xl mx-auto px-6 py-20 space-y-12">
 
-    <section>
-        <h2 class="text-center mb-4">Featured stories</h2>
-        <div class="carousel-container"
-             style="max-height: 500px; overflow: hidden; padding-top: 10px; padding-bottom: 10px;">
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner text-center">
+    <div class="flex flex-col md:flex-row justify-between items-end gap-6">
+        <div class="max-w-2xl">
+            <h1 class="text-6xl md:text-8xl font-black text-wells-navy tracking-tighter leading-none">
+                What they <span class="text-wells-green">say.</span>
+            </h1>
+            <p class="text-xl text-slate-500 mt-6 font-medium">
+                Real stories from households across Kenya switching to a smarter way to cook.
+            </p>
+        </div>
+        <div class="flex gap-4 mb-2">
+            <button onclick="document.getElementById('testimonial-slider').scrollBy({left: -400, behavior: 'smooth'})"
+                    class="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center hover:bg-wells-navy hover:text-white transition-all">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <button onclick="document.getElementById('testimonial-slider').scrollBy({left: 400, behavior: 'smooth'})"
+                    class="w-14 h-14 rounded-full bg-wells-green text-white flex items-center justify-center hover:shadow-lg hover:shadow-wells-green/30 transition-all">
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 
-                    <div class="carousel-item active">
-                        <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
-                            <img src="{% static 'images/testimonial1.jpg' %}" alt="Brian recommending GasGo"
-                                 style="height:300px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
-                            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
-                                <p style="font-size:1rem;">“I love the convenience. No more carrying heavy cylinders.
-                                    Highly recommend GasGo.”</p>
-                                <footer class="blockquote-footer">Brian, South C</footer>
-                            </div>
-                        </div>
+    <div id="testimonial-slider" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-8 py-10">
+
+        <div class="min-w-[320px] md:min-w-[450px] snap-center">
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-50 h-full flex flex-col justify-between hover:border-wells-green transition-colors">
+                <p class="text-xl text-wells-navy font-bold leading-relaxed italic">
+                    “I love the convenience. No more carrying heavy cylinders up three flights of stairs. Highly recommend GasGo for anyone in apartments.”
+                </p>
+                <div class="flex items-center gap-4 mt-10">
+                    <img src="{% static 'images/testimonial1.jpg' %}" class="w-14 h-14 rounded-2xl object-cover grayscale hover:grayscale-0 transition-all" alt="Brian">
+                    <div>
+                        <h4 class="font-black text-wells-navy">Brian</h4>
+                        <p class="text-wells-blue text-[10px] font-bold uppercase tracking-widest">South C</p>
                     </div>
-
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
-                            <img src="{% static 'images/testimonial2.jpg' %}" alt="Amina smiling after GasGo delivery"
-                                 style="height:300px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
-                            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
-                                <p style="font-size:1rem;">“Delivery was quick and the cylinder was properly sealed.
-                                    Cooking again in no time!”</p>
-                                <footer class="blockquote-footer">Amina, Westlands</footer>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
-                            <img src="{% static 'images/testimonial3.jpg' %}"
-                                 alt="Mercy talking about customer support services"
-                                 style="height:300px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
-                            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
-                                <p style="font-size:1rem;">“Customer service was helpful and the emergency top-up saved
-                                    our dinner party.”</p>
-                                <footer class="blockquote-footer">Mercy, Parklands</footer>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
-                            <img src="https://envirofit.org/wp-content/uploads/2018/03/kangemi12_edit_NewValve_BlogM.jpg"
-                                 alt="Kevin comparing prices"
-                                 style="height:300px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
-                            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
-                                <p style="font-size:1rem;">“Prices are fair and riders are professional. The safety
-                                    checks gave me peace of mind.”</p>
-                                <footer class="blockquote-footer">Peninah, Kirigiti</footer>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <div class="card border-0 shadow-sm mx-auto" style="max-width: 500px;">
-                            <img src="https://www.africaoutlookmag.com/media/2023/08/Proto-Energy-4-jpg.webp"
-                                 alt="Joy happy with delivery"
-                                 style="height:300px; width:100%; object-fit:cover; border-top-left-radius:0.5rem; border-top-right-radius:0.5rem;">
-                            <div class="card-body" style="padding:1rem 1.25rem; min-height:160px;">
-                                <p style="font-size:1rem;">“Ordering and tracking were simple. Got my 6kg cylinder
-                                    within the hour.”</p>
-
-                                <footer class="blockquote-footer">Joy, Ngong Road</footer>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-
-                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel"
-                        data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel"
-                        data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
             </div>
         </div>
-    </section>
 
+        <div class="min-w-[320px] md:min-w-[450px] snap-center">
+            <div class="bg-wells-navy p-10 rounded-[3rem] shadow-2xl h-full flex flex-col justify-between text-white relative overflow-hidden">
+                <p class="text-xl font-bold leading-relaxed italic relative z-10">
+                    “Delivery was incredibly quick and the cylinder was properly sealed. It's the peace of mind that matters most to me.”
+                </p>
+                <div class="flex items-center gap-4 mt-10 relative z-10">
+                    <img src="{% static 'images/testimonial2.jpg' %}" class="w-14 h-14 rounded-2xl object-cover border-2 border-wells-green" alt="Amina">
+                    <div>
+                        <h4 class="font-black">Amina</h4>
+                        <p class="text-wells-green text-[10px] font-bold uppercase tracking-widest">Westlands</p>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-wells-green/10 rounded-full blur-3xl"></div>
+            </div>
+        </div>
 
-</main>
+        <div class="min-w-[320px] md:min-w-[450px] snap-center">
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-50 h-full flex flex-col justify-between hover:border-wells-blue transition-colors">
+                <p class="text-xl text-wells-navy font-bold leading-relaxed italic">
+                    “The emergency top-up saved our dinner party! The rider was professional and arrived within 20 minutes.”
+                </p>
+                <div class="flex items-center gap-4 mt-10">
+                    <img src="{% static 'images/testimonial3.jpg' %}" class="w-14 h-14 rounded-2xl object-cover grayscale hover:grayscale-0 transition-all" alt="Mercy">
+                    <div>
+                        <h4 class="font-black text-wells-navy">Mercy</h4>
+                        <p class="text-wells-blue text-[10px] font-bold uppercase tracking-widest">Parklands</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
+        <div class="min-w-[320px] md:min-w-[450px] snap-center">
+            <div class="bg-wells-green p-10 rounded-[3rem] shadow-2xl h-full flex flex-col justify-between text-white">
+                <p class="text-xl font-bold leading-relaxed italic">
+                    “Ordering was simple. Got my 6kg cylinder within the hour. No more searching for vendors!”
+                </p>
+                <div class="flex items-center gap-4 mt-10">
+                    img src="{% static 'images/testimonial3.jpg' %}" class="w-14 h-14 rounded-2xl object-cover grayscale hover:grayscale-0 transition-all" alt="Mercy">
+                    <div>
+                        <h4 class="font-black">Joy</h4>
+                        <p class="text-wells-navy text-[10px] font-bold uppercase tracking-widest">Ngong Road</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</body>
-</html>
+    </div>
+
+    <div class="text-center pt-8">
+        <p class="text-slate-400 font-bold text-xs uppercase tracking-[0.3em]">Swipe to explore more stories</p>
+    </div>
+
+</div>
+
+<style>
+    /* Hide scrollbar but keep functionality */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+{% endblock %}

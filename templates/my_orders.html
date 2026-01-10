@@ -1,147 +1,104 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}My Orders | GasGo{% endblock %}
 
-{% block head %}
-<style>
-  .orders-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    background-color: #fff;
-    box-shadow: 0 0 6px rgba(0,0,0,0.05);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  .orders-table thead {
-    background-color: #f9f3ef;
-  }
-
-  .orders-table th {
-    padding: 0.75rem;
-    text-align: left;
-    color: #4B2E2E;
-    font-weight: 600;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  .orders-table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid #f0eae6;
-    color: #3a2a2a;
-  }
-
-  .orders-table tr:hover {
-    background-color: #fef7f2;
-  }
-
-  .orders-table .actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    padding: 0.4rem 0.7rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-track {
-    background-color: #D97706;
-    color: white;
-  }
-
-  .btn-track:hover {
-    background-color: #b45309;
-  }
-
-  .btn-delete {
-    background-color: #e11d48;
-    color: white;
-  }
-
-  .btn-delete:hover {
-    background-color: #be123c;
-  }
-
-  .btn-disabled {
-    background-color: #ccc;
-    color: #666;
-    cursor: not-allowed;
-  }
-
-  @media screen and (max-width: 768px) {
-    .orders-table th, .orders-table td {
-      font-size: 0.85rem;
-      padding: 0.5rem;
-    }
-
-    .orders-table .actions {
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .btn {
-      width: 100%;
-      text-align: center;
-    }
-  }
-</style>
-<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-{% endblock %}
+{% block title %}Manage Orders | GasGo{% endblock %}
+{% block page_title %}Active Orders{% endblock %}
 
 {% block content %}
-<main style="margin-left:50px; padding:1rem;">
-  <section>
-    <h1>My Orders</h1>
+<div class="max-w-6xl mx-auto pb-20 space-y-8">
+
+    <section class="flex flex-col md:flex-row justify-between items-center bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm gap-6">
+        <div>
+            <h1 class="text-3xl font-black text-wells-navy tracking-tighter">Your <span class="text-wells-green">Deliveries.</span></h1>
+            <p class="text-slate-500 font-medium">Manage and monitor your ongoing LPG orders.</p>
+        </div>
+        <a href="{% url 'orders' %}" class="bg-wells-navy text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-wells-green hover:shadow-xl transition-all">
+            <i class="fas fa-plus mr-2"></i> New Order
+        </a>
+    </section>
+
     {% if orders %}
-      <table class="orders-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Delivery</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Gas</th>
-            <th>Placed</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for order in orders %}
-          <tr>
-            <td>{{ order.order_id }}</td>
-            <td>{{ order.address }}</td>
-            <td>{{ order.preferred_time }}</td>
-            <td>{{ order.status }}</td>
-            <td>{{ order.size }} {% if order.brand %}({{ order.brand }}){% endif %}</td>
-            <td>{{ order.created_at|date:"M d, H:i" }}</td>
-            <td class="actions">
-              {% if order.rider_latitude and order.rider_longitude %}
-                <a href="{% url 'track_order' %}?order_id={{ order.order_id }}" class="btn btn-track">Track</a>
-              {% else %}
-                <span class="btn btn-disabled">—</span>
-              {% endif %}
-              <form method="post" action="{% url 'delete_order' order.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-delete" onclick="return confirm('Delete this order?')">Delete</button>
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50">
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order Details</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Destination</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for order in orders %}
+                    <tr class="hover:bg-slate-50/30 transition-colors">
+                        <td class="px-8 py-6">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-black text-wells-navy">#{{ order.order_id }}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                    {{ order.size }} {{ order.brand|default:"" }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-wells-navy truncate max-w-[200px]">{{ order.address }}</span>
+                                <span class="text-[10px] text-slate-400 font-bold uppercase">{{ order.preferred_time|default:"Standard Delivery" }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-6">
+                            {% if order.status == 'Confirmed' or order.status == 'Paid' %}
+                                <span class="px-4 py-1.5 bg-wells-green/10 text-wells-green rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status }}
+                                </span>
+                            {% elif order.status == 'Pending' %}
+                                <span class="px-4 py-1.5 bg-wells-blue/10 text-wells-blue rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status }}
+                                </span>
+                            {% else %}
+                                <span class="px-4 py-1.5 bg-slate-100 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                    {{ order.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-8 py-6">
+                            <div class="flex items-center justify-center gap-2">
+                                {% if order.rider_latitude and order.rider_longitude %}
+                                    <a href="{% url 'track_order' %}?order_id={{ order.order_id }}"
+                                       class="bg-wells-navy text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-wells-green transition-all shadow-sm">
+                                        Track
+                                    </a>
+                                {% else %}
+                                    <span class="bg-slate-100 text-slate-400 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed">
+                                        Wait
+                                    </span>
+                                {% endif %}
+
+                                <form method="post" action="{% url 'delete_order' order.id %}" onsubmit="return confirm('Delete this order?');" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="w-10 h-10 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
     {% else %}
-      <p>You haven’t placed any orders yet.</p>
+    <div class="bg-white p-20 rounded-[3rem] border border-slate-100 text-center shadow-sm">
+        <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-200 text-3xl">
+            <i class="fas fa-box-open"></i>
+        </div>
+        <h3 class="text-xl font-black text-wells-navy mb-2">No orders found</h3>
+        <p class="text-slate-500 text-sm mb-8">Ready to replenish your gas? Start a new delivery request below.</p>
+        <a href="{% url 'orders' %}" class="bg-wells-navy text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-wells-green hover:shadow-xl transition-all">
+            Order Now
+        </a>
+    </div>
     {% endif %}
-  </section>
-</main>
+</div>
 {% endblock %}

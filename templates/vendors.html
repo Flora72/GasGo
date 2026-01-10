@@ -1,62 +1,119 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Choose Vendor | GasGo{% endblock %}
-
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/vendor.css' %}">
-<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-{% endblock %}
+{% block title %}Confirm Order | GasGo{% endblock %}
+{% block page_title %}Final Step{% endblock %}
 
 {% block content %}
-<main>
-    <section>
-        <h1>Step 2 of 3: Choose a vendor</h1>
-        <p>Based on your order details, pick a nearby vendor. Next, you'll choose your payment method and confirm.</p>
-        <p style="font-size: 13px; color:#555;">Tip: Prices shown are indicative. Final price is confirmed on delivery after safety checks.</p>
+<div class="max-w-4xl mx-auto space-y-10 pb-20">
+
+    <section class="text-center space-y-4">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-wells-green/10 text-wells-green rounded-full mb-2">
+            <i class="fas fa-check-double text-2xl"></i>
+        </div>
+        <h1 class="text-4xl font-black text-wells-navy tracking-tighter">Almost <span class="text-wells-blue">There.</span></h1>
+        <p class="text-slate-500 font-medium max-w-lg mx-auto">Review your order details and choose your preferred payment method to secure your delivery.</p>
     </section>
 
-  <form method="post" action="{% url 'vendors' %}">
-  {% csrf_token %}
-  <input type="hidden" name="vendor_choice" value="{{ selected_vendor.name }}">
+    <div class="grid md:grid-cols-5 gap-8">
 
-  <section>
-    <h2>Step 3 of 3: Payment</h2>
-    <p>
-      <label for="id_payment">Payment method</label><br>
-      <select id="id_payment" name="payment_method" required>
-        <option value="" disabled selected>Select payment method</option>
-        <option value="Cash">Cash on delivery</option>
-        <option value="M-Pesa">M-Pesa</option>
-      </select>
-    </p>
-    <p>
-      <label for="id_notes">Notes (optional)</label><br>
-      <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
-    </p>
-  </section>
+        <div class="md:col-span-3 space-y-6">
 
-  <p>
-    <button type="submit" class="btn btn-primary">Confirm Order</button>
-    <a class="btn btn-outline" href="{% url 'orders' %}">Go back to edit order</a>
-  </p>
-</form>
+            <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden">
+                <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em] mb-6">Delivery Items</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-2 border-b border-slate-50">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cylinder</span>
+                        <span class="text-sm font-black text-wells-navy">{{ pending_order_data.brand }} ({{ pending_order_data.size }})</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-slate-50">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Quantity</span>
+                        <span class="text-sm font-black text-wells-navy">x{{ pending_order_data.quantity }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-slate-50">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Station</span>
+                        <span class="text-sm font-black text-wells-green italic">{{ selected_vendor.name|default:"Nearby Partner" }}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-4">
+                        <span class="text-lg font-black text-wells-navy">Total Cost</span>
+                        <span class="text-3xl font-black text-wells-navy tracking-tighter">KES {{ pending_order_data.price }}</span>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -top-10 opacity-[0.03] pointer-events-none">
+                    <i class="fas fa-gas-pump text-[12rem] rotate-12"></i>
+                </div>
+            </div>
 
-    <section>
-        <p style="font-size: 13px; color:#555;">By confirming, you'll proceed to tracking while our team assigns the nearest rider.</p>
-    </section>
-</main>
-{% endblock %}
+            <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm">
+                <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em] mb-6">Logistics</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <i class="fas fa-map-marker-alt text-wells-blue mt-1"></i>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Delivery Address</p>
+                            <p class="text-sm font-bold text-wells-navy">{{ pending_order_data.address }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <i class="fas fa-clock text-wells-green mt-1"></i>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Preferred Time</p>
+                            <p class="text-sm font-bold text-wells-navy">{{ pending_order_data.preferred_time|default:"ASAP" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-{% block content_end %}
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
+            <a href="{% url 'orders' %}" class="flex items-center justify-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-wells-navy transition">
+                <i class="fas fa-edit"></i> Edit Order Details
+            </a>
+        </div>
+
+        <div class="md:col-span-2">
+            <form method="post" action="{% url 'vendors' %}" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="vendor_choice" value="{{ selected_vendor.name }}">
+
+                <div class="bg-white rounded-[3rem] p-8 border border-slate-100 shadow-xl space-y-6">
+                    <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em]">Payment Method</h3>
+
+                    <div class="space-y-3">
+                        <label class="block cursor-pointer group">
+                            <input type="radio" name="payment_method" value="M-Pesa" class="peer sr-only" required checked>
+                            <div class="flex items-center justify-between p-4 rounded-2xl border-2 border-slate-50 peer-checked:border-wells-green peer-checked:bg-wells-green/5 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-wells-green rounded-xl flex items-center justify-center text-white text-xs font-black">M</div>
+                                    <span class="font-black text-wells-navy text-sm">M-Pesa</span>
+                                </div>
+                                <i class="fas fa-check-circle text-wells-green opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                            </div>
+                        </label>
+
+                        <label class="block cursor-pointer group">
+                            <input type="radio" name="payment_method" value="Cash" class="peer sr-only" required>
+                            <div class="flex items-center justify-between p-4 rounded-2xl border-2 border-slate-50 peer-checked:border-wells-blue peer-checked:bg-wells-blue/5 transition-all">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-wells-blue rounded-xl flex items-center justify-center text-white text-xs">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </div>
+                                    <span class="font-black text-wells-navy text-sm">Cash on Delivery</span>
+                                </div>
+                                <i class="fas fa-check-circle text-wells-blue opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Delivery Notes</label>
+                        <textarea name="notes" rows="2" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-wells-navy transition outline-none" placeholder="Gate code, floor number..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-wells-navy text-white py-5 rounded-2xl font-black text-lg hover:bg-wells-green hover:shadow-2xl hover:shadow-wells-green/20 transition-all flex items-center justify-center group">
+                        Confirm Order <i class="fas fa-chevron-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

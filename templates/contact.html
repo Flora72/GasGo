@@ -1,171 +1,112 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Contact Us | GasGo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% block title %}Contact Us | GasGo Assistance{% endblock %}
+
+{% block landing_content %}
+<div class="max-w-7xl mx-auto px-6 py-16 md:py-24">
     
-    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
-</head>
-<body>
-
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
-
-<main>
-    <!-- Intro Section -->
-    <section class="contact-intro">
-        <h1>Get in touch</h1>
-        <p>We'd love to hear from you. Send us a message about orders, partnerships, support, or anything else.</p>
-        <p>
-            <strong>Email:</strong> <a href="mailto:gasgoassistance@gmail.com">gasgosupport@gmail.com</a>
-            &nbsp;|&nbsp;
-            <strong>Phone:</strong> <a href="tel:+254700000000">+254 700 000 000</a>
-        </p>
-    </section>
-
-    <!-- Contact Form -->
-    <section>
-        <form method="post" action="">
-            {% csrf_token %}
-
-            <fieldset>
-                <legend>Your details</legend>
-                <p>
-                    <label for="id_full_name">Full name</label><br>
-                    <input id="id_full_name" name="full_name" type="text" placeholder="Amina Ali" autocomplete="name"
-                           required>
+    <div class="grid md:grid-cols-5 gap-16 items-start">
+        
+        <div class="md:col-span-2 space-y-12">
+            <div class="space-y-4">
+                <h1 class="text-6xl md:text-8xl font-black text-wells-navy tracking-tighter leading-none">
+                    Get in <br><span class="text-wells-green">touch.</span>
+                </h1>
+                <p class="text-lg text-slate-500 font-medium leading-relaxed">
+                    Have questions about an order or want to partner with <strong>GasGo</strong> ? We're here to help.
                 </p>
-                <p>
-                    <label for="id_email">Email</label><br>
-                    <input id="id_email" name="email" type="email" placeholder="amina@example.com" autocomplete="email"
-                           required>
-                </p>
-                <p>
-                    <label for="id_phone">Phone</label><br>
-                    <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" autocomplete="tel">
-                </p>
-            </fieldset>
+            </div>
 
-            <fieldset>
-                <legend>Your inquiry</legend>
-                <p>
-                    <label for="id_topic">Topic</label><br>
-                    <select id="id_topic" name="topic" required>
-                        <option value="" selected disabled>Select a topic</option>
-                        <option>General question</option>
-                        <option>Order support</option>
-                        <option>Payment issue</option>
-                        <option>Safety & cylinder</option>
-                        <option>Partnerships/Vendors</option>
-                        <option>Careers</option>
-                        <option>Other</option>
-                    </select>
-                </p>
-                <p>
-                    <label for="id_subject">Subject</label><br>
-                    <input id="id_subject" name="subject" type="text" placeholder="How can we help?" required>
-                </p>
-                <p>
-                    <label for="id_message">Message</label><br>
-                    <textarea id="id_message" name="message" rows="6" placeholder="Write your message here…"
-                              required></textarea>
-                </p>
-            </fieldset>
+            <div class="space-y-8">
+                <div class="flex items-center gap-6 group">
+                    <div class="w-12 h-12 bg-wells-mint text-wells-green rounded-2xl flex items-center justify-center group-hover:bg-wells-green group-hover:text-white transition-colors">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Email Us</p>
+                        <a href="mailto:gasgosupport@gmail.com" class="text-lg font-bold text-wells-navy hover:text-wells-blue transition">gasgosupport@gmail.com</a>
+                    </div>
+                </div>
 
-            <fieldset>
-                <legend>Order details (optional)</legend>
-                <p>
-                    <label for="id_order_id">Order ID</label><br>
-                    <input id="id_order_id" name="order_id" type="text" placeholder="e.g. GGO-2025-00123">
-                </p>
-                <p>
-                    <label><input type="checkbox" name="urgent" value="1"> Mark as urgent</label>
-                </p>
-            </fieldset>
+                <div class="flex items-center gap-6 group">
+                    <div class="w-12 h-12 bg-blue-50 text-wells-blue rounded-2xl flex items-center justify-center group-hover:bg-wells-blue group-hover:text-white transition-colors">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Call Us</p>
+                        <a href="tel:+254700000000" class="text-lg font-bold text-wells-navy hover:text-wells-green transition">+254 700 000 000</a>
+                    </div>
+                </div>
+            </div>
 
-            <fieldset>
-                <legend>How should we reach you?</legend>
-                <p>
-                    <label><input type="radio" name="reply_via" value="email" checked> Email</label>
-                    <label><input type="radio" name="reply_via" value="phone"> Phone</label>
-                    <label><input type="radio" name="reply_via" value="whatsapp"> WhatsApp</label>
-                </p>
-                <p>
-                    <label for="id_best_time">Best time to contact you</label><br>
-                    <select id="id_best_time" name="best_time">
-                        <option>Anytime</option>
-                        <option>Morning (8–12)</option>
-                        <option>Afternoon (12–5)</option>
-                        <option>Evening (5–8)</option>
-                    </select>
-                </p>
-            </fieldset>
+            <div class="p-8 bg-red-50 rounded-[3rem] border border-red-100">
+                <h4 class="text-red-600 font-black uppercase text-xs tracking-widest mb-2">Emergency?</h4>
+                <p class="text-sm text-red-900/70 mb-4">Run out unexpectedly? Our priority team is standing by.</p>
+                <a href="{% url 'emergency' %}" class="inline-flex items-center font-black text-red-600 hover:gap-3 transition-all">
+                    GO TO EMERGENCY <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
 
-            <fieldset>
-                <legend>Consent</legend>
-                <p>
-                    <label>
-                        <input type="checkbox" name="consent" value="1" required>
-                        I agree to be contacted regarding my inquiry and I accept the processing of my data.
-                    </label>
-                </p>
-            </fieldset>
+        <div class="md:col-span-3 bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl shadow-slate-200/50 border border-slate-50">
+            <form method="post" action="" class="space-y-8">
+                {% csrf_token %}
 
-            <p>
-                <button type="submit" class="btn btn-primary">Send message</button>
-                <a class="btn btn-outline" href="{% url 'index' %}">Go back home</a>
-            </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-wells-navy uppercase tracking-widest ml-1">Full Name</label>
+                        <input type="text" name="full_name" placeholder="Amina Ali" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition" required>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-wells-navy uppercase tracking-widest ml-1">Phone Number</label>
+                        <input type="tel" name="phone" placeholder="0712 345 678" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-blue transition">
+                    </div>
+                </div>
 
-            <p class="form-tip">
-                Tip: For emergencies, please use our <a href="{% url 'emergency' %}">Emergency delivery</a> page for the
-                fastest response.
-            </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-wells-navy uppercase tracking-widest ml-1">Inquiry Topic</label>
+                        <select name="topic" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition appearance-none" required>
+                            <option value="" selected disabled>Select a topic</option>
+                            <option>Order Support</option>
+                            <option>Safety & Cylinder</option>
+                            <option>Partnerships</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-black text-wells-navy uppercase tracking-widest ml-1">Order ID <span class="text-slate-300 font-normal">(Optional)</span></label>
+                        <input type="text" name="order_id" placeholder="GGO-2025-XXXX" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-blue transition">
+                    </div>
+                </div>
 
-            <p class="form-tip" aria-live="polite" id="formHelp">
-                After you submit, we'll get back to you as soon as possible (typically within a few hours).
-            </p>
-        </form>
-    </section>
-</main>
+                <div class="space-y-2">
+                    <label class="text-xs font-black text-wells-navy uppercase tracking-widest ml-1">How can we help?</label>
+                    <textarea name="message" rows="5" placeholder="Write your message here..." class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition" required></textarea>
+                </div>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
+                <div class="flex flex-wrap items-center justify-between gap-6 p-6 bg-wells-slate rounded-2xl">
+                    <div class="space-y-2">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Reply via</p>
+                        <div class="flex gap-4">
+                            <label class="flex items-center text-sm font-bold text-wells-navy"><input type="radio" name="reply_via" value="email" class="mr-2 text-wells-green" checked> Email</label>
+                            <label class="flex items-center text-sm font-bold text-wells-navy"><input type="radio" name="reply_via" value="whatsapp" class="mr-2 text-wells-green"> WhatsApp</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" name="consent" class="w-5 h-5 rounded border-slate-300 text-wells-green focus:ring-wells-green mr-3" required>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tight">I agree to the privacy policy</span>
+                    </div>
+                </div>
 
-</body>
-</html>
+                <button type="submit" class="w-full bg-wells-green text-white py-5 rounded-2xl font-black text-xl hover:shadow-[0_20px_50px_rgba(72,187,58,0.3)] hover:-translate-y-1 transition-all">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
 
+</div>
+
+{% endblock %}

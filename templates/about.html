@@ -1,123 +1,94 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>About us | GasGo</title>
-    <link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#D97706">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="{% static 'css/content.css' %}">
-</head>
-<body>
-<header class="header">
-    <a href="{% url 'index' %}" class="logo">GasGo</a>
-    <nav>
-        <ul>
-            <li><a href="{% url 'index' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">About Us</a></li>
-            <li><a href="{% url 'testimonials' %}">Testimonials</a></li>
-            <li><a href="{% url 'contact' %}">Contact Us</a></li>
-            <li><a href="{% url 'signup' %}">Sign Up</a></li>
-            <li><a href="{% url 'login' %}">Login</a></li>
-        </ul>
-    </nav>
-</header>
+{% block title %}About Us | GasGo {% endblock %}
 
-<main class="container">
-    <section class="hero">
-        <h1>About GasGo</h1>
-        <p class="muted">GasGo is your trusted LPG (liquefied petroleum gas) delivery partner. We make it fast and easy
-            to order safe, reliable cooking gas right to your doorstep for homes, hostels, and small businesses.</p>
+{% block landing_content %}
+<div class="space-y-24 pb-20">
+
+    <section class="max-w-7xl mx-auto px-6 pt-16 md:pt-24 text-center">
+        <div class="space-y-6">
+            <h1 class="text-5xl md:text-7xl font-black text-wells-navy tracking-tighter">
+                Restoring <span class="text-wells-green">Trust</span> in Energy.
+            </h1>
+            <p class="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
+                GasGo was born out of a shared frustration: the struggle to find safe, reliable cooking gas without the risk of illegal refills or faulty cylinders. We are here to restore safety, transparency, and dignity to your kitchen.
+            </p>
+        </div>
     </section>
 
-    <section class="section">
-        <h2>What we do</h2>
-        <div class="cards">
-            <div class="card">
-                <h3>On‑demand LPG delivery</h3>
-                <p>Place an order and our vetted riders deliver filled, sealed cylinders to you promptly. No queues, no
-                    transport hassle.</p>
+    <section class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-10 rounded-[40px] bg-wells-slate border border-slate-100 group hover:bg-wells-green transition-colors duration-500">
+                <i class="fas fa-truck text-wells-green text-3xl mb-6 group-hover:text-white transition-colors"></i>
+                <h3 class="text-2xl font-black text-wells-navy group-hover:text-white mb-4">On-Demand</h3>
+                <p class="text-slate-500 group-hover:text-white/80 text-sm">Vetted riders deliver sealed cylinders promptly to your home, hostel, or business.</p>
             </div>
-            <div class="card">
-                <h3>Safe cylinder exchange</h3>
-                <p>We exchange your empty cylinder for a certified, leak‑tested one that matches your brand/valve type
-                    where available.</p>
+            <div class="p-10 rounded-[40px] bg-wells-slate border border-slate-100 group hover:bg-wells-blue transition-colors duration-500">
+                <i class="fas fa-sync text-wells-blue text-3xl mb-6 group-hover:text-white transition-colors"></i>
+                <h3 class="text-2xl font-black text-wells-navy group-hover:text-white mb-4">Safe Exchange</h3>
+                <p class="text-slate-500 group-hover:text-white/80 text-sm">Every cylinder is leak-tested and ISO 9001-2015 certified. We only swap for quality.</p>
             </div>
-            <div class="card">
-                <h3>Emergency top‑ups</h3>
-                <p>Run out unexpectedly? Use our emergency option for priority delivery during extended hours.</p>
+            <div class="p-10 rounded-[40px] bg-wells-slate border border-slate-100 group hover:bg-wells-navy transition-colors duration-500">
+                <i class="fas fa-bolt text-wells-navy text-3xl mb-6 group-hover:text-white transition-colors"></i>
+                <h3 class="text-2xl font-black text-wells-navy group-hover:text-white mb-4">Emergency</h3>
+                <p class="text-slate-500 group-hover:text-white/80 text-sm">Priority delivery during extended hours when you run out unexpectedly.</p>
             </div>
         </div>
     </section>
 
-
-    <section class="section">
-        <h2>Our vision</h2>
-        <p>To be the most trusted and convenient LPG delivery platform, powering safe, affordable cooking for every home
-            and business we serve.</p>
-    </section>
-
-    <section class="section">
-        <h2>Our mission</h2>
-        <p>To deliver clean energy reliably and safely by connecting customers to certified LPG suppliers and a trained
-            last‑mile network — with transparency, speed, and great customer care.</p>
-    </section>
-
-    <section class="section">
-        <h2>Our values</h2>
-        <div class="values">
-            <div class="card">
-                <h3>Safety first</h3>
-                <p>Every cylinder we deliver is inspected and leak‑tested. Our team follows strict handling
-                    standards.</p>
+    <section class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-1px bg-slate-200 border border-slate-200 rounded-[60px] overflow-hidden shadow-2xl">
+            <div class="bg-white p-12 md:p-20">
+                <h2 class="text-xs font-black text-wells-green uppercase tracking-[0.2em] mb-4">Our Vision</h2>
+                <p class="text-3xl font-bold text-wells-navy leading-tight">
+                    To be the most trusted LPG platform, powering safe cooking for every household in Kenya.
+                </p>
             </div>
-            <div class="card">
-                <h3>Reliability</h3>
-                <p>We show up when we say we will, with clear ETAs and order tracking where supported.</p>
-            </div>
-            <div class="card">
-                <h3>Affordability</h3>
-                <p>Competitive, transparent pricing with no hidden fees.</p>
+            <div class="bg-wells-navy p-12 md:p-20 text-white">
+                <h2 class="text-xs font-black text-wells-blue uppercase tracking-[0.2em] mb-4">Our Mission</h2>
+                <p class="text-3xl font-bold leading-tight">
+                    Connecting customers to certified suppliers through a trained last-mile network with speed and transparency.
+                </p>
             </div>
         </div>
     </section>
 
-    <section class="section">
-        <h2>How it works</h2>
-        <ol>
-            <li>Place an order with your cylinder size and location.</li>
-            <li>We confirm availability and dispatch the nearest rider.</li>
-            <li>Exchange your empty for a sealed, certified cylinder. Pay securely on delivery.</li>
-        </ol>
-        <div class="cta">
-            <a class="btn" href="{% url 'orders' %}">Order LPG now</a>
+    <section class="max-w-4xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-black text-wells-navy mb-16">The Values We Live By</h2>
+        <div class="space-y-12">
+            <div class="flex flex-col md:flex-row items-center gap-6 text-left">
+                <div class="w-12 h-12 rounded-full bg-wells-green text-white flex items-center justify-center font-black shrink-0">01</div>
+                <div>
+                    <h4 class="text-xl font-bold text-wells-navy">Safety First</h4>
+                    <p class="text-slate-500">Every cylinder is inspected and follows strict handling standards.</p>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-6 text-left">
+                <div class="w-12 h-12 rounded-full bg-wells-blue text-white flex items-center justify-center font-black shrink-0">02</div>
+                <div>
+                    <h4 class="text-xl font-bold text-wells-navy">Reliability</h4>
+                    <p class="text-slate-500">We provide clear ETAs and live order tracking.</p>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row items-center gap-6 text-left">
+                <div class="w-12 h-12 rounded-full bg-wells-navy text-white flex items-center justify-center font-black shrink-0">03</div>
+                <div>
+                    <h4 class="text-xl font-bold text-wells-navy">Sustainability</h4>
+                    <p class="text-slate-500">Access to clean energy (UN-SDG 7) to protect our environment.</p>
+                </div>
+            </div>
         </div>
     </section>
-</main>
 
-<footer>
-    <p>Follow Us:</p>
-    <nav aria-label="Support and social">
-        <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
-        <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
-        <a href="#"><i class="fab fa-x-twitter"></i> X</a>
-    </nav>
-    <small>&copy; {{ now|default:2025 }} GasGo. All rights reserved.</small>
-</footer>
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register("{% static 'service-worker.js' %}")
-            .then(reg => console.log("GasGo PWA active"))
-            .catch(err => console.error("Service Worker error:", err));
-    }
-</script>
+    <section class="max-w-7xl mx-auto px-6">
+        <div class="bg-wells-green rounded-[50px] p-12 md:p-16 text-center text-white">
+            <h2 class="text-4xl font-black mb-8">Ready to experience GasGo?</h2>
+            <a href="{% url 'orders' %}" class="inline-block bg-wells-navy text-white px-12 py-5 rounded-full font-bold text-xl hover:scale-105 transition-transform">
+                Start Your Order
+            </a>
+        </div>
+    </section>
 
-</body>
-</html>
+</div>
+{% endblock %}

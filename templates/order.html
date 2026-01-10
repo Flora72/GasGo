@@ -1,122 +1,146 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Order LPG | GasGo{% endblock %}
-
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/orders.css' %}">
-<link rel="icon" href="{% static 'images/logo.png' %}" type="image/png">
-<link rel="shortcut icon" href="{% static 'images/logo.png' %}" type="image/png">
-{% endblock %}
+{% block title %}Order Gas | GasGo{% endblock %}
+{% block page_title %}New Delivery Request{% endblock %}
 
 {% block content %}
-<main>
-  <section>
-    <h1>Order LPG delivery</h1>
-    <p>Fill in your details below. We deliver sealed, certified cylinders and exchange your empty safely on arrival.</p>
-    <p>
-      Need it urgently? <a href="{% url 'emergency' %}">Use Emergency delivery</a> ·
-      Want to check status? <a href="{% url 'track_order' %}?order_id={{ request.session.pending_order_id }}">Track your order</a>
-    </p>
-  </section>
+<div class="max-w-5xl mx-auto space-y-10 pb-20">
 
-  <section>
-    <form method="post" action="{% url 'orders' %}">
-      {% csrf_token %}
+    <section class="space-y-4">
+        <h1 class="text-4xl md:text-6xl font-black text-wells-navy tracking-tighter">
+            Fuel your <span class="text-wells-green">Kitchen.</span>
+        </h1>
+        <p class="text-slate-500 font-medium max-w-2xl">
+            Select your cylinder size and delivery details. We deliver sealed, certified cylinders and exchange your empty safely on arrival.
+        </p>
+    </section>
 
-      <fieldset>
-        <legend>Gas details</legend>
-        <p>
-          <label for="id_size">Cylinder size</label><br>
-          <select id="id_size" name="size" required>
-            <option value="" selected disabled>Choose size</option>
-            <option>6kg</option>
-            <option>13kg</option>
-            <option>22.5kg</option>
-            <option>35kg</option>
-            <option>50kg</option>
-          </select>
-        </p>
-        <p>
-          <label for="id_brand">Preferred brand (optional)</label><br>
-          <select id="id_brand" name="brand">
-            <option value="">Any certified</option>
-            <option>TotalEnergies</option>
-            <option>Afri-Gas</option>
-            <option>ProGas</option>
-            <option>K-Gas</option>
-            <option>RubisGas</option>
-          </select>
-        </p>
-        <p>
-          <span>Exchange empty cylinder?</span><br>
-          <label><input type="radio" name="exchange" value="yes" checked> Yes</label>
-          <label><input type="radio" name="exchange" value="no"> No (new cylinder)</label>
-        </p>
-        <p>
-          <label for="id_qty">Quantity</label><br>
-          <input id="id_qty" type="number" name="quantity" min="1" value="1" required>
-        </p>
-      </fieldset>
+    <form method="post" action="{% url 'orders' %}" class="space-y-12">
+        {% csrf_token %}
 
-      <fieldset>
-        <legend>Delivery details</legend>
-        <p>
-          <label for="id_full_name">Full name</label><br>
-          <input id="id_full_name" name="full_name" type="text" placeholder="Amina Ali" required>
-        </p>
-        <p>
-          <label for="id_phone">Phone number</label><br>
-          <input id="id_phone" name="phone" type="tel" placeholder="0712 345 678" required>
-        </p>
-        <p>
-          <label for="id_address">Estate/Address</label><br>
-          <input id="id_address" name="address" type="text" placeholder="Westlands, Nairobi" required>
-        </p>
-        <p>
-          <label for="id_directions">Extra directions (optional)</label><br>
-          <input id="id_directions" name="directions" type="text" placeholder="Gate code, landmark, floor...">
-        </p>
-        <p>
-          <label for="id_when">Preferred delivery time</label><br>
-          <select id="id_when" name="preferred_time">
-            <option>ASAP (30–90 mins)</option>
-            <option>Today (in the next 2–4 hours)</option>
-            <option>Schedule (we'll call to confirm)</option>
-          </select>
-        </p>
-      </fieldset>
+        <section class="space-y-6">
+            <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em] ml-2">1. Select Cylinder Size</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {% with "6kg 13kg 22.5kg 35kg 50kg" as size_list %}
+                    {% for size in size_list.split %}
+                        <label class="relative group cursor-pointer">
+                            <input type="radio" name="size" value="{{ size }}" class="peer sr-only" required {% if forloop.first %}checked{% endif %}>
+                            <div class="bg-white border-2 border-slate-100 rounded-[2.5rem] p-6 text-center transition-all peer-checked:border-wells-green peer-checked:bg-wells-green/5 hover:border-wells-blue">
+                                <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition">
+                                    <i class="fas fa-gas-pump text-wells-navy"></i>
+                                </div>
+                                <p class="font-black text-xl text-wells-navy">{{ size }}</p>
+                            </div>
+                            <div class="absolute top-4 right-4 w-6 h-6 bg-wells-green rounded-full flex items-center justify-center text-white scale-0 peer-checked:scale-100 transition-transform">
+                                <i class="fas fa-check text-[10px]"></i>
+                            </div>
+                        </label>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        </section>
 
-      <fieldset>
-        <legend>Next step</legend>
-        <p>After this step, you'll see available vendors near you. You'll choose a vendor and then select your payment method.</p>
-        <p>
-          <label for="id_notes">Notes (optional)</label><br>
-          <textarea id="id_notes" name="notes" rows="3" placeholder="Anything else we should know?"></textarea>
-        </p>
-      </fieldset>
+        <section class="grid md:grid-cols-2 gap-8">
 
- 
-      <input type="hidden" name="delivery_latitude" id="delivery-latitude">
-      <input type="hidden" name="delivery_longitude" id="delivery-longitude">
+            <div class="bg-white p-8 md:p-10 rounded-[3.5rem] border border-slate-100 shadow-sm space-y-8">
+                <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em]">2. Configuration</h3>
 
-      <p>
-        <button type="submit" class="btn btn-primary">See available vendors</button>
-        <a class="btn btn-outline" href="{% url 'available_vendors' %}">Cancel</a>
-      </p>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Preferred Brand</label>
+                    <select name="brand" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-blue transition outline-none">
+                        <option value="">Any Certified (Fastest)</option>
+                        <option value="TotalEnergies">TotalEnergies</option>
+                        <option value="RubisGas">Rubis Gas</option>
+                        <option value="K-Gas">K-Gas</option>
+                        <option value="ProGas">ProGas</option>
+                        <option value="Afri-Gas">Afri-Gas</option>
+                    </select>
+                </div>
+
+                <div class="space-y-4">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Order Type</p>
+                    <div class="flex gap-4">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="exchange" value="yes" class="peer sr-only" checked>
+                            <div class="text-center p-4 rounded-2xl border border-slate-100 peer-checked:bg-wells-navy peer-checked:text-white peer-checked:border-wells-navy transition font-bold text-sm">
+                                Refill/Exchange
+                            </div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="exchange" value="no" class="peer sr-only">
+                            <div class="text-center p-4 rounded-2xl border border-slate-100 peer-checked:bg-wells-navy peer-checked:text-white peer-checked:border-wells-navy transition font-bold text-sm">
+                                New Cylinder
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Quantity</label>
+                    <div class="flex items-center bg-slate-50 rounded-2xl px-4 py-2">
+                        <button type="button" onclick="this.parentNode.querySelector('input').stepDown()" class="w-10 h-10 flex items-center justify-center text-wells-navy hover:bg-white rounded-xl transition">-</button>
+                        <input type="number" name="quantity" min="1" value="1" class="bg-transparent border-none text-center font-black text-lg focus:ring-0 w-full" required>
+                        <button type="button" onclick="this.parentNode.querySelector('input').stepUp()" class="w-10 h-10 flex items-center justify-center text-wells-navy hover:bg-white rounded-xl transition">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 md:p-10 rounded-[3.5rem] border border-slate-100 shadow-sm space-y-6">
+                <h3 class="text-xs font-black text-wells-navy uppercase tracking-[0.2em]">3. Delivery Details</h3>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Full Name</label>
+                    <input type="text" name="full_name" value="{{ user.get_full_name|default:user.username }}" placeholder="Amina Ali" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition outline-none" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Phone Number</label>
+                    <input type="tel" name="phone" value="{{ user.profile.phone|default:'' }}" placeholder="0712 345 678" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition outline-none" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Estate / Landmark / Address</label>
+                    <input type="text" name="address" placeholder="e.g., Akila 2, House B4" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition outline-none" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Specific Directions</label>
+                    <input type="text" name="directions" placeholder="Gate code, floor, landmark..." class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-green transition outline-none" required>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Priority</label>
+                    <select name="preferred_time" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 focus:ring-2 focus:ring-wells-blue transition outline-none">
+                        <option value="ASAP (Flash Delivery)">ASAP (Flash Delivery)</option>
+                        <option value="Later Today">Later Today</option>
+                        <option value="Schedule for Tomorrow">Schedule for Tomorrow</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <input type="hidden" name="delivery_latitude" id="delivery-latitude">
+        <input type="hidden" name="delivery_longitude" id="delivery-longitude">
+
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 bg-wells-navy p-8 rounded-[3.5rem] text-white">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-wells-green rounded-full flex items-center justify-center animate-pulse">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div>
+                    <p class="font-bold">Location Sync Active</p>
+                    <p class="text-[10px] text-white/50 uppercase tracking-widest">Finding nearest vendors...</p>
+                </div>
+            </div>
+            <button type="submit" class="w-full md:w-auto bg-wells-green text-white px-12 py-5 rounded-2xl font-black text-xl hover:shadow-[0_20px_50px_rgba(72,187,58,0.3)] hover:-translate-y-1 transition-all">
+                Search Vendors <i class="fas fa-arrow-right ml-2 text-sm"></i>
+            </button>
+        </div>
     </form>
-  </section>
+</div>
 
-  <section>
-    <h2>What to expect</h2>
-    <ol>
-      <li>We confirm availability and assign the nearest rider.</li>
-      <li>On arrival, we exchange your empty for a sealed, certified cylinder.</li>
-      <li>Rider performs a quick leak-check. You pay securely on delivery.</li>
-    </ol>
-  </section>
-
-  <script>
+<script>
     window.addEventListener("DOMContentLoaded", () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -124,20 +148,10 @@
             document.getElementById("delivery-latitude").value = position.coords.latitude;
             document.getElementById("delivery-longitude").value = position.coords.longitude;
           },
-          error => {
-            console.warn("Geolocation failed:", error);
-            alert("We couldn't detect your location. You can still proceed, but tracking may be less accurate.");
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-          }
+          error => { console.warn("Geolocation failed:", error); },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
-      } else {
-        alert("Your browser doesn't support location access. You can still place your order manually.");
       }
     });
-  </script>
-</main>
+</script>
 {% endblock %}
