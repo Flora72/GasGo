@@ -74,9 +74,10 @@
 
                 <div class="space-y-2">
                     <div class="flex justify-between items-center px-2">
-                        <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em]">Password</label>
-                        <a href="{% url 'forgot_password' %}" class="text-[10px] font-bold text-wells-blue">Forgot?</a>
-                    </div>
+    <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em]">Password</label>
+    <a href="{% url 'forgot_password' %}" class="text-[10px] font-bold text-red-500">Forgot password?</a>
+</div>
+
                     <div class="relative">
                         <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
                         <input id="id_password" name="password" type="password" placeholder="••••••••"

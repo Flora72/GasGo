@@ -166,9 +166,9 @@ def forgot_password(request):
             if form.is_valid():
                 form.save(
                     request=request,
-                    email_template_name='emails/password_reset_email.html',
+                    email_template_name='password_reset_email.txt',
                     from_email='GasGo Assistance <gasgoassistance@gmail.com>',
-                    subject_template_name='emails/password_reset_subject.txt',
+                    subject_template_name='password_reset_subject.txt',
                 )
             return JsonResponse({
                 "message": "If the email is registered, a password reset link has been sent."
