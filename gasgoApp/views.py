@@ -18,7 +18,10 @@ from django.db.models import FloatField, ExpressionWrapper
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from .models import USSDOrder
-
+from django.db.models import Sum, FloatField
+from django.db.models.functions import Cast, Replace
+from django.db.models import Value
+from datetime import datetime
 
 # -------------------------------------------
 # GENERAL VIEWS
@@ -54,20 +57,62 @@ def testimonials(request):
 def emergency(request):
     return render(request, 'emergency.html',
                   {'is_dashboard': True,})
+
+@login_required(login_url='login')
 def gasbot(request):
     return render(request, 'gasbot.html',{
         'is_dashboard': True,
     })
 
+
 @login_required
 def dashboard(request):
-    alert_message = request.session.pop('alert_message', None)
-    return render(request, 'dashboard.html', {
+    user_orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
+    # Calculate Total KG
+    total_kg_data = user_orders.annotate(
+        clean_size=Replace('size', Value('kg'), Value(''))
+    ).annotate(
+        size_as_float=Cast('clean_size', FloatField())
+    ).aggregate(total=Sum('size_as_float'))
+    total_kg = total_kg_data['total'] or 0
+
+    # Dynamic Expected Duration
+    prediction_percentage = 0
+    show_recommender = False
+    days_left = "--"
+
+    if user_orders.count() >= 2:
+        # Calculate actual average days between orders
+        order_dates = list(user_orders.values_list('created_at', flat=True)[:5])
+        intervals = [(order_dates[i] - order_dates[i + 1]).days for i in range(len(order_dates) - 1)]
+        avg_duration = sum(intervals) / len(intervals)
+        expected_duration = max(avg_duration, 7)
+    else:
+        # Default for new users
+        expected_duration = 30
+
+    last_order = user_orders.first()
+    if last_order:
+        days_since = (datetime.now().date() - last_order.created_at.date()).days
+        # Calculate percentage based on dynamic or default duration
+        prediction_percentage = max(0, 100 - (int((days_since / expected_duration) * 100)))
+        days_left = max(0, int(expected_duration - days_since))
+
+        # Show recommender naturally if level is low
+        if prediction_percentage <= 20:
+            show_recommender = True
+
+    context = {
+        'total_kg': total_kg,
+        'prediction_percentage': prediction_percentage,
+        'show_recommender': show_recommender,
+        'days_left': days_left,
+        'expected_duration': expected_duration,
+        'last_order': last_order,
         'is_dashboard': True,
-        'alert_message': alert_message
-    })
-
-
+    }
+    return render(request, 'dashboard.html', context)
 @login_required
 def history(request):
 
