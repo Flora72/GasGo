@@ -33,55 +33,45 @@
 
 {% if is_dashboard %}
     <div class="flex min-h-screen overflow-hidden">
-        <aside class="hidden md:flex md:w-64 flex-col bg-wells-navy text-white">
-            <div class="p-8">
+        <aside id="dashboard-sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-wells-navy text-white transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex flex-col">
+            <div class="p-8 flex justify-between items-center">
                 <a href="/" class="flex items-center space-x-3">
                     <img src="{% static 'images/logo.png' %}" alt="GasGo Logo" class="h-8 w-auto">
                     <span class="text-2xl font-black tracking-tighter italic">
-                Gas<span class="text-wells-green">Go.</span>
-            </span>
+                        Gas<span class="text-wells-green">Go.</span>
+                    </span>
                 </a>
+                <button id="close-sidebar" class="md:hidden text-white/50 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
 
             <nav class="flex-1 px-4 space-y-1 font-medium overflow-y-auto">
-                <a href="{% url 'dashboard' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'dashboard' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-th-large w-5 text-wells-green group-hover:scale-110 transition"></i>
                     <span>Dashboard</span>
                 </a>
-
-                <a href="{% url 'my_orders' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'my_orders' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-clipboard-list w-5 text-wells-blue group-hover:scale-110 transition"></i>
                     <span>My Orders</span>
                 </a>
-
-                <a href="{% url 'orders' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'orders' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-gas-pump w-5 text-wells-blue group-hover:scale-110 transition"></i>
                     <span>Order Gas</span>
                 </a>
-
-                <a href="{% url 'track_order' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'track_order' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-map-marker-alt w-5 text-wells-green group-hover:scale-110 transition"></i>
                     <span>Track Order</span>
                 </a>
-
-                <a href="{% url 'profile' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'profile' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-user-cog w-5 text-wells-blue group-hover:scale-110 transition"></i>
                     <span>Edit Profile</span>
                 </a>
-
-                <a href="{% url 'history' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
+                <a href="{% url 'history' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition group">
                     <i class="fas fa-history w-5 text-wells-green group-hover:scale-110 transition"></i>
                     <span>History</span>
                 </a>
-
-                <a href="{% url 'emergency' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 transition group text-red-400">
+                <a href="{% url 'emergency' %}" class="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-500/10 transition group text-red-400">
                     <i class="fas fa-exclamation-triangle w-5 group-hover:scale-110 transition"></i>
                     <span class="font-bold">Emergency</span>
                 </a>
@@ -101,9 +91,7 @@
                         <p class="text-[10px] text-white/50 truncate">{{ user.email }}</p>
                     </div>
                 </div>
-
-                <a href="{% url 'logout' %}"
-                   class="flex items-center space-x-3 p-3 rounded-xl text-red-400 hover:bg-red-500/10 transition group">
+                <a href="{% url 'logout' %}" class="flex items-center space-x-3 p-3 rounded-xl text-red-400 hover:bg-red-500/10 transition group">
                     <i class="fas fa-power-off group-hover:rotate-90 transition"></i>
                     <span class="font-bold text-xs uppercase tracking-widest">Logout</span>
                 </a>
@@ -111,11 +99,16 @@
         </aside>
 
         <div class="flex-1 flex flex-col h-screen overflow-y-auto bg-wells-slate">
-            <header class="bg-white border-b px-8 py-4 flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-bold text-wells-navy uppercase text-xs tracking-widest">{% block page_title %}
-                    Overview{% endblock %}</h2>
+            <header class="bg-white border-b px-6 md:px-8 py-4 flex justify-between items-center sticky top-0 z-30">
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm font-bold text-slate-500">Hi, {{ user.first_name|default:"User" }}</span>
+                    <button id="open-sidebar" class="md:hidden text-wells-navy text-xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="font-bold text-wells-navy uppercase text-xs tracking-widest">{% block page_title %}Overview{% endblock %}</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="hidden sm:inline text-sm font-bold text-slate-500">Hi, {{ user.first_name|default:"User" }}</span>
                     <div class="w-10 h-10 rounded-full bg-wells-navy flex items-center justify-center text-white font-bold border-2 border-wells-green overflow-hidden">
                         {% if user.profile.profile_image %}
                             <img src="{{ user.profile.profile_image.url }}" class="w-full h-full object-cover">
@@ -155,9 +148,20 @@
                 </a>
             </div>
 
-            <button class="md:hidden text-wells-navy text-2xl">
+            <button id="mobile-landing-btn" class="md:hidden text-wells-navy text-2xl">
                 <i class="fas fa-bars"></i>
             </button>
+        </div>
+
+        <div id="mobile-landing-menu" class="hidden md:hidden bg-white border-t border-slate-100 px-6 py-6 space-y-4 font-bold text-wells-navy shadow-xl">
+            <a href="{% url 'about' %}" class="block hover:text-wells-green">About</a>
+            <a href="{% url 'testimonials' %}" class="block hover:text-wells-green">Testimonials</a>
+            <a href="{% url 'contact' %}" class="block hover:text-wells-green">Contact</a>
+            <a href="{% url 'ussd_access' %}" class="block hover:text-wells-green">USSD Access</a>
+            <div class="pt-4 border-t border-slate-100 flex flex-col gap-4">
+                <a href="{% url 'login' %}" class="text-slate-400">Login</a>
+                <a href="{% url 'signup' %}" class="bg-wells-green text-white px-8 py-3 rounded-full text-center">Sign Up</a>
+            </div>
         </div>
     </nav>
 
@@ -172,8 +176,7 @@
                     <img src="{% static 'images/logo.png' %}" alt="GasGo Logo" class="h-8 w-auto brightness-0 invert">
                     <p class="text-3xl font-black italic">GasGo.</p>
                 </div>
-                <p class="text-slate-400 max-w-xs">Connecting households to clean, safe, and sustainable energy in
-                    partnership with Green Wells Energies.</p>
+                <p class="text-slate-400 max-w-xs">Connecting households to clean, safe, and sustainable energy in partnership with Green Wells Energies.</p>
             </div>
             <div class="flex md:justify-end space-x-6 text-2xl">
                 <a href="#" class="hover:text-wells-blue transition"><i class="fab fa-facebook"></i></a>
@@ -192,19 +195,44 @@
             class="relative group flex items-center justify-center w-16 h-16 bg-wells-green text-white rounded-2xl shadow-2xl shadow-wells-green/40 hover:scale-110 hover:-translate-y-1 transition-all duration-300">
         <span class="absolute inline-flex h-full w-full rounded-2xl bg-wells-green opacity-75 animate-ping group-hover:hidden"></span>
         <i class="fas fa-robot text-2xl relative z-10"></i>
-
         <span class="absolute right-20 bg-wells-navy text-white text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10 shadow-xl">
-                GasGo Assistant
-            </span>
+            GasGo Assistant
+        </span>
     </button>
 </div>
 
 {% block scripts %}{% endblock %}
 
 <script>
+    // Chatbot link
     document.getElementById('chatbot-toggle').addEventListener('click', function () {
         window.location.href = "{% url 'gasbot' %}";
     });
+
+    // Landing Page Mobile Menu Toggle
+    const landingBtn = document.getElementById('mobile-landing-btn');
+    const landingMenu = document.getElementById('mobile-landing-menu');
+    if(landingBtn) {
+        landingBtn.addEventListener('click', () => {
+            landingMenu.classList.toggle('hidden');
+        });
+    }
+
+    // Dashboard Sidebar Drawer Toggle
+    const openSidebar = document.getElementById('open-sidebar');
+    const closeSidebar = document.getElementById('close-sidebar');
+    const sidebar = document.getElementById('dashboard-sidebar');
+
+    if(openSidebar && sidebar) {
+        openSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('-translate-x-full');
+        });
+    }
+    if(closeSidebar && sidebar) {
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+        });
+    }
 </script>
 </body>
 </html>
