@@ -8,8 +8,8 @@
 <div class="max-w-md mx-auto py-8 space-y-8 animate-fade-in">
 
     <div class="text-center space-y-4">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-wells-green/10 text-wells-green rounded-3xl mb-2">
-            <i class="fas fa-signal-alt-3 text-3xl"></i>
+        <div class="w-16 h-16 bg-wells-navy rounded-3xl shadow-lg flex items-center justify-center mx-auto mb-6 transform -rotate-3">
+            <img src="{% static 'images/logo.png' %}" alt="GasGo" class="h-10 w-auto brightness-0 invert">
         </div>
         <h1 class="text-4xl font-black text-wells-navy tracking-tighter">No <span class="text-wells-green">Data?</span></h1>
         <p class="text-slate-500 font-medium px-4">Order GasGo deliveries even without an internet connection using our dedicated USSD channel.</p>
@@ -18,12 +18,12 @@
     <div class="bg-white rounded-[3rem] p-8 border border-slate-100 shadow-xl text-center space-y-6">
         <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Quick Dial</h3>
 
-        <a href="tel:*789*1%23" class="w-full bg-wells-navy text-white py-6 rounded-2xl font-black text-2xl hover:bg-wells-green transition-all flex items-center justify-center group shadow-lg">
+        <a href="https://simulator.africastalking.com:9246/" target="_blank" class="w-full bg-wells-navy text-white py-6 rounded-2xl font-black text-2xl hover:bg-wells-green transition-all flex items-center justify-center group shadow-lg">
             <i class="fas fa-phone-arrow-up-right mr-4 group-hover:scale-110 transition-transform"></i>
-            *789*1#
+            *384*93233#
         </a>
 
-        <p class="text-xs font-bold text-slate-400 italic">One-tap to launch the official dialer.</p>
+        <p class="text-xs font-bold text-slate-400 italic">One-tap to launch the Africa's Talking simulator.</p>
     </div>
 
     <div class="bg-slate-100/50 rounded-[3rem] p-8 border-2 border-dashed border-slate-200 text-center">
@@ -74,6 +74,7 @@
         document.getElementById('ussdModal').classList.remove('hidden');
         document.getElementById('ussdContent').innerText = ussdSteps[0];
         document.getElementById('ussdInput').value = "";
+        document.getElementById('ussdInput').style.display = 'block'; // Ensure input shows up if re-opened
         document.getElementById('ussdInput').focus();
     }
 
@@ -90,7 +91,6 @@
             document.getElementById('ussdContent').innerText = ussdSteps[currentStep];
             document.getElementById('ussdInput').value = "";
 
-            // If it's the final confirmation, hide the input
             if (currentStep === 3) {
                 document.getElementById('ussdInput').style.display = 'none';
             }

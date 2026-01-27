@@ -670,29 +670,93 @@ def find_petrol_stations_mapbox(lng, lat):
 # AFRSTKNG VIEWS
 # -------------------------------------------
 def ussd_access(request):
-    return render(request, 'ussd_access.html')
+    # This renders the page. 
+    # 'is_dashboard': False ensures it uses the landing page layout in base.html
+    return render(request, 'ussd_access.html', {'is_dashboard': False})
+
 @csrf_exempt
 def ussd_callback(request):
     if request.method == "POST":
-        text = request.POST.get("text", "")
         session_id = request.POST.get("sessionId", "")
         phone_number = request.POST.get("phoneNumber", "")
+        text = request.POST.get("text", "")
 
         parts = text.split("*")
-        if len(parts) >= 4:
-            gas_size = parts[1]
-            quantity = parts[2]
-            location = parts[3]
-            confirmed = parts[4] == "1"
+        user_input = parts[-1] if text else ""
+        
+        # Price Map for calculations
+        PRICE_MAP = {
+            ('ProGas', '6kg'): 1100, ('ProGas', '13kg'): 2500, ('ProGas', '22.5kg'): 4300,
+            ('TotalEnergies', '6kg'): 1050, ('TotalEnergies', '13kg'): 2450, ('TotalEnergies', '22.5kg'): 4200,
+            ('Afri-Gas', '6kg'): 1020, ('Afri-Gas', '13kg'): 2400, ('Afri-Gas', '22.5kg'): 4150,
+            ('K-Gas', '6kg'): 1000, ('K-Gas', '13kg'): 2350, ('K-Gas', '22.5kg'): 4100,
+            ('RubisGas', '6kg'): 1030, ('RubisGas', '13kg'): 2420, ('RubisGas', '22.5kg'): 4180,
+        }
 
-            order = USSDOrder.objects.create(
-                session_id=session_id,
-                phone_number=phone_number,
-                gas_size=gas_size,
-                quantity=int(quantity),
-                location=location,
-                confirmed=confirmed
-            )
-            return HttpResponse(f"#GAS{order.id:05d}")
-        return HttpResponse("Invalid USSD input")
-    return HttpResponse("Only POST allowed")
+        # Step 0: Main Menu
+        if text == "":
+            response = "CON Welcome to GasGo\n"
+            response += "1. Order Gas\n"
+            response += "2. Check Order Status"
+
+        # Step 1: Select Brand
+        elif text == "1":
+            response = "CON Select Brand:\n"
+            response += "1. ProGas\n2. TotalEnergies\n3. Afri-Gas\n4. K-Gas\n5. RubisGas"
+
+        # Step 2: Select Size
+        elif len(parts) == 2 and parts[0] == "1":
+            response = "CON Select Size:\n1. 6kg\n2. 13kg\n3. 22.5kg"
+
+        # Step 3: Enter Quantity
+        elif len(parts) == 3 and parts[0] == "1":
+            response = "CON Enter Quantity (e.g., 1):"
+
+        # Step 4: Enter Location
+        elif len(parts) == 4 and parts[0] == "1":
+            response = "CON Enter Delivery Location:"
+
+        # Step 5: Confirmation
+        elif len(parts) == 5 and parts[0] == "1":
+            brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
+            sizes = ["6kg", "13kg", "22.5kg"]
+            
+            brand = brands[int(parts[1]) - 1]
+            size = sizes[int(parts[2]) - 1]
+            qty = parts[3]
+            loc = parts[4]
+            
+            price = PRICE_MAP.get((brand, size), 0) * int(qty)
+            
+            response = f"CON Confirm {qty}x {brand} ({size}) to {loc}?\nTotal: KES {price}\n"
+            response += "1. Confirm\n2. Cancel"
+
+        # Step 6: Finalize Order
+        elif len(parts) == 6 and parts[0] == "1":
+            if user_input == "1":
+                brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
+                sizes = ["6kg", "13kg", "22.5kg"]
+                
+                brand = brands[int(parts[1]) - 1]
+                size = sizes[int(parts[2]) - 1]
+                
+                order = USSDOrder.objects.create(
+                    session_id=session_id,
+                    phone_number=phone_number,
+                    gas_size=f"{brand} {size}",
+                    quantity=int(parts[3]),
+                    location=parts[4],
+                    confirmed=True
+                )
+                response = f"END Order placed successfully! ID: #GAS{order.id:05d}. We will call you shortly."
+            else:
+                response = "END Order cancelled. Thank you for choosing GasGo."
+
+        # Track Order Logic (Quick addition)
+        elif text == "2":
+            response = "END Feature coming soon! Please use our mobile app to track orders."
+
+        else:
+            response = "END Invalid input. Please try again."
+
+        return HttpResponse(response, content_type='text/plain')
