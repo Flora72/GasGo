@@ -44,10 +44,6 @@
             <p class="text-slate-300 text-lg max-w-sm font-medium">
                 Log in to access safe, certified energy from Green Wells stations delivered to your doorstep.
             </p>
-            <div class="flex gap-4 items-center pt-6 opacity-60">
-                <div class="h-[1px] w-12 bg-white"></div>
-                <span class="text-xs font-bold uppercase tracking-widest">ISO 9001-2015 CERTIFIED</span>
-            </div>
         </div>
 
         <div class="w-full md:w-[460px] glass-login rounded-[4rem] p-10 md:p-14 relative overflow-hidden">
@@ -74,15 +70,16 @@
 
                 <div class="space-y-2">
                     <div class="flex justify-between items-center px-2">
-    <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em]">Password</label>
-    <a href="{% url 'forgot_password' %}" class="text-[10px] font-bold text-red-500">Forgot password?</a>
-</div>
+                        <label class="text-[10px] font-black text-wells-navy uppercase tracking-[0.2em]">Password</label>
+                        <a href="{% url 'forgot_password' %}" class="text-[10px] font-bold text-red-500">Forgot password?</a>
+                    </div>
 
                     <div class="relative">
                         <i class="fas fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
                         <input id="id_password" name="password" type="password" placeholder="••••••••"
                                class="w-full bg-slate-50 border border-slate-100 focus:border-wells-blue rounded-2xl px-12 py-4 transition-all outline-none text-sm energy-input" required>
-                        <button type="button" id="togglePassword" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+                        
+                        <button type="button" onclick="togglePass('id_password', this)" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-wells-navy">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -101,5 +98,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePass(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+</script>
 
 {% endblock %}
