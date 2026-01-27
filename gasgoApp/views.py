@@ -674,7 +674,9 @@ def ussd_access(request):
     # 'is_dashboard': False ensures it uses the landing page layout in base.html
     return render(request, 'ussd_access.html', {'is_dashboard': False})
 
-@csrf_exempt
+from django.http import HttpResponse
+from .models import USSDOrder
+
 def ussd_callback(request):
     if request.method == "POST":
         session_id = request.POST.get("sessionId", "")
@@ -684,29 +686,30 @@ def ussd_callback(request):
         parts = text.split("*")
         user_input = parts[-1] if text else ""
         
-        # Price Map for calculations
+        # 1. Expanded Price Map
         PRICE_MAP = {
-            ('ProGas', '6kg'): 1100, ('ProGas', '13kg'): 2500, ('ProGas', '22.5kg'): 4300,
-            ('TotalEnergies', '6kg'): 1050, ('TotalEnergies', '13kg'): 2450, ('TotalEnergies', '22.5kg'): 4200,
-            ('Afri-Gas', '6kg'): 1020, ('Afri-Gas', '13kg'): 2400, ('Afri-Gas', '22.5kg'): 4150,
-            ('K-Gas', '6kg'): 1000, ('K-Gas', '13kg'): 2350, ('K-Gas', '22.5kg'): 4100,
-            ('RubisGas', '6kg'): 1030, ('RubisGas', '13kg'): 2420, ('RubisGas', '22.5kg'): 4180,
+            ('ProGas', '6kg'): 1100, ('ProGas', '13kg'): 2500, ('ProGas', '22.5kg'): 4300, ('ProGas', '35kg'): 6700, ('ProGas', '50kg'): 9500,
+            ('TotalEnergies', '6kg'): 1050, ('TotalEnergies', '13kg'): 2450, ('TotalEnergies', '22.5kg'): 4200, ('TotalEnergies', '35kg'): 6600, ('TotalEnergies', '50kg'): 9400,
+            ('Afri-Gas', '6kg'): 1020, ('Afri-Gas', '13kg'): 2400, ('Afri-Gas', '22.5kg'): 4150, ('Afri-Gas', '35kg'): 6550, ('Afri-Gas', '50kg'): 9300,
+            ('K-Gas', '6kg'): 1000, ('K-Gas', '13kg'): 2350, ('K-Gas', '22.5kg'): 4100, ('K-Gas', '35kg'): 6500, ('K-Gas', '50kg'): 9200,
+            ('RubisGas', '6kg'): 1030, ('RubisGas', '13kg'): 2420, ('RubisGas', '22.5kg'): 4180, ('RubisGas', '35kg'): 6580, ('RubisGas', '50kg'): 9350,
         }
+
+        # Shared Helper Lists
+        brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
+        sizes = ["6kg", "13kg", "22.5kg", "35kg", "50kg"]
 
         # Step 0: Main Menu
         if text == "":
-            response = "CON Welcome to GasGo\n"
-            response += "1. Order Gas\n"
-            response += "2. Check Order Status"
+            response = "CON Welcome to GasGo\n1. Order Gas\n2. Check Order Status"
 
         # Step 1: Select Brand
         elif text == "1":
-            response = "CON Select Brand:\n"
-            response += "1. ProGas\n2. TotalEnergies\n3. Afri-Gas\n4. K-Gas\n5. RubisGas"
+            response = "CON Select Brand:\n1. ProGas\n2. TotalEnergies\n3. Afri-Gas\n4. K-Gas\n5. RubisGas"
 
-        # Step 2: Select Size
+        # Step 2: Select Size (Added 35kg and 50kg to the menu)
         elif len(parts) == 2 and parts[0] == "1":
-            response = "CON Select Size:\n1. 6kg\n2. 13kg\n3. 22.5kg"
+            response = "CON Select Size:\n1. 6kg\n2. 13kg\n3. 22.5kg\n4. 35kg\n5. 50kg"
 
         # Step 3: Enter Quantity
         elif len(parts) == 3 and parts[0] == "1":
@@ -716,27 +719,24 @@ def ussd_callback(request):
         elif len(parts) == 4 and parts[0] == "1":
             response = "CON Enter Delivery Location:"
 
-        # Step 5: Confirmation
+        # Step 5: Confirmation Logic
         elif len(parts) == 5 and parts[0] == "1":
-            brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
-            sizes = ["6kg", "13kg", "22.5kg"]
-            
-            brand = brands[int(parts[1]) - 1]
-            size = sizes[int(parts[2]) - 1]
-            qty = parts[3]
-            loc = parts[4]
-            
-            price = PRICE_MAP.get((brand, size), 0) * int(qty)
-            
-            response = f"CON Confirm {qty}x {brand} ({size}) to {loc}?\nTotal: KES {price}\n"
-            response += "1. Confirm\n2. Cancel"
+            try:
+                brand = brands[int(parts[1]) - 1]
+                size = sizes[int(parts[2]) - 1]
+                qty = int(parts[3])
+                loc = parts[4]
+                
+                unit_price = PRICE_MAP.get((brand, size), 0)
+                total_price = unit_price * qty
+                
+                response = f"CON Confirm Order:\n{qty}x {brand} {size}\nLocation: {loc}\nTotal: KES {total_price}\n1. Confirm\n2. Cancel"
+            except (IndexError, ValueError):
+                response = "END Invalid selection. Please restart the process."
 
         # Step 6: Finalize Order
         elif len(parts) == 6 and parts[0] == "1":
             if user_input == "1":
-                brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
-                sizes = ["6kg", "13kg", "22.5kg"]
-                
                 brand = brands[int(parts[1]) - 1]
                 size = sizes[int(parts[2]) - 1]
                 
@@ -752,7 +752,7 @@ def ussd_callback(request):
             else:
                 response = "END Order cancelled. Thank you for choosing GasGo."
 
-        # Track Order Logic (Quick addition)
+        # Track Order Logic
         elif text == "2":
             response = "END Feature coming soon! Please use our mobile app to track orders."
 
