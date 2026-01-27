@@ -13,7 +13,6 @@ venv/
 db.sqlite3
 *.log
 staticfiles/
-media/
 local_settings.py
 
 # IDEs
