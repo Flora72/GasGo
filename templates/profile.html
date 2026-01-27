@@ -13,12 +13,9 @@
                 {% if user.profile.profile_image %}
                     <img src="{{ user.profile.profile_image.url }}" class="w-full h-full object-cover">
                 {% else %}
-                    {{ user.first_name|slice:":1"|default:"U" }}
+                    <img src="https://ui-avatars.com/api?name={{ user.username }} &background=001F3F&color=fff" alt="Default Profile">
                 {% endif %}
             </div>
-            <label for="profile_image" class="absolute -bottom-2 -right-2 w-10 h-10 bg-wells-green text-white rounded-xl flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition-transform">
-                <i class="fas fa-camera text-sm"></i>
-            </label>
         </div>
 
         <div class="text-center md:text-left flex-1">

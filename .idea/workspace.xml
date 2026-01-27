@@ -4,11 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="timezone editing" />
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="timezone editing">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GasGO/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0002_profile.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0003_order_total_cost.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0004_alter_vendor_location_lat_alter_vendor_location_lng.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0005_alter_order_exchange_alter_order_full_name_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0006_ussdorder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0007_order_price.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0008_alter_profile_profile_image.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/migrations/0009_alter_order_brand_alter_order_directions_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gasgoApp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/gasgoApp/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/profile.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -47,6 +65,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;Django Server.DjangoProject.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -60,7 +79,7 @@
     &quot;django.template.preview.state&quot;: &quot;SHOW_EDITOR&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/florencendinda/PycharmProjects/DjangoProject/static/images&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/florencendinda/PycharmProjects/DjangoProject/media/profile_pics&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -73,6 +92,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/media/profile_pics" />
       <recent name="$PROJECT_DIR$/static/images" />
     </key>
   </component>
@@ -156,6 +176,8 @@
       <workItem from="1768242812588" duration="4510000" />
       <workItem from="1768568595589" duration="388000" />
       <workItem from="1768587627397" duration="308000" />
+      <workItem from="1769514464612" duration="3597000" />
+      <workItem from="1769520326808" duration="340000" />
     </task>
     <task id="LOCAL-00001" summary="favicon added">
       <option name="closed" value="true" />

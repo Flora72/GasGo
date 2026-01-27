@@ -83,8 +83,8 @@
                         {% if user.profile.profile_image %}
                             <img src="{{ user.profile.profile_image.url }}" class="w-full h-full object-cover">
                         {% else %}
-                            {{ user.first_name|slice:":1"|default:"U" }}
-                        {% endif %}
+                    <img src="https://ui-avatars.com/api?name={{ user.username }} &background=001F3F&color=fff" alt="Default Profile">
+                {% endif %}
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold truncate">{{ user.get_full_name|default:user.username }}</p>
