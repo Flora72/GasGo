@@ -1,4 +1,4 @@
-import json, requests
+import json, requests , math
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
@@ -15,7 +15,6 @@ from django.conf import settings
 from django.utils.crypto import get_random_string
 from django.db.models import F
 from django.db.models import FloatField, ExpressionWrapper
-from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from .models import USSDOrder
 from django.db.models import Sum, FloatField
@@ -23,7 +22,7 @@ from django.db.models.functions import Cast, Replace
 from django.db.models import Value
 from datetime import datetime
 from django.utils import timezone
-import math
+
 
 # -------------------------------------------
 # GENERAL VIEWS
