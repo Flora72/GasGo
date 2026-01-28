@@ -752,9 +752,39 @@ def ussd_callback(request):
 
         # Track Order Logic
         elif text == "2":
-            response = "END Feature coming soon! Please use our mobile app to track orders."
+            # Fetches the absolute latest order made by this phone number
+            order = USSDOrder.objects.filter(phone_number=phone_number).order_by('-created_at').first()
+            
+            if not order:
+                response = "END You have no active orders. Dial *384*93233# to order gas!"
+            else:
+                # 1. Get the ID for display
+                order_id = f"GAS{order.id:05d}"
+                
+                # 2. Calculate time passed (in minutes)
+                now = timezone.now()
+                minutes_passed = (now - order.created_at).total_seconds() / 60
+                
+                # 3. SETTINGS FOR YOUR DEMO:
+                start_distance = 3.0  # Starting distance from petrol station
+                speed_km_per_min = 0.5 # The rider covers 0.5km every minute
+                
+                # 4. Calculate current distance (Dynamic)
+                # It decreases as minutes_passed increases
+                current_distance = max(0.0, start_distance - (minutes_passed * speed_km_per_min))
+                
+                # 5. Calculate ETA using your 1km = 4min rule
+                eta = math.ceil(current_distance * 4)
 
-        else:
-            response = "END Invalid input. Please try again."
+                if current_distance == 0:
+                    response = f"END Order {order_id}\nStatus: Arrived!\nThe rider has reached {order.location} with your {order.gas_size} cylinder."
+                else:
+                    response = f"CON Order {order_id} Tracking\n"
+                    response += f"--------------------\n"
+                    response += f"Dist. to Station: {round(current_distance, 1)}km\n"
+                    response += f"Est. Arrival: {eta} mins\n"
+                    response += f"Location: {order.location}\n\n"
+                    response += "0. Back"
 
-        return HttpResponse(response, content_type='text/plain')
+        elif user_input == "0":
+            response = "CON Welcome to GasGo\n1. Order Gas\n2. Check Order Status"
