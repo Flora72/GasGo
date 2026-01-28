@@ -674,9 +674,7 @@ def ussd_access(request):
     # 'is_dashboard': False ensures it uses the landing page layout in base.html
     return render(request, 'ussd_access.html', {'is_dashboard': False})
 
-from django.http import HttpResponse
-from .models import USSDOrder
-
+@csrf_exempt
 def ussd_callback(request):
     if request.method == "POST":
         session_id = request.POST.get("sessionId", "")
