@@ -1,4 +1,5 @@
-import json, requests , math
+import json, requests 
+import math
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
@@ -677,6 +678,99 @@ def ussd_access(request):
 
 @csrf_exempt
 def ussd_callback(request):
+    try:
+        if request.method == "POST":
+            session_id = request.POST.get("sessionId", "")
+            phone_number = request.POST.get("phoneNumber", "")
+            text = request.POST.get("text", "")
+
+            parts = text.split("*")
+            user_input = parts[-1] if text else ""
+            
+            # 1. Price Map & Helper Lists
+            PRICE_MAP = {
+                ('ProGas', '6kg'): 1100, ('ProGas', '13kg'): 2500, ('ProGas', '22.5kg'): 4300, ('ProGas', '35kg'): 6700, ('ProGas', '50kg'): 9500,
+                ('TotalEnergies', '6kg'): 1050, ('TotalEnergies', '13kg'): 2450, ('TotalEnergies', '22.5kg'): 4200, ('TotalEnergies', '35kg'): 6600, ('TotalEnergies', '50kg'): 9400,
+                ('Afri-Gas', '6kg'): 1020, ('Afri-Gas', '13kg'): 2400, ('Afri-Gas', '22.5kg'): 4150, ('Afri-Gas', '35kg'): 6550, ('Afri-Gas', '50kg'): 9300,
+                ('K-Gas', '6kg'): 1000, ('K-Gas', '13kg'): 2350, ('K-Gas', '22.5kg'): 4100, ('K-Gas', '35kg'): 6500, ('K-Gas', '50kg'): 9200,
+                ('RubisGas', '6kg'): 1030, ('RubisGas', '13kg'): 2420, ('RubisGas', '22.5kg'): 4180, ('RubisGas', '35kg'): 6580, ('RubisGas', '50kg'): 9350,
+            }
+            brands = ["ProGas", "TotalEnergies", "Afri-Gas", "K-Gas", "RubisGas"]
+            sizes = ["6kg", "13kg", "22.5kg", "35kg", "50kg"]
+
+            # --- USSD MENU NAVIGATION ---
+            
+            # Step 0: Main Menu
+            if text == "":
+                response = "CON Welcome to GasGo\n1. Order Gas\n2. Check Order Status"
+
+            # OPTION 1: ORDERING
+            elif text == "1":
+                response = "CON Select Brand:\n1. ProGas\n2. TotalEnergies\n3. Afri-Gas\n4. K-Gas\n5. RubisGas"
+
+            elif len(parts) == 2 and parts[0] == "1":
+                response = "CON Select Size:\n1. 6kg\n2. 13kg\n3. 22.5kg\n4. 35kg\n5. 50kg"
+
+            elif len(parts) == 3 and parts[0] == "1":
+                response = "CON Enter Quantity (e.g., 1):"
+
+            elif len(parts) == 4 and parts[0] == "1":
+                response = "CON Enter Delivery Location:"
+
+            elif len(parts) == 5 and parts[0] == "1":
+                try:
+                    brand = brands[int(parts[1]) - 1]
+                    size = sizes[int(parts[2]) - 1]
+                    qty = int(parts[3])
+                    total = PRICE_MAP.get((brand, size), 0) * qty
+                    response = f"CON Confirm Order:\n{qty}x {brand} {size}\nLocation: {parts[4]}\nTotal: KES {total}\n1. Confirm\n2. Cancel"
+                except:
+                    response = "END Invalid selection. Please try again."
+
+            elif len(parts) == 6 and parts[0] == "1":
+                if user_input == "1":
+                    brand = brands[int(parts[1]) - 1]
+                    size = sizes[int(parts[2]) - 1]
+                    order = USSDOrder.objects.create(
+                        session_id=session_id, phone_number=phone_number,
+                        gas_size=f"{brand} {size}", quantity=int(parts[3]),
+                        location=parts[4], confirmed=True
+                    )
+                    response = f"END Order placed! ID: #GAS{order.id:05d}."
+                else:
+                    response = "END Order cancelled."
+
+            # OPTION 2: TRACKING
+            elif text == "2":
+                order = USSDOrder.objects.filter(phone_number=phone_number).order_by('-created_at').first()
+                if not order:
+                    response = "END No active orders found. Dial *384*93233# to order!"
+                else:
+                    order_id = f"GAS{order.id:05d}"
+                    # Tracking Logic
+                    minutes_passed = (timezone.now() - order.created_at).total_seconds() / 60
+                    current_dist = max(0.0, 3.0 - (minutes_passed * 0.5))
+                    eta = math.ceil(current_dist * 4)
+
+                    if current_dist == 0:
+                        response = f"END Order {order_id}\nStatus: Arrived!\nThe rider is at {order.location}."
+                    else:
+                        response = f"CON Order {order_id} Tracking\n"
+                        response += f"Dist. to Station: {round(current_dist, 1)}km\n"
+                        response += f"Est. Arrival: {eta} mins\n"
+                        response += f"Location: {order.location}\n\n0. Back"
+
+            elif user_input == "0":
+                response = "CON Welcome to GasGo\n1. Order Gas\n2. Check Order Status"
+            
+            else:
+                response = "END Invalid input."
+
+            return HttpResponse(response, content_type='text/plain')
+
+    except Exception as e:
+        # If the code crashes, this tells you WHY on the USSD screen
+        return HttpResponse(f"END Error: {str(e)}", content_type='text/plain')
     if request.method == "POST":
         session_id = request.POST.get("sessionId", "")
         phone_number = request.POST.get("phoneNumber", "")
