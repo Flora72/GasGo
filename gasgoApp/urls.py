@@ -14,11 +14,13 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
     # password reset flow
+    
     path('forgot_password/', auth_views.PasswordResetView.as_view(
         template_name='forgot_password.html',
         email_template_name='password_reset_email.txt',
         subject_template_name='password_reset_subject.txt',
-        success_url='/password_reset_done/'
+        success_url='/password_reset_done/',
+        extra_email_context={'domain': 'gasgo-uby8.onrender.com', 'protocol': 'https'}
     ), name='forgot_password'),
 
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(
