@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="edited the allowed hosts and debug to false for production purposes">
-      <change beforePath="$PROJECT_DIR$/GasGO/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/settings.py" afterDir="false" />
-    </list>
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="edited the allowed hosts and debug to false for production purposes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -167,7 +165,7 @@
       <workItem from="1769520326808" duration="684000" />
       <workItem from="1769795773867" duration="1329000" />
       <workItem from="1769866211891" duration="700000" />
-      <workItem from="1788860914699" duration="779000" />
+      <workItem from="1788860914699" duration="1130000" />
     </task>
     <task id="LOCAL-00001" summary="favicon added">
       <option name="closed" value="true" />
@@ -297,7 +295,15 @@
       <option name="project" value="LOCAL" />
       <updated>1788862396565</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="edited the allowed hosts and debug to false for production purposes">
+      <option name="closed" value="true" />
+      <created>1788862787814</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1788862787814</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
