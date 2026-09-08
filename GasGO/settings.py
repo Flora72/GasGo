@@ -23,7 +23,7 @@ load_dotenv(BASE_DIR / '.env')
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost,gasgo-uby8.onrender.com, gasgo-5otz.onrender.com').split(',')
+ALLOWED_HOSTS = [h.strip() for h in config('ALLOWED_HOSTS', default='127.0.0.1,localhost,gasgo-uby8.onrender.com,gasgo-5otz.onrender.com').split(',')]
 
 # Application definition
 INSTALLED_APPS = [

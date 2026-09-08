@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="timezone editing">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="0b20e8d0-e8e4-47d9-a262-0c5390037e1d" name="Changes" comment="edited the allowed hosts and debug to false for production purposes">
       <change beforePath="$PROJECT_DIR$/GasGO/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/GasGO/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -168,7 +167,7 @@
       <workItem from="1769520326808" duration="684000" />
       <workItem from="1769795773867" duration="1329000" />
       <workItem from="1769866211891" duration="700000" />
-      <workItem from="1788860914699" duration="499000" />
+      <workItem from="1788860914699" duration="779000" />
     </task>
     <task id="LOCAL-00001" summary="favicon added">
       <option name="closed" value="true" />
@@ -290,7 +289,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768591138447</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="edited the allowed hosts and debug to false for production purposes">
+      <option name="closed" value="true" />
+      <created>1788862396565</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1788862396565</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -319,6 +326,7 @@
     <MESSAGE value="misc" />
     <MESSAGE value="model registering" />
     <MESSAGE value="timezone editing" />
-    <option name="LAST_COMMIT_MESSAGE" value="timezone editing" />
+    <MESSAGE value="edited the allowed hosts and debug to false for production purposes" />
+    <option name="LAST_COMMIT_MESSAGE" value="edited the allowed hosts and debug to false for production purposes" />
   </component>
 </project>
