@@ -27,7 +27,7 @@ GasGo supports both mobilephones and laptops, making it accessible to a wide ran
 | Deployment  | Render                                                                       |
 
 ## Live Demo
-You can access the live GasGo platform here: [https://gasgo-uby8.onrender.com/](https://gasgo-uby8.onrender.com/)
+You can access the live GasGo platform here: [https://gasgo-5otz.onrender.com](https://gasgo-5otz.onrender.com)
 
 ## Getting Started
 
